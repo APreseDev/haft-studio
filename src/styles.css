@@ -20,6 +20,7 @@
 }
 html {
   direction: rtl; /* راست‌به‌چپ از خود CSS هم تضمین شود */
+  overflow-x: clip; /* عنصرهایی که برای انیمیشن بیرون صفحه‌اند، اسکرول افقی نسازند */
   color-scheme: dark;
   -webkit-text-size-adjust: 100%;
 }
@@ -80,6 +81,15 @@ main,
 .nav {
   position: relative;
   z-index: 1;
+}
+
+/* هر بخش خودش لبه‌ی افقی‌اش را می‌برد. این روش برخلاف hidden اسکرول جدید نمی‌سازد و منوی چسبان را خراب نمی‌کند. */
+main,
+.hero,
+.section,
+.manifesto,
+.footer {
+  overflow-x: clip;
 }
 
 .wrap {
@@ -285,9 +295,7 @@ main,
   border-radius: 999px;
   color: var(--muted);
   font-size: 14px;
-  background: rgba(10, 10, 13, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(10, 10, 13, 0.6);
 }
 .dot {
   width: 8px;
@@ -411,9 +419,12 @@ h2 {
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 26px;
-  background: var(--surface);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(
+    20,
+    20,
+    26,
+    0.86
+  ); /* بدون تار کردن پشت‌زمینه: روی بوم سه‌بعدی خیلی سنگین بود */
   transition: border-color 0.25s;
 }
 /* حالت سه‌بعدی کارت فقط برای ماوس لازم است */
@@ -620,9 +631,7 @@ h2 {
   padding: clamp(24px, 5vw, 64px);
   border: 1px solid var(--line);
   border-radius: 34px;
-  background: var(--surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(20, 20, 26, 0.88);
 }
 .contact__box > * {
   min-width: 0;
@@ -899,6 +908,7 @@ h2,
     animation: none;
   }
 }
+
 .avatar {
   overflow: hidden;
 }

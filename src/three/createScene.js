@@ -30,7 +30,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
     antialias: !lite,
     powerPreference: 'high-performance',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1.25 : 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1 : 1.5)); // سقف کمتر = رندر خیلی سبک‌تر
   renderer.setClearColor(0x0a0a0d, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = LOOK.exposure;
@@ -124,7 +124,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   const solid = new THREE.MeshStandardMaterial({ color: 0x1e1b16, metalness: 0.9, roughness: 0.28 });
   const wire = new THREE.MeshBasicMaterial({ color: accentColor, wireframe: true, transparent: true, opacity: 0.45 });
   const floaterData = [];
-  const count = lite ? 8 : 20;
+  const count = lite ? 6 : 14;
   for (let i = 0; i < count; i++) {
     const m = new THREE.Mesh(geos[i % geos.length], i % 3 === 0 ? wire : solid);
     const ang = rand(0, Math.PI * 2);
@@ -136,7 +136,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   }
 
   // ذرات
-  const pCount = lite ? 700 : 2400;
+  const pCount = lite ? 400 : 1200;
   const pos = new Float32Array(pCount * 3);
   for (let i = 0; i < pCount; i++) {
     pos[i * 3] = rand(-26, 26);
@@ -159,9 +159,11 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   scene.add(particles);
 
   // پست‌پراسسینگ (درخشش)
+  // درخشش (bloom) سنگین‌ترین بخش است؛ فقط روی دستگاه‌های قوی (۸ هسته یا بیشتر) فعال می‌شود.
+  const useBloom = !lite && (navigator.hardwareConcurrency || 4) >= 8;
   let composer = null;
   let bloom = null;
-  if (!lite) {
+  if (useBloom) {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
     bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), LOOK.bloomStrength, 0.6, LOOK.bloomThreshold);
@@ -196,6 +198,12 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
     if (reduced) frame();
   }
 
+  // ارتفاع قابل اسکرول فقط وقتی اندازه‌ی صفحه عوض می‌شود محاسبه می‌شود، نه در هر فریم
+  let maxScroll = 1;
+  const updateMax = () => {
+    maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  };
+
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
   const onMove = (e) => {
     mouse.tx = (e.clientX / window.innerWidth) * 2 - 1;
@@ -206,7 +214,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   let cur = 0;
   function frame() {
     const t = clock.getElapsedTime();
-    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const max = maxScroll;
     const target = Math.min(1, Math.max(0, window.scrollY / max));
     cur += (target - cur) * (reduced ? 1 : 0.06);
     mouse.x += (mouse.tx - mouse.x) * 0.05;
@@ -245,6 +253,10 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   }
 
   resize();
+  updateMax();
+  const bodyObserver = new ResizeObserver(updateMax);
+  bodyObserver.observe(document.body);
+  window.addEventListener('load', updateMax);
   window.addEventListener('resize', resize);
   if (!reduced) {
     window.addEventListener('pointermove', onMove, { passive: true });
@@ -256,6 +268,8 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
 
   return function dispose() {
     renderer.setAnimationLoop(null);
+    bodyObserver.disconnect();
+    window.removeEventListener('load', updateMax);
     window.removeEventListener('resize', resize);
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('scroll', frame);

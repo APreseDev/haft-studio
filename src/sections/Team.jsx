@@ -1,9 +1,9 @@
-import { useLayoutEffect, useRef } from 'react';
-import { gsap } from '../gsap.js';
-import { fromRight, flipIn } from '../reveal.js';
-import { Icon } from '../components/Icons.jsx';
-import { team } from '../data.js';
-import { useTilt } from '../hooks.js';
+import { useLayoutEffect, useRef } from "react";
+import { gsap } from "../gsap.js";
+import { fromRight, flipIn } from "../reveal.js";
+import { Icon } from "../components/Icons.jsx";
+import { team } from "../data.js";
+import { useTilt } from "../hooks.js";
 
 function Member({ m }) {
   const tilt = useTilt(8);
@@ -12,9 +12,8 @@ function Member({ m }) {
       <span className="avatar">
         {m.photo ? (
           <img src={`${import.meta.env.BASE_URL}${m.photo}`} alt={m.name} />
-          ) : (
-        <Icon name="user" size={38} />
-
+        ) : (
+          <Icon name="user" size={38} />
         )}
       </span>
       <h3>{m.name}</h3>
@@ -29,13 +28,13 @@ export default function Team() {
   useLayoutEffect(() => {
     const mm = gsap.matchMedia();
     mm.add(
-      '(prefers-reduced-motion: no-preference)',
+      "(prefers-reduced-motion: no-preference)",
       () => {
         // عنوان از راست، کارت‌ها مثل ورق‌زدن از پهلو می‌چرخند
-        fromRight('.team .head > *', '.team .head', { stagger: 0.12 });
-        flipIn('.member', '.team .grid', { stagger: 0.16 });
+        fromRight(".team .head > *", ".team .head", { stagger: 0.12 });
+        flipIn(".member", ".team .grid", { stagger: 0.16 });
       },
-      root
+      root,
     );
     return () => mm.revert();
   }, []);

@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { gsap, ScrollTrigger } from './gsap.js';
 import { setLenis } from './lenis.js';
 import { prefersReduced } from './hooks.js';
-import Scene from './components/Scene.jsx';
 import Cursor from './components/Cursor.jsx';
 import Nav from './components/Nav.jsx';
 import Hero from './sections/Hero.jsx';
@@ -16,7 +15,24 @@ import Team from './sections/Team.jsx';
 import Contact from './sections/Contact.jsx';
 import Footer from './sections/Footer.jsx';
 
+// کتابخانه‌ی Three.js حجیم‌ترین بخش سایت است. جدا و دیرتر بارگذاری می‌شود تا متن‌ها و منو فوراً دیده شوند.
+const Scene = lazy(() => import('./components/Scene.jsx'));
+const sceneFallback = <div className="scene scene--fallback" aria-hidden="true" />;
+
 export default function App() {
+  const [sceneReady, setSceneReady] = useState(false);
+
+  // صحنه‌ی سه‌بعدی بعد از اولین نمایش صفحه و در زمان بیکاری مرورگر شروع می‌شود
+  useEffect(() => {
+    const start = () => setSceneReady(true);
+    if ('requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(start, { timeout: 1500 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const t = setTimeout(start, 400);
+    return () => clearTimeout(t);
+  }, []);
+
   useEffect(() => {
     if (prefersReduced()) return;
 
@@ -72,7 +88,7 @@ export default function App() {
 
   return (
     <>
-      <Scene />
+      {sceneReady ? <Suspense fallback={sceneFallback}><Scene /></Suspense> : sceneFallback}
       <Cursor />
       <div className="progress" aria-hidden="true" />
       <Nav />
