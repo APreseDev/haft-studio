@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from '../gsap.js';
+import { fromLeft, wipeUp } from '../reveal.js';
 import { projects } from '../data.js';
 import { useTilt } from '../hooks.js';
 
@@ -27,22 +28,9 @@ export default function Work() {
     mm.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
-        gsap.from('.work-section .head > *', {
-          y: 40,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.12,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: '.work-section .head', start: 'top 80%' },
-        });
-        gsap.from('.work', {
-          y: 80,
-          opacity: 0,
-          duration: 1.1,
-          stagger: 0.14,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: '.work-grid', start: 'top 80%' },
-        });
+        // عنوان از چپ، کارت‌ها با پرده‌ی بالا‌رونده
+        fromLeft('.work-section .head > *', '.work-section .head', { stagger: 0.12 });
+        wipeUp('.work', '.work-grid', { stagger: 0.16 });
         // عدد ۷ بزرگ پشت هر کارت کمی آرام‌تر از کارت حرکت می‌کند
         gsap.utils.toArray('.work__ghost').forEach((g) => {
           gsap.to(g, {

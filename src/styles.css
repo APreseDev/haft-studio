@@ -3,21 +3,23 @@
   --bg: #0a0a0d;
   --surface: rgba(20, 20, 26, 0.72);
   --surface-2: #1c1c23;
-  --line: rgba(243, 238, 227, 0.14);
-  --line-strong: rgba(243, 238, 227, 0.32);
-  --fg: #f4f0e6;
-  --muted: #b0aba0;
+  --line: rgba(237, 226, 201, 0.14);
+  --line-strong: rgba(237, 226, 201, 0.32);
+  --fg: #ede2c9; /* متن اصلی: کرمی، نه سفید */
+  --muted: #bdb097; /* متن کم‌رنگ‌تر: کرمی-خاکی */
   --accent: #eadfc8; /* باید با ACCENT در data.js یکی باشد */
   --on-accent: #16130c;
-  --font: 'Vazirmatn', Tahoma, system-ui, sans-serif;
+  --font: "Vazirmatn", Tahoma, system-ui, sans-serif;
   --gutter: clamp(16px, 4vw, 40px);
   --maxw: 1240px;
+  --nav-h: 61px; /* ارتفاع منوی بالا؛ هیرو این مقدار را از ارتفاع صفحه کم می‌کند */
 }
 
 * {
   box-sizing: border-box;
 }
 html {
+  direction: rtl; /* راست‌به‌چپ از خود CSS هم تضمین شود */
   color-scheme: dark;
   -webkit-text-size-adjust: 100%;
 }
@@ -60,11 +62,18 @@ a {
   inset: 0;
   width: 100%;
   height: 100%;
+  height: 100lvh; /* ارتفاع ثابت؛ با بالا و پایین رفتن نوار آدرس موبایل کش نمی‌آید */
   z-index: 0;
   display: block;
 }
 .scene--fallback {
-  background: radial-gradient(60% 50% at 25% 40%, rgba(234, 223, 200, 0.12), transparent 70%), var(--bg);
+  background:
+    radial-gradient(
+      60% 50% at 25% 40%,
+      rgba(234, 223, 200, 0.12),
+      transparent 70%
+    ),
+    var(--bg);
 }
 main,
 .footer,
@@ -127,7 +136,10 @@ main,
   position: sticky;
   top: 0;
   z-index: 50;
-  transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    backdrop-filter 0.3s;
   border-bottom: 1px solid transparent;
 }
 .nav--solid {
@@ -204,7 +216,10 @@ main,
   color: var(--fg);
   font: 500 16px var(--font);
   cursor: pointer;
-  transition: background 0.25s, color 0.25s, border-color 0.25s;
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s;
 }
 .btn--solid {
   background: var(--accent);
@@ -240,12 +255,15 @@ main,
 /* هیرو */
 .hero {
   position: relative;
-  min-height: 100svh;
+  min-height: calc(
+    100svh - var(--nav-h)
+  ); /* منو جای خودش را می‌گیرد، پس دکمه‌ها در صفحه‌ی اول می‌مانند */
   display: flex;
   align-items: center;
   padding-block: 48px 96px;
 }
 .hero__inner {
+  position: relative;
   width: 100%;
   max-width: var(--maxw);
   margin: 0 auto;
@@ -316,7 +334,6 @@ main,
   background: var(--accent);
   color: var(--on-accent);
   overflow: hidden;
-  direction: ltr;
   border-block: 1px solid var(--line);
 }
 .marquee__track {
@@ -336,15 +353,15 @@ main,
   font-weight: 900;
   font-size: clamp(22px, 3.2vw, 36px);
   white-space: nowrap;
-  direction: rtl;
 }
 .marquee__item b {
   font-weight: 400;
   opacity: 0.55;
 }
+/* در حالت راست‌به‌چپ، ردیف از راست شروع می‌شود و به سمت راست حرکت می‌کند */
 @keyframes marquee {
   to {
-    transform: translateX(-50%);
+    transform: translateX(50%);
   }
 }
 
@@ -397,21 +414,30 @@ h2 {
   background: var(--surface);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  transform-style: preserve-3d;
   transition: border-color 0.25s;
+}
+/* حالت سه‌بعدی کارت فقط برای ماوس لازم است */
+@media (hover: hover) and (pointer: fine) {
+  .card {
+    transform-style: preserve-3d;
+  }
 }
 .card:hover {
   border-color: var(--line-strong);
 }
 .card--glow::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
-  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(234, 223, 200, 0.12), transparent 60%);
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(234, 223, 200, 0.12),
+    transparent 60%
+  );
 }
 .card--glow:hover::after {
   opacity: 1;
@@ -456,7 +482,11 @@ h2 {
 /* نمونه‌کارها */
 .work {
   height: 340px;
-  background: linear-gradient(150deg, rgba(34, 34, 44, 0.8), rgba(14, 14, 18, 0.8));
+  background: linear-gradient(
+    150deg,
+    rgba(34, 34, 44, 0.8),
+    rgba(14, 14, 18, 0.8)
+  );
 }
 .work.work--wide {
   flex: 2 1 520px;
@@ -649,6 +679,17 @@ textarea {
   line-height: 1.8;
   resize: vertical;
 }
+.hp {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
 .status {
   min-height: 26px;
   color: var(--accent);
@@ -671,6 +712,121 @@ textarea {
   gap: 12px 24px;
 }
 
+/* متن‌ها روی صحنه‌ی سه‌بعدی بمانند و خوانا باشند */
+/* عنوان هیرو و شعار حذف شدند، چون کلمه‌هایشان برای انیمیشن بریده می‌شود و سایه مستطیلی می‌شد */
+.hero__text,
+.eyebrow,
+h2,
+.sub {
+  text-shadow: 0 0 28px rgba(10, 10, 13, 0.85);
+}
+
+/* منوی موبایل */
+.nav__toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+}
+.nav__toggle span {
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--fg);
+}
+.nav__only-menu {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .card,
+  .contact__box,
+  .pill {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .card {
+    background: rgba(20, 20, 26, 0.88);
+  }
+  .contact__box {
+    background: rgba(20, 20, 26, 0.9);
+  }
+  /* لایه‌ی تیره‌ی ملایم زیر متن هیرو */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 15%,
+      rgba(10, 10, 13, 0.82) 60%
+    );
+  }
+}
+
+@media (max-width: 720px) {
+  .nav__inner {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  .logo {
+    margin-inline-end: auto;
+  }
+  .nav__toggle {
+    display: inline-flex;
+  }
+  .nav__links {
+    display: none;
+    order: 3;
+    flex-basis: 100%;
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: 8px;
+    font-size: 17px;
+  }
+  .nav__links.is-open {
+    display: flex;
+  }
+  .nav__links a {
+    min-height: 48px;
+    border-top: 1px solid var(--line);
+  }
+  .nav .btn {
+    min-height: 40px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav__cta {
+    display: none;
+  }
+  .nav__only-menu {
+    display: inline-flex !important;
+    color: var(--accent);
+  }
+  .logo {
+    font-size: 18px;
+    gap: 8px;
+  }
+  .logo__mark {
+    width: 34px;
+    height: 34px;
+    font-size: 21px;
+  }
+}
+
 @media (max-width: 640px) {
   .section,
   .manifesto {
@@ -681,6 +837,55 @@ textarea {
   }
   .hero {
     align-items: flex-end;
+    padding-block: 24px 72px;
+  }
+  .scroll-hint {
+    display: none;
+  }
+}
+
+/* گوشی‌های کوچک: هیرو کمی فشرده‌تر تا دکمه‌ها در صفحه‌ی اول بمانند */
+@media (max-width: 420px) {
+  .hero__title {
+    font-size: clamp(36px, 10.5vw, 44px);
+  }
+  .hero__inner {
+    gap: 20px;
+  }
+  .hero__text {
+    font-size: 16px;
+    line-height: 1.9;
+  }
+}
+
+/* گوشی افقی */
+@media (max-height: 500px) {
+  .hero {
+    padding-block: 16px 32px;
+  }
+  .hero__inner {
+    gap: 14px;
+  }
+  .hero__title {
+    font-size: clamp(30px, 9vh, 52px);
+    line-height: 1.25;
+  }
+  .hero__text {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .btn {
+    min-height: 44px;
+  }
+}
+
+/* صفحه‌های کوتاه */
+@media (max-height: 700px) {
+  .scroll-hint {
+    display: none;
+  }
+  .hero {
+    padding-block: 32px 48px;
   }
 }
 
@@ -693,4 +898,13 @@ textarea {
   .marquee__track {
     animation: none;
   }
+}
+.avatar {
+  overflow: hidden;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }

@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from '../gsap.js';
+import { fromRight, alternateSides } from '../reveal.js';
 import { Icon } from '../components/Icons.jsx';
 import { services } from '../data.js';
 import { useTilt } from '../hooks.js';
@@ -25,26 +26,15 @@ export default function Services() {
 
   useLayoutEffect(() => {
     const mm = gsap.matchMedia();
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      gsap.from('.services .head > *', {
-        y: 40,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.12,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '.services .head', start: 'top 80%' },
-      });
-      gsap.from('.services .service', {
-        y: 90,
-        opacity: 0,
-        rotationX: -18,
-        transformPerspective: 900,
-        duration: 1.1,
-        stagger: 0.14,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '.services .grid', start: 'top 80%' },
-      });
-    }, root);
+    mm.add(
+      '(prefers-reduced-motion: no-preference)',
+      () => {
+        // عنوان از راست، کارت‌ها یکی در میان از راست و چپ
+        fromRight('.services .head > *', '.services .head', { stagger: 0.12 });
+        alternateSides('.services .service', '.services .grid', { stagger: 0.14 });
+      },
+      root
+    );
     return () => mm.revert();
   }, []);
 

@@ -1,48 +1,66 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from '../gsap.js';
+import { fromRight, fromLeft, fromBottom } from '../reveal.js';
 import { Icon } from '../components/Icons.jsx';
 import { contact, serviceOptions } from '../data.js';
+import { sendContact } from '../api.js';
 import { useMagnetic } from '../hooks.js';
 
 export default function Contact() {
   const root = useRef(null);
   const submit = useMagnetic(0.25);
   const [status, setStatus] = useState('');
+  const [sending, setSending] = useState(false);
 
   useLayoutEffect(() => {
     const mm = gsap.matchMedia();
     mm.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
-        gsap.from('.contact__box', {
-          y: 70,
-          opacity: 0,
-          duration: 1.1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: '.contact__box', start: 'top 85%' },
-        });
+        // اطلاعات تماس از راست و فرم از چپ به هم می‌رسند؛ در موبایل (تک‌ستونه) هر دو از پایین
+        if (window.innerWidth >= 769) {
+          fromRight('.contact__info', '.contact__box');
+          fromLeft('form', '.contact__box');
+        } else {
+          fromBottom('.contact__info, form', '.contact__box');
+        }
       },
       root
     );
     return () => mm.revert();
   }, []);
 
-  // اگر در data.js ایمیل واقعی بگذارید، فرم یک ایمیل آماده در برنامه‌ی ایمیل کاربر باز می‌کند.
-  // فرم به سرور وصل نیست؛ برای ارسال واقعی باید یک سرویس فرم یا API اضافه شود.
-  const onSubmit = (e) => {
+  // پیام از طریق src/api.js به ایمیل تیم فرستاده می‌شود.
+  const onSubmit = async (e) => {
     e.preventDefault();
-    const f = new FormData(e.currentTarget);
-    const email = contact.email;
-    if (!email || email.startsWith('[')) {
-      setStatus('ایمیل تیم هنوز در فایل data.js تنظیم نشده است.');
+    if (sending) return;
+    const form = e.currentTarget; // قبل از await گرفته می‌شود
+    const f = new FormData(form);
+    const name = String(f.get('name') || '').trim();
+    const phone = String(f.get('phone') || '').trim();
+    const service = String(f.get('service') || '');
+    const message = String(f.get('message') || '').trim();
+
+    if (!name || !phone) {
+      setStatus('لطفاً نام و شماره تماس را وارد کنید.');
       return;
     }
-    const subject = encodeURIComponent(`درخواست پروژه: ${f.get('service')}`);
-    const body = encodeURIComponent(
-      `نام: ${f.get('name')}\nتماس: ${f.get('phone')}\nخدمت: ${f.get('service')}\n\n${f.get('message')}`
-    );
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-    setStatus('برنامه‌ی ایمیل شما باز شد. پیام را از همان‌جا ارسال کنید.');
+    // فیلد مخفی ضد اسپم: انسان آن را نمی‌بیند و پر نمی‌کند
+    if (f.get('botcheck')) {
+      setStatus('پیام شما ارسال شد. به‌زودی با شما تماس می‌گیریم.');
+      return;
+    }
+
+    setSending(true);
+    setStatus('در حال ارسال…');
+    const r = await sendContact({ name, phone, service, message });
+    setSending(false);
+    if (r.ok) {
+      setStatus('پیام شما ارسال شد. به‌زودی با شما تماس می‌گیریم.');
+      form.reset();
+    } else {
+      setStatus('ارسال انجام نشد. دوباره تلاش کنید یا مستقیم با شماره و ایمیل بالا تماس بگیرید.');
+    }
   };
 
   return (
@@ -56,15 +74,21 @@ export default function Contact() {
             <ul className="contact__list">
               <li>
                 <Icon name="call" size={22} />
-                <span>{contact.phone}</span>
+                <span>
+                  <bdi>{contact.phone}</bdi>
+                </span>
               </li>
               <li>
                 <Icon name="insta" size={22} />
-                <span>{contact.instagram}</span>
+                <span>
+                  <bdi>{contact.instagram}</bdi>
+                </span>
               </li>
               <li>
                 <Icon name="mail" size={22} />
-                <span>{contact.email}</span>
+                <span>
+                  <bdi>{contact.email}</bdi>
+                </span>
               </li>
             </ul>
           </div>
@@ -76,7 +100,7 @@ export default function Contact() {
             </div>
             <div className="field">
               <label htmlFor="f-phone">شماره تماس</label>
-              <input id="f-phone" name="phone" type="tel" autoComplete="tel" />
+              <input id="f-phone" name="phone" type="tel" dir="rtl" autoComplete="tel" />
             </div>
             <div className="field">
               <label htmlFor="f-service">چه خدمتی لازم داری؟</label>
@@ -90,7 +114,8 @@ export default function Contact() {
               <label htmlFor="f-msg">درباره‌ی پروژه بنویس</label>
               <textarea id="f-msg" name="message" rows="4" />
             </div>
-            <button ref={submit} type="submit" className="btn btn--solid">
+            <input type="checkbox" name="botcheck" className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+            <button ref={submit} type="submit" className="btn btn--solid" disabled={sending}>
               ارسال درخواست
               <Icon name="arrow" size={20} />
             </button>

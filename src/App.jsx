@@ -47,6 +47,11 @@ export default function App() {
     };
     document.addEventListener('click', onClick);
 
+    // بعد از آمدن فونت و بارگذاری کامل، جای شروع انیمیشن‌ها دوباره محاسبه شود
+    const refresh = () => ScrollTrigger.refresh();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+    window.addEventListener('load', refresh);
+
     // نوار پیشرفت اسکرول
     const progress = gsap.to('.progress', {
       scaleX: 1,
@@ -56,6 +61,7 @@ export default function App() {
 
     return () => {
       document.removeEventListener('click', onClick);
+      window.removeEventListener('load', refresh);
       progress.scrollTrigger && progress.scrollTrigger.kill();
       progress.kill();
       gsap.ticker.remove(tick);

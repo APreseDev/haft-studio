@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from '../gsap.js';
+import { fromBottom, fromRight } from '../reveal.js';
 import { steps } from '../data.js';
 
 const FA = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -12,22 +13,9 @@ export default function Process() {
     mm.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
-        gsap.from('.process .head > *', {
-          y: 40,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.12,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: '.process .head', start: 'top 80%' },
-        });
-        gsap.from('.step', {
-          y: 60,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.15,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: '.steps', start: 'top 80%' },
-        });
+        // عنوان از پایین، قدم‌ها یکی‌یکی از راست (به ترتیب خواندن فارسی)
+        fromBottom('.process .head > *', '.process .head', { stagger: 0.12 });
+        fromRight('.step', '.steps', { stagger: 0.2 });
         // خط بالای هر قدم با اسکرول کشیده می‌شود
         gsap.fromTo(
           '.step__line',

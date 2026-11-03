@@ -11,7 +11,20 @@ const rand = (a, b) => a + Math.random() * (b - a);
  * صحنه‌ی سه‌بعدی پس‌زمینه: عدد ۷ فلزی، حلقه‌ها، شکل‌های شناور و ذرات.
  * اسکرول صفحه، حرکت ماوس و زمان، همه روی صحنه اثر می‌گذارند.
  */
-export function createScene(canvas, { accent = '#D4FF3A', lite = false, reduced = false } = {}) {
+// تنظیمات ظاهر. اگر عدد ۷ هنوز زیادی روشن (سفید) یا زیادی تیره بود، فقط این عددها را عوض کنید.
+const LOOK = {
+  sevenColor: '#B79E70', // کرمی/شامپاینی تیره‌تر، تا زیر نور به سفید نرسد
+  exposure: 0.95, // روشنایی کلی صحنه
+  envIntensity: 0.35, // شدت بازتاب محیط روی فلز
+  keyLight: 0.8, // نور اصلی
+  accentLight: 30, // نور کرمی متحرک
+  warmLight: 26, // نور کهربایی کناری
+  bloomStrength: 0.3, // شدت درخشش
+  bloomThreshold: 0.95, // درخشش فقط روی روشن‌ترین نقطه‌ها
+  particleOpacity: 0.5, // شفافیت ذرات
+};
+
+export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced = false } = {}) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: !lite,
@@ -20,7 +33,7 @@ export function createScene(canvas, { accent = '#D4FF3A', lite = false, reduced 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1.25 : 2));
   renderer.setClearColor(0x0a0a0d, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = LOOK.exposure;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x0a0a0d, 0.03);
@@ -32,18 +45,19 @@ export function createScene(canvas, { accent = '#D4FF3A', lite = false, reduced 
   const pmrem = new THREE.PMREMGenerator(renderer);
   const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environment = envTex;
-  scene.environmentIntensity = 0.55;
+  scene.environmentIntensity = LOOK.envIntensity;
 
   const accentColor = new THREE.Color(accent);
 
   // نورها
-  const key = new THREE.DirectionalLight(0xffffff, 1.1);
+  const key = new THREE.DirectionalLight(0xfff0d6, LOOK.keyLight);
   key.position.set(5, 6, 8);
   scene.add(key);
-  const accentLight = new THREE.PointLight(accentColor, 90, 40, 2);
+  const accentLight = new THREE.PointLight(accentColor, LOOK.accentLight, 40, 2);
   accentLight.position.set(-6, 2, 5);
   scene.add(accentLight);
-  const coolLight = new THREE.PointLight(0x3de0ff, 60, 40, 2);
+  // نور کناری کهربایی (به‌جای نور فیروزه‌ای قبلی) تا همه‌چیز در تن کرمی بماند
+  const coolLight = new THREE.PointLight(0xc9a36b, LOOK.warmLight, 40, 2);
   coolLight.position.set(7, -3, 4);
   scene.add(coolLight);
 
@@ -71,11 +85,11 @@ export function createScene(canvas, { accent = '#D4FF3A', lite = false, reduced 
   sevenGeo.center();
 
   const sevenMat = new THREE.MeshPhysicalMaterial({
-    color: accentColor,
-    metalness: 0.85,
-    roughness: 0.22,
-    clearcoat: 1,
-    clearcoatRoughness: 0.15,
+    color: new THREE.Color(LOOK.sevenColor),
+    metalness: 0.7,
+    roughness: 0.32,
+    clearcoat: 0.25,
+    clearcoatRoughness: 0.3,
   });
   const seven = new THREE.Mesh(sevenGeo, sevenMat);
   const shell = new THREE.Mesh(
@@ -87,12 +101,12 @@ export function createScene(canvas, { accent = '#D4FF3A', lite = false, reduced 
   hero.add(seven, shell);
 
   // حلقه‌های مداری
-  const ringMat = new THREE.MeshBasicMaterial({ color: accentColor, transparent: true, opacity: 0.55 });
+  const ringMat = new THREE.MeshBasicMaterial({ color: accentColor, transparent: true, opacity: 0.4 });
   const ring1 = new THREE.Mesh(new THREE.TorusGeometry(5.4, 0.018, 8, lite ? 80 : 180), ringMat);
   ring1.rotation.x = Math.PI / 2.6;
   const ring2 = new THREE.Mesh(
     new THREE.TorusGeometry(6.4, 0.012, 8, lite ? 80 : 180),
-    new THREE.MeshBasicMaterial({ color: 0x3de0ff, transparent: true, opacity: 0.4 })
+    new THREE.MeshBasicMaterial({ color: accentColor, transparent: true, opacity: 0.28 })
   );
   ring2.rotation.set(Math.PI / 3, 0.6, 0);
   hero.add(ring1, ring2);
@@ -107,8 +121,8 @@ export function createScene(canvas, { accent = '#D4FF3A', lite = false, reduced 
     new THREE.TorusGeometry(0.34, 0.12, 12, 28),
     new THREE.BoxGeometry(0.6, 0.6, 0.6),
   ];
-  const solid = new THREE.MeshStandardMaterial({ color: 0x1b1b24, metalness: 0.9, roughness: 0.28 });
-  const wire = new THREE.MeshBasicMaterial({ color: accentColor, wireframe: true, transparent: true, opacity: 0.6 });
+  const solid = new THREE.MeshStandardMaterial({ color: 0x1e1b16, metalness: 0.9, roughness: 0.28 });
+  const wire = new THREE.MeshBasicMaterial({ color: accentColor, wireframe: true, transparent: true, opacity: 0.45 });
   const floaterData = [];
   const count = lite ? 8 : 20;
   for (let i = 0; i < count; i++) {
@@ -137,7 +151,7 @@ export function createScene(canvas, { accent = '#D4FF3A', lite = false, reduced 
       color: accentColor,
       size: 0.06,
       transparent: true,
-      opacity: 0.7,
+      opacity: LOOK.particleOpacity,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     })
@@ -150,7 +164,7 @@ export function createScene(canvas, { accent = '#D4FF3A', lite = false, reduced 
   if (!lite) {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.6, 0.85);
+    bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), LOOK.bloomStrength, 0.6, LOOK.bloomThreshold);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
   }
@@ -160,9 +174,16 @@ export function createScene(canvas, { accent = '#D4FF3A', lite = false, reduced 
   let baseY = 0;
   let baseScale = 1;
   let baseZ = 14;
+  // اندازه از خود بوم گرفته می‌شود (ارتفاعش با CSS ثابت است). با بالا و پایین رفتن نوار آدرس موبایل
+  // اندازه عوض نمی‌شود، پس صحنه دوباره ساخته نمی‌شود و نمی‌پرد.
+  let lastW = 0;
+  let lastH = 0;
   function resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const w = canvas.clientWidth || window.innerWidth;
+    const h = canvas.clientHeight || window.innerHeight;
+    if (w === lastW && h === lastH) return;
+    lastW = w;
+    lastH = h;
     renderer.setSize(w, h, false);
     if (composer) composer.setSize(w, h);
     camera.aspect = w / h;
