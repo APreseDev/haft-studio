@@ -14,6 +14,7 @@ import Manifesto from './sections/Manifesto.jsx';
 import Team from './sections/Team.jsx';
 import Contact from './sections/Contact.jsx';
 import Footer from './sections/Footer.jsx';
+import StructuredData from './components/StructuredData.jsx';
 
 // کتابخانه‌ی Three.js حجیم‌ترین بخش سایت است. جدا و دیرتر بارگذاری می‌شود تا متن‌ها و منو فوراً دیده شوند.
 const Scene = lazy(() => import('./components/Scene.jsx'));
@@ -24,6 +25,9 @@ export default function App() {
 
   // صحنه‌ی سه‌بعدی بعد از اولین نمایش صفحه و در زمان بیکاری مرورگر شروع می‌شود
   useEffect(() => {
+    // اگر کاربر «صرفه‌جویی در داده» را روشن کرده باشد، بسته‌ی سنگین سه‌بعدی دانلود نمی‌شود و پس‌زمینه‌ی ساده می‌ماند.
+    const conn = navigator.connection;
+    if (conn && conn.saveData) return;
     const start = () => setSceneReady(true);
     if ('requestIdleCallback' in window) {
       const id = window.requestIdleCallback(start, { timeout: 1500 });
@@ -88,11 +92,15 @@ export default function App() {
 
   return (
     <>
+      <StructuredData />
+      <a className="skip-link" href="#main">
+        پرش به محتوا
+      </a>
       {sceneReady ? <Suspense fallback={sceneFallback}><Scene /></Suspense> : sceneFallback}
       <Cursor />
       <div className="progress" aria-hidden="true" />
       <Nav />
-      <main>
+      <main id="main" tabIndex={-1}>
         <Hero />
         <Marquee />
         <Services />

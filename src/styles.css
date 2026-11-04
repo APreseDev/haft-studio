@@ -23,6 +23,7 @@ html {
   overflow-x: clip; /* عنصرهایی که برای انیمیشن بیرون صفحه‌اند، اسکرول افقی نسازند */
   color-scheme: dark;
   -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 72px; /* لینک‌های داخل صفحه زیر منوی چسبان نروند (وقتی Lenis فعال نیست) */
 }
 body {
   margin: 0;
@@ -236,6 +237,10 @@ main,
   border-color: var(--accent);
   color: var(--on-accent);
   font-weight: 700;
+}
+.btn--solid:hover {
+  background: #f4ecd9;
+  border-color: #f4ecd9;
 }
 .btn--ghost:hover {
   border-color: var(--accent);
@@ -527,7 +532,8 @@ h2 {
   align-items: flex-start;
   gap: 8px;
 }
-.work__cap b {
+.work__cap b,
+.work__cap h3 {
   font-size: 24px;
   font-weight: 700;
 }
@@ -917,4 +923,74 @@ h2,
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* پرش به محتوا: فقط با کیبورد دیده می‌شود */
+.skip-link {
+  position: fixed;
+  top: 10px;
+  inset-inline-start: 12px;
+  z-index: 200;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+}
+main:focus {
+  outline: none;
+}
+
+/* فرم: ستاره‌ی الزامی، خطا و پرکردن خودکار مرورگر */
+.req {
+  color: var(--accent);
+}
+input[aria-invalid="true"] {
+  border-color: #e8a598;
+}
+.status--error {
+  color: #f0b3a6;
+}
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--fg);
+  caret-color: var(--fg);
+  box-shadow: 0 0 0 1000px var(--bg) inset;
+}
+
+/* لینک‌های تماس */
+.contact__list a {
+  transition: color 0.2s;
+}
+.contact__list a:hover {
+  color: var(--accent);
+}
+
+/* نمونه‌کار با عکس، و حالت خالی بخش نمونه‌کارها */
+.work__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.work--img::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(10, 10, 13, 0.88), transparent 65%);
+}
+.work--img .work__cap {
+  z-index: 2;
+}
+.work__empty {
+  padding: 40px 30px;
+  color: var(--muted);
+  text-align: center;
 }

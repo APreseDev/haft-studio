@@ -11,7 +11,14 @@ function Member({ m }) {
     <article ref={tilt} className="card card--glow member">
       <span className="avatar">
         {m.photo ? (
-          <img src={`${import.meta.env.BASE_URL}${m.photo}`} alt={m.name} />
+          <img
+            src={`${import.meta.env.BASE_URL}${m.photo}`}
+            alt={m.name}
+            width="360"
+            height="360"
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <Icon name="user" size={38} />
         )}

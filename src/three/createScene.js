@@ -1,9 +1,5 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 
 const rand = (a, b) => a + Math.random() * (b - a);
 
@@ -28,7 +24,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: !lite,
-    powerPreference: 'high-performance',
+    powerPreference: lite ? 'default' : 'high-performance', // پس‌زمینه‌ی تزئینی روی گوشی/دستگاه ضعیف باتری را فشار ندهد
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1 : 1.5)); // سقف کمتر = رندر خیلی سبک‌تر
   renderer.setClearColor(0x0a0a0d, 1);
@@ -161,14 +157,28 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   // پست‌پراسسینگ (درخشش)
   // درخشش (bloom) سنگین‌ترین بخش است؛ فقط روی دستگاه‌های قوی (۸ هسته یا بیشتر) فعال می‌شود.
   const useBloom = !lite && (navigator.hardwareConcurrency || 4) >= 8;
+  // کدهای پست‌پراسسینگ فقط روی دستگاه‌های قوی و با import پویا دانلود می‌شوند؛ بقیه‌ی کاربران این بسته را نمی‌گیرند.
+  // تا آماده شدن آن، صحنه بدون درخشش رندر می‌شود.
   let composer = null;
-  let bloom = null;
+  let disposed = false;
   if (useBloom) {
-    composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), LOOK.bloomStrength, 0.6, LOOK.bloomThreshold);
-    composer.addPass(bloom);
-    composer.addPass(new OutputPass());
+    Promise.all([
+      import('three/examples/jsm/postprocessing/EffectComposer.js'),
+      import('three/examples/jsm/postprocessing/RenderPass.js'),
+      import('three/examples/jsm/postprocessing/UnrealBloomPass.js'),
+      import('three/examples/jsm/postprocessing/OutputPass.js'),
+    ])
+      .then(([ec, rp, ub, op]) => {
+        if (disposed) return;
+        const c = new ec.EffectComposer(renderer);
+        c.addPass(new rp.RenderPass(scene, camera));
+        c.addPass(new ub.UnrealBloomPass(new THREE.Vector2(1, 1), LOOK.bloomStrength, 0.6, LOOK.bloomThreshold));
+        c.addPass(new op.OutputPass());
+        if (lastW && lastH) c.setSize(lastW, lastH);
+        composer = c;
+        if (reduced) frame();
+      })
+      .catch((err) => console.warn('Bloom unavailable', err));
   }
 
   // چیدمان بر اساس اندازه‌ی صفحه
@@ -260,13 +270,20 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   window.addEventListener('resize', resize);
   if (!reduced) {
     window.addEventListener('pointermove', onMove, { passive: true });
-    renderer.setAnimationLoop(frame);
+    // سقف حدود ۶۰ فریم در ثانیه: روی نمایشگرهای ۱۲۰/۱۴۴ هرتز رندر و سرعت انیمیشن دو برابر نشود
+    let last = 0;
+    renderer.setAnimationLoop((now) => {
+      if (now - last < 12) return;
+      last = now;
+      frame();
+    });
   } else {
     frame();
     window.addEventListener('scroll', frame, { passive: true });
   }
 
   return function dispose() {
+    disposed = true;
     renderer.setAnimationLoop(null);
     bodyObserver.disconnect();
     window.removeEventListener('load', updateMax);

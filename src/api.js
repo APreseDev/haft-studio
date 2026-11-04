@@ -8,7 +8,7 @@ const ENDPOINT = 'https://api.web3forms.com/submit';
  * ارسال پیام فرم تماس.
  * خروجی همیشه یک شیء است و خطا پرتاب نمی‌کند:
  *   { ok: true }
- *   { ok: false, reason: 'rejected' | 'network' | 'timeout', detail? }
+ *   { ok: false, reason: 'rejected' | 'rate_limited' | 'network' | 'timeout', status?, detail? }
  */
 export async function sendContact({ name, phone, service, message }, { timeoutMs = 15000 } = {}) {
   const ctrl = new AbortController();
@@ -35,7 +35,7 @@ export async function sendContact({ name, phone, service, message }, { timeoutMs
       /* پاسخ JSON نبود */
     }
     if (res.ok && data && data.success) return { ok: true };
-    return { ok: false, reason: 'rejected', detail: data && data.message };
+    return { ok: false, reason: res.status === 429 ? 'rate_limited' : 'rejected', status: res.status, detail: data && data.message };
   } catch (err) {
     return { ok: false, reason: err && err.name === 'AbortError' ? 'timeout' : 'network' };
   } finally {
