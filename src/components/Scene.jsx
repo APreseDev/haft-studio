@@ -11,7 +11,14 @@ export default function Scene() {
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
-    const lite = window.matchMedia('(max-width: 768px)').matches || (navigator.hardwareConcurrency || 8) <= 4;
+    // برای عیب‌یابی کندی: آدرس را با ?noscene (بدون صحنه‌ی سه‌بعدی) یا ?lite (نسخه‌ی سبک) باز کنید
+    const q = new URLSearchParams(window.location.search);
+    if (q.has('noscene')) {
+      setFailed(true);
+      return;
+    }
+    const lite =
+      q.has('lite') || window.matchMedia('(max-width: 768px)').matches || (navigator.hardwareConcurrency || 8) <= 4;
     let dispose;
     try {
       dispose = createScene(canvas, { accent: ACCENT, lite, reduced: prefersReduced() });

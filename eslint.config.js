@@ -6,7 +6,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
   // test/ شامل نسخه‌های قدیمی کد است و بخشی از اپلیکیشن نیست؛ فایل‌ها حفظ می‌شوند ولی لینت نمی‌شوند.
-  globalIgnores(['dist', 'test']),
+  globalIgnores(['dist', 'test', 'scripts']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [

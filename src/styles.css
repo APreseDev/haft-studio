@@ -125,7 +125,7 @@ main,
   width: 38px;
   height: 38px;
   border: 1px solid var(--accent);
-  mix-blend-mode: difference;
+  box-shadow: 0 0 0 1px rgba(10, 10, 13, 0.5); /* روی زمینه‌ی روشن هم دیده شود (جایگزین mix-blend-mode که سنگین بود) */
 }
 .cursor-ring.is-hot {
   background: rgba(234, 223, 200, 0.18);
@@ -149,14 +149,11 @@ main,
   z-index: 50;
   transition:
     background 0.3s,
-    border-color 0.3s,
-    backdrop-filter 0.3s;
+    border-color 0.3s;
   border-bottom: 1px solid transparent;
 }
 .nav--solid {
-  background: rgba(10, 10, 13, 0.78);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(10, 10, 13, 0.92); /* بدون backdrop-filter: تار کردن پشت منو روی بوم متحرک هر فریم هزینه دارد */
   border-bottom-color: var(--line);
 }
 .nav__inner {

@@ -26,7 +26,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
     antialias: !lite,
     powerPreference: lite ? 'default' : 'high-performance', // پس‌زمینه‌ی تزئینی روی گوشی/دستگاه ضعیف باتری را فشار ندهد
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1 : 1.5)); // سقف کمتر = رندر خیلی سبک‌تر
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1 : 1.25)); // سقف کمتر = رندر خیلی سبک‌تر
   renderer.setClearColor(0x0a0a0d, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = LOOK.exposure;
@@ -161,6 +161,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   // تا آماده شدن آن، صحنه بدون درخشش رندر می‌شود.
   let composer = null;
   let disposed = false;
+  let bloomOff = false; // وقتی کنترل‌کننده‌ی کیفیت درخشش را خاموش کرد، دیگر ساخته نشود
   if (useBloom) {
     Promise.all([
       import('three/examples/jsm/postprocessing/EffectComposer.js'),
@@ -169,7 +170,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
       import('three/examples/jsm/postprocessing/OutputPass.js'),
     ])
       .then(([ec, rp, ub, op]) => {
-        if (disposed) return;
+        if (disposed || bloomOff) return;
         const c = new ec.EffectComposer(renderer);
         c.addPass(new rp.RenderPass(scene, camera));
         c.addPass(new ub.UnrealBloomPass(new THREE.Vector2(1, 1), LOOK.bloomStrength, 0.6, LOOK.bloomThreshold));
@@ -271,11 +272,57 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   if (!reduced) {
     window.addEventListener('pointermove', onMove, { passive: true });
     // سقف حدود ۶۰ فریم در ثانیه: روی نمایشگرهای ۱۲۰/۱۴۴ هرتز رندر و سرعت انیمیشن دو برابر نشود
+    //
+    // کنترل‌کننده‌ی کیفیت: اگر دستگاه در چند ثانیه‌ی اول فریم کافی ندهد، صحنه خودکار سبک‌تر می‌شود
+    // (مرحله ۱: بدون درخشش، رزولوشن ۱، شکل‌های کمتر) و اگر باز هم کند بود، ثابت می‌ماند
+    // و آخرین فریم به‌عنوان پس‌زمینه می‌ماند تا اسکرول صفحه روان شود.
     let last = 0;
+    let tier = 0;
+    let frames = 0;
+    let acc = 0;
+    let good = 0;
+    let monitoring = true;
+    const WARMUP = 90; // فریم‌های اول (کامپایل شیدر و ...) حساب نمی‌شوند
+    const WINDOW = 120;
+    const degrade = () => {
+      tier += 1;
+      if (tier === 1) {
+        bloomOff = true;
+        if (composer) {
+          composer.dispose();
+          composer = null;
+        }
+        renderer.setPixelRatio(1);
+        lastW = 0;
+        resize();
+        shell.visible = false;
+        floaterData.forEach((f, i) => {
+          if (i % 2) f.m.visible = false;
+        });
+      } else {
+        renderer.setAnimationLoop(null);
+        monitoring = false;
+      }
+    };
     renderer.setAnimationLoop((now) => {
-      if (now - last < 12) return;
+      const dt = now - last;
+      if (dt < 12) return;
       last = now;
       frame();
+      if (monitoring && dt < 250) {
+        // وقفه‌های بزرگ (مثلاً عوض‌کردن تب) حساب نمی‌شوند
+        frames += 1;
+        if (frames > WARMUP) {
+          acc += dt;
+          if (frames === WARMUP + WINDOW) {
+            const avg = acc / WINDOW;
+            frames = 0;
+            acc = 0;
+            if (avg > (tier === 0 ? 28 : 40)) degrade();
+            else if (++good >= 2) monitoring = false;
+          }
+        }
+      }
     });
   } else {
     frame();

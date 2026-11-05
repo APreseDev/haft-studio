@@ -3,6 +3,14 @@
 // رنگ تأکید (کرمی). اگر عوضش کردید، متغیر --accent در styles.css را هم هم‌رنگ کنید.
 export const ACCENT = "#EADFC8";
 
+// آدرس نهایی سایت بعد از اتصال دامنه، مثلاً "https://example.com" (حتماً با https و بدون / آخر).
+// با پر کردن آن، هنگام بیلد خودکار canonical، og:url، sitemap.xml و خط Sitemap در robots.txt ساخته می‌شود.
+// تا دامنه‌ی نهایی مشخص نیست، خالی بماند.
+export const siteUrl = "";
+// (اختیاری) نام فایل تصویر پیش‌نمایش لینک داخل پوشه‌ی public، مثلاً "og.png" (ترجیحاً ۱۲۰۰×۶۳۰).
+// تا لوگو آماده نیست، خالی بماند.
+export const ogImage = "";
+
 export const nav = [
   { href: "#services", label: "خدمات" },
   { href: "#work", label: "نمونه‌کارها" },
@@ -92,36 +100,23 @@ export const steps = [
 export const manifesto =
   "ما تازه شروع کرده‌ایم؛ یعنی برای ما هر پروژه *مهم‌ترین* *پروژه‌ی* *سال* است.";
 
-// export const team = [
-//   {
-//     name: "امیرمحسن دهقان",
-//     role: "طراح و توسعه‌دهنده سایت",
-//     photo: "01.jpg",
-//   },
-//   {
-//     name: "محمد متین دهقان",
-//     role: "تدوینگر و ویدیومیکر",
-//     photo: "02.jpg",
-//   },
-// ];
-
 export const team = [
   {
-    name: "یوزر اول",
-    role: "شغل و وظیفه",
-    photo: "",
+    name: "شخص اول",
+    role: "کار در گروه",
+    photo: "01.jpgز",
   },
   {
-    name: "یوزر دوم",
-    role: "شغل و وظیفه",
-    photo: "",
+    name: "شخص دوم",
+    role: "کار در گروه",
+    photo: "02.jpgز",
   },
 ];
 
 export const contact = {
-  phone: "۰۹۱۳ ۸۵۵ ۹۶۷۲",
-  instagram: "@amirmohsen.dm",
-  email: "amirmohsrn.amdm@gmail.com",
+  phone: "۰۹۱2 345 6789",
+  instagram: "haft-studio",
+  email: "haft-studio@gmail.com",
 };
 
 // کلید فرم Web3Forms. این کلید طبق طراحی خود سرویس عمومی است و داخل کد سایت قرار می‌گیرد.

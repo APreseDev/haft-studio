@@ -38,11 +38,50 @@
 
 عنوان و توضیح هیرو (`src/sections/Hero.jsx`)، عنوان بخش‌ها (`Services.jsx`، `Process.jsx`، `Team.jsx`) و متن بخش تماس (`Contact.jsx`).
 
-## ۵. سئو: کارهایی که بعد از خرید دامنه انجام می‌شود
+## ۵. سئو بعد از خرید دامنه
 
-این‌ها عمداً هنوز اضافه نشده‌اند، چون به آدرس نهایی دامنه نیاز دارند و ساختن آدرس فرضی گمراه‌کننده است:
+فقط یک کار: در `src/data.js` مقدار `siteUrl` را بنویسید (مثلاً `"https://example.com"`). بقیه (`canonical`، `og:url`، `sitemap.xml`، خط `Sitemap` در `robots.txt`) در بیلد خودکار ساخته می‌شود. بعدش سایت را در Google Search Console ثبت کنید.
 
-- تگ `canonical` و `og:url` در `index.html`
-- فایل `sitemap.xml` و خط `Sitemap:` در `public/robots.txt`
-- ثبت سایت در Google Search Console و درخواست ایندکس
-- تصویر پیش‌نمایش لینک (`og:image`) بعد از طراحی لوگو
+اگر بعداً لوگو یا تصویر پیش‌نمایش آماده شد، نام فایل را در `ogImage` (همان فایل `data.js`) بنویسید.
+
+## ۶. امنیت: کارهای دستی
+
+- روی GitHub: احراز هویت دومرحله‌ای، فعال‌کردن Dependabot alerts و Secret scanning، و محافظت از شاخه‌ی `main` (در Settings).
+- هدر `Content-Security-Policy-Report-Only` در `public/_headers` فعلاً فقط گزارش می‌دهد و چیزی را مسدود نمی‌کند. بعد از انتشار، سایت را در مرورگر باز کنید و در Console خطای CSP نبودنش را ببینید؛ اگر خطایی نبود، نام هدر را به `Content-Security-Policy` تغییر دهید.
+- HSTS و «Always Use HTTPS» را بعد از اتصال دامنه در داشبورد Cloudflare فعال کنید (قبل از آن فعال نکنید، چون برگشتش سخت است).
+- قبل از هر انتشار روی سیستم خودتان یک بار `npm audit` را اجرا کنید.
+
+## ۷. GitHub و بیلد
+
+**اولین بار (روی سیستم خودتان، داخل پوشه‌ی پروژه):**
+
+```
+npm ci
+npm run build
+npm run preview
+```
+
+اگر بیلد خطا داد، متن خطا را بفرستید. پوشه‌های `node_modules` و `dist` و فایل‌های `.env` در `.gitignore` هستند و روی GitHub نمی‌روند.
+
+**ساخت مخزن:** شاخه‌ی اصلی باید `main` باشد (workflowها روی `main` تنظیم شده‌اند):
+
+```
+git init -b main
+git add .
+git commit -m "Initial commit"
+```
+
+**تنظیمات لازم در GitHub:**
+
+- Settings → Actions → General: اجرای Actions فعال باشد.
+- اگر با GitHub Pages منتشر می‌کنید: Settings → Pages → Source را روی **GitHub Actions** بگذارید.
+- اگر با Cloudflare Pages منتشر می‌کنید، workflow به نام `Deploy to GitHub Pages` لازم نیست؛ در تب Actions آن را Disable کنید (فایلش را حذف نکردم).
+
+**تنظیمات Cloudflare Pages (وقتی به مرحله‌اش رسیدیم):**
+
+- Build command: `npm run build`
+- Build output directory: `dist`
+- نسخه‌ی Node از فایل `.nvmrc` (۲۲) خوانده می‌شود.
+- متغیر `VITE_BASE` را تنظیم **نکنید** (پیش‌فرض `/` درست است).
+
+**راهنمای کامل انتشار روی Cloudflare Pages و اتصال دامنه:** فایل `DEPLOYMENT.md`
