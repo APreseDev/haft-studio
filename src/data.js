@@ -104,12 +104,10 @@ export const team = [
   {
     name: "شخص اول",
     role: "کار در گروه",
-    photo: "01.jpgز",
   },
   {
     name: "شخص دوم",
     role: "کار در گروه",
-    photo: "02.jpgز",
   },
 ];
 
