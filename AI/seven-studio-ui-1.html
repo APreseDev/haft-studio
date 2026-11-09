@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090909" />
+  <title>هفت استودیو | Seven Studio</title>
+  <meta name="description" content="هفت استودیو؛ ترکیبی از طراحی دیجیتال و قدرت تصویر برای ساخت تجربه‌های ماندگار." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#090909',
+            panel: '#111110',
+            line: '#292722',
+            cream: '#F1EEE7',
+            muted: '#99958C',
+            gold: '#C9A56A',
+            gold2: '#E8C58B'
+          },
+          fontFamily: {
+            fa: ['Vazirmatn', 'Tahoma', 'sans-serif'],
+            en: ['Manrope', 'Arial', 'sans-serif']
+          },
+          boxShadow: {
+            glow: '0 0 45px rgba(201,165,106,.12)'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background:#090909; color:#F1EEE7; font-family:'Vazirmatn',Tahoma,sans-serif; }
+    ::selection { background:#C9A56A; color:#090909; }
+    .gold-gradient { background:linear-gradient(135deg,#F0D7A8 0%,#B88B4D 52%,#E9C58B 100%); }
+    .text-gradient { background:linear-gradient(110deg,#F3E5C9,#C49A5E); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .hero-grid { background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px); background-size:72px 72px; mask-image:linear-gradient(to left,black,transparent 85%); }
+    .hero-image { background-image:linear-gradient(90deg,rgba(9,9,9,.02),rgba(9,9,9,.15) 48%,#090909 100%),linear-gradient(0deg,#090909 0%,transparent 35%),url('https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=85'); background-position:center; background-size:cover; }
+    .work-image { transition:transform .8s cubic-bezier(.2,.7,.2,1),filter .6s; }
+    .work-card:hover .work-image { transform:scale(1.055); filter:brightness(.68); }
+    .work-overlay { opacity:0; transform:translateY(12px); transition:.35s ease; }
+    .work-card:hover .work-overlay { opacity:1; transform:translateY(0); }
+    .service-card { transition:background .35s,border-color .35s,transform .35s; }
+    .service-card:hover { background:#171612; border-color:rgba(201,165,106,.55); transform:translateY(-5px); }
+    .service-card:hover .service-arrow { transform:translateX(-5px); color:#E8C58B; }
+    .service-arrow { transition:.25s; }
+    .seven-orbit { animation:orbit 28s linear infinite; transform-origin:center; }
+    .seven-float { animation:float 7s ease-in-out infinite; }
+    @keyframes orbit { to { transform:rotate(360deg); } }
+    @keyframes float { 0%,100% { transform:translateY(0) rotate(-5deg); } 50% { transform:translateY(-13px) rotate(-3deg); } }
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity .8s ease,transform .8s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .nav-link { position:relative; }
+    .nav-link:after { content:''; position:absolute; right:0; bottom:-9px; width:0; height:1px; background:#C9A56A; transition:width .3s; }
+    .nav-link:hover:after,.nav-link.active:after { width:100%; }
+    .outline-button { border:1px solid rgba(201,165,106,.6); transition:.3s; }
+    .outline-button:hover { background:rgba(201,165,106,.1); border-color:#E8C58B; box-shadow:0 0 25px rgba(201,165,106,.1); }
+    .gold-button { background:linear-gradient(135deg,#E8C58B,#B98C51); color:#15120D; transition:transform .25s,box-shadow .25s; }
+    .gold-button:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(201,165,106,.2); }
+    .noise { position:relative; isolation:isolate; }
+    .noise:after { content:''; pointer-events:none; position:absolute; inset:0; z-index:-1; opacity:.12; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E"); }
+    @media (prefers-reduced-motion: reduce) { *,*:before,*:after { animation-duration:.01ms!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }
+  </style>
+</head>
+<body class="overflow-x-hidden">
+  <!-- Navigation -->
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-white/[.06] bg-ink/75 backdrop-blur-xl">
+    <div class="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 md:px-10">
+      <a href="#home" class="flex items-center gap-3" aria-label="Seven Studio home">
+        <span class="font-en text-[13px] font-extrabold tracking-[.12em] text-cream">SEVEN STUDIO</span>
+        <span class="font-en text-3xl font-extrabold leading-none text-gradient">7</span>
+      </a>
+      <nav class="hidden items-center gap-9 text-[13px] text-[#B9B5AD] md:flex">
+        <a class="nav-link active" href="#home">خانه</a>
+        <a class="nav-link" href="#services">خدمات</a>
+        <a class="nav-link" href="#work">نمونه‌کارها</a>
+        <a class="nav-link" href="#about">درباره ما</a>
+        <a class="nav-link" href="#contact">تماس با ما</a>
+      </nav>
+      <a href="#contact" class="outline-button hidden rounded-full px-5 py-2.5 text-xs text-gold2 md:inline-flex">شروع همکاری <span class="mr-2">↙</span></a>
+      <button id="menuButton" class="rounded-lg border border-white/10 px-3 py-2 text-sm md:hidden" aria-label="باز کردن منو">☰</button>
+    </div>
+    <div id="mobileMenu" class="hidden border-t border-white/10 bg-ink px-6 py-5 md:hidden">
+      <div class="flex flex-col gap-5 text-sm text-[#D6D1C7]">
+        <a href="#home">خانه</a><a href="#services">خدمات</a><a href="#work">نمونه‌کارها</a><a href="#about">درباره ما</a><a href="#contact">تماس با ما</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section id="home" class="noise relative flex min-h-[760px] items-center overflow-hidden border-b border-line pt-24 md:min-h-[790px]">
+      <div class="hero-image absolute inset-0 opacity-65"></div>
+      <div class="hero-grid absolute inset-0"></div>
+      <div class="absolute -left-24 top-28 h-[520px] w-[520px] rounded-full border border-gold/10"></div>
+      <div class="absolute -left-10 top-44 h-[380px] w-[380px] rounded-full border border-gold/10"></div>
+      <div class="relative mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-10 px-6 pb-24 pt-16 md:grid-cols-12 md:px-12">
+        <div class="relative z-10 md:col-span-7">
+          <div class="mb-7 flex items-center gap-3 text-[11px] tracking-[.16em] text-gold2">
+            <span class="h-px w-9 bg-gold"></span><span class="font-en">INDEPENDENT CREATIVE STUDIO</span>
+          </div>
+          <h1 class="max-w-[760px] text-[clamp(2.7rem,7vw,6.8rem)] font-extrabold leading-[1.25] tracking-tight">
+            ایده‌ها را به<br><span class="text-gradient">تجربه</span> تبدیل می‌کنیم.
+          </h1>
+          <p class="mt-7 max-w-[490px] text-sm leading-8 text-[#B9B5AD] md:text-base">
+            هفت استودیو، همراه خلاق برندها برای ساخت تجربه‌های دیجیتال و محتوای بصری ماندگار.
+          </p>
+          <div class="mt-9 flex flex-wrap gap-3">
+            <a href="#work" class="gold-button rounded-full px-7 py-3.5 text-xs font-bold">مشاهده پروژه‌ها <span class="mr-3">←</span></a>
+            <a href="#contact" class="outline-button rounded-full px-7 py-3.5 text-xs">شروع همکاری <span class="mr-3">↙</span></a>
+          </div>
+          <div class="mt-20 hidden items-center gap-4 text-[10px] tracking-[.12em] text-muted md:flex"><span class="h-10 w-px bg-gold/60"></span><span class="font-en">SCROLL TO EXPLORE</span></div>
+        </div>
+        <div class="pointer-events-none absolute left-[3%] top-1/2 hidden -translate-y-1/2 md:block">
+          <div class="seven-float relative flex h-[410px] w-[300px] items-center justify-center">
+            <div class="seven-orbit absolute inset-0 rounded-full border border-gold/20"></div>
+            <div class="absolute inset-8 rounded-full border border-white/10"></div>
+            <span class="font-en text-[330px] font-extrabold leading-none text-gradient drop-shadow-[0_0_45px_rgba(201,165,106,.2)]">7</span>
+            <span class="absolute bottom-3 left-0 font-en text-[9px] tracking-[.3em] text-gold/70">EST. DAY SEVEN</span>
+          </div>
+        </div>
+        <div class="absolute bottom-10 left-7 hidden font-en text-[10px] tracking-[.18em] text-white/40 md:block">01 — 04</div>
+      </div>
+      <div class="absolute bottom-0 right-0 h-px w-2/3 bg-gradient-to-l from-gold/50 to-transparent"></div>
+    </section>
+
+    <!-- Intro / services -->
+    <section id="services" class="relative border-b border-line py-24 md:py-32">
+      <div class="mx-auto grid max-w-[1440px] gap-12 px-6 md:grid-cols-12 md:px-12">
+        <div class="md:col-span-3 reveal">
+          <p class="mb-5 text-xs text-gold">خدمات ما <span class="mr-2 font-en text-[10px] tracking-widest">/ WHAT WE DO</span></p>
+          <h2 class="text-3xl font-bold leading-[1.6] md:text-[2.5rem]">ترکیبی از<br>خلاقیت و<br><span class="text-gradient">تکنولوژی.</span></h2>
+          <p class="mt-5 text-xs leading-7 text-muted">از طراحی وب تا تولید محتوای ویدئویی؛ همه‌چیز برای روایت بهتر برند شما.</p>
+          <a href="#contact" class="mt-7 inline-flex items-center gap-3 text-xs text-gold2">درباره همکاری بیشتر بدانید <span>←</span></a>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2 md:col-span-9 md:grid-cols-4">
+          <article class="service-card reveal rounded-sm border border-line bg-[#0E0E0D] p-6">
+            <div class="mb-12 flex items-start justify-between"><span class="font-en text-3xl text-white/10">01</span><span class="text-2xl text-gold">⌘</span></div>
+            <h3 class="text-base font-semibold">طراحی و توسعه وب</h3><p class="mt-3 min-h-[48px] text-xs leading-6 text-muted">وب‌سایت‌هایی با هویت بصری متمایز و تجربه کاربری دقیق.</p>
+            <a href="#contact" class="service-arrow mt-7 inline-flex items-center gap-3 text-xs text-gold">بیشتر بدانید <span>←</span></a>
+          </article>
+          <article class="service-card reveal rounded-sm border border-line bg-[#0E0E0D] p-6" style="transition-delay:80ms">
+            <div class="mb-12 flex items-start justify-between"><span class="font-en text-3xl text-white/10">02</span><span class="text-2xl text-gold">▣</span></div>
+            <h3 class="text-base font-semibold">تدوین حرفه‌ای ویدئو</h3><p class="mt-3 min-h-[48px] text-xs leading-6 text-muted">روایت تصویری منسجم با ریتم، رنگ و جزئیات حساب‌شده.</p>
+            <a href="#contact" class="service-arrow mt-7 inline-flex items-center gap-3 text-xs text-gold">بیشتر بدانید <span>←</span></a>
+          </article>
+          <article class="service-card reveal rounded-sm border border-line bg-[#0E0E0D] p-6" style="transition-delay:160ms">
+            <div class="mb-12 flex items-start justify-between"><span class="font-en text-3xl text-white/10">03</span><span class="text-2xl text-gold">▷</span></div>
+            <h3 class="text-base font-semibold">ساخت تیزر تبلیغاتی</h3><p class="mt-3 min-h-[48px] text-xs leading-6 text-muted">تصویرسازی هدفمند برای معرفی محصول، خدمت یا برند.</p>
+            <a href="#contact" class="service-arrow mt-7 inline-flex items-center gap-3 text-xs text-gold">بیشتر بدانید <span>←</span></a>
+          </article>
+          <article class="service-card reveal rounded-sm border border-line bg-[#0E0E0D] p-6" style="transition-delay:240ms">
+            <div class="mb-12 flex items-start justify-between"><span class="font-en text-3xl text-white/10">04</span><span class="text-2xl text-gold">◎</span></div>
+            <h3 class="text-base font-semibold">محتوای شبکه‌های اجتماعی</h3><p class="mt-3 min-h-[48px] text-xs leading-6 text-muted">ویدئوهای کوتاه و اثرگذار متناسب با پلتفرم و مخاطب.</p>
+            <a href="#contact" class="service-arrow mt-7 inline-flex items-center gap-3 text-xs text-gold">بیشتر بدانید <span>←</span></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Work -->
+    <section id="work" class="border-b border-line py-24 md:py-32">
+      <div class="mx-auto max-w-[1440px] px-6 md:px-12">
+        <div class="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div class="reveal"><p class="mb-4 text-xs text-gold">منتخب پروژه‌ها <span class="mr-2 font-en text-[10px] tracking-widest">/ SELECTED WORK</span></p><h2 class="text-4xl font-bold md:text-6xl">کارهایی که<br><span class="text-gradient">حرف می‌زنند.</span></h2></div>
+          <div class="flex flex-wrap gap-2 text-xs" id="filters">
+            <button class="filter-btn rounded-full border border-gold bg-gold px-4 py-2 text-ink" data-filter="all">همه</button>
+            <button class="filter-btn rounded-full border border-line px-4 py-2 text-muted hover:border-gold/60" data-filter="web">طراحی وب</button>
+            <button class="filter-btn rounded-full border border-line px-4 py-2 text-muted hover:border-gold/60" data-filter="video">ویدئو و تبلیغات</button>
+          </div>
+        </div>
+        <div class="grid auto-rows-[230px] gap-3 md:grid-cols-12 md:auto-rows-[260px]">
+          <article class="work-card group relative col-span-1 overflow-hidden bg-panel md:col-span-7 md:row-span-2" data-category="web">
+            <img class="work-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=1300&q=85" alt="معماری مدرن" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/5"></div>
+            <div class="work-overlay absolute bottom-7 right-7"><span class="text-[10px] text-gold">طراحی وب‌سایت</span><h3 class="mt-2 text-2xl font-bold">روایت یک معماری مدرن</h3></div>
+            <span class="absolute left-6 top-6 font-en text-xs text-white/60">01 / WEB</span>
+          </article>
+          <article class="work-card group relative col-span-1 overflow-hidden bg-panel md:col-span-5" data-category="video">
+            <img class="work-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85" alt="پرتره تبلیغاتی" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+            <div class="work-overlay absolute bottom-5 right-5"><span class="text-[10px] text-gold">تولید محتوای تبلیغاتی</span><h3 class="mt-1 text-lg font-semibold">پرتره / کمپین</h3></div>
+          </article>
+          <article class="work-card group relative col-span-1 overflow-hidden bg-panel md:col-span-5" data-category="video">
+            <img class="work-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1602143368064-6b6c6e9e6e4d?auto=format&fit=crop&w=900&q=85" alt="محصول تبلیغاتی" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+            <div class="work-overlay absolute bottom-5 right-5"><span class="text-[10px] text-gold">تیزر تبلیغاتی</span><h3 class="mt-1 text-lg font-semibold">جزئیات یک محصول</h3></div>
+          </article>
+          <article class="work-card group relative col-span-1 overflow-hidden bg-panel md:col-span-5" data-category="web">
+            <img class="work-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=85" alt="فضای کاری مدرن" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+            <div class="work-overlay absolute bottom-5 right-5"><span class="text-[10px] text-gold">طراحی وب‌سایت</span><h3 class="mt-1 text-lg font-semibold">فضای تازه برای ایده‌ها</h3></div>
+          </article>
+          <article class="work-card group relative col-span-1 overflow-hidden bg-panel md:col-span-7" data-category="video">
+            <img class="work-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=85" alt="خودروی لوکس" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+            <div class="work-overlay absolute bottom-5 right-6"><span class="text-[10px] text-gold">فیلم تبلیغاتی</span><h3 class="mt-1 text-xl font-semibold">حرکت، فرم، هیجان</h3></div>
+          </article>
+        </div>
+        <p class="mt-5 text-[10px] leading-6 text-muted">تصاویر این نسخه صرفاً برای نمایش چیدمان هستند؛ در نسخه نهایی با پروژه‌های واقعی شما جایگزین می‌شوند.</p>
+      </div>
+    </section>
+
+    <!-- About / philosophy -->
+    <section id="about" class="relative overflow-hidden border-b border-line py-24 md:py-32">
+      <div class="absolute -right-28 top-0 select-none font-en text-[420px] font-extrabold leading-none text-white/[.025]">7</div>
+      <div class="relative mx-auto grid max-w-[1440px] items-center gap-14 px-6 md:grid-cols-12 md:px-12">
+        <div class="md:col-span-5 reveal">
+          <p class="mb-5 text-xs text-gold">داستان هفت <span class="mr-2 font-en text-[10px] tracking-widest">/ WHY SEVEN</span></p>
+          <div class="relative flex h-[350px] items-center justify-center overflow-hidden border border-gold/20 bg-[radial-gradient(circle_at_50%_50%,rgba(201,165,106,.13),transparent_55%),#0E0E0D]">
+            <div class="absolute h-[270px] w-[270px] rounded-full border border-gold/20"></div><div class="absolute h-[210px] w-[210px] rounded-full border border-gold/10"></div>
+            <span class="seven-float font-en text-[245px] font-extrabold leading-none text-gradient">7</span>
+            <span class="absolute bottom-5 left-5 font-en text-[9px] tracking-[.25em] text-gold/60">A STORY THAT STARTED ON DAY SEVEN</span>
+          </div>
+        </div>
+        <div class="md:col-span-7 reveal">
+          <h2 class="text-3xl font-bold leading-[1.65] md:text-5xl">ما به دیده‌شدن فکر نمی‌کنیم؛<br><span class="text-gradient">به ماندگارشدن فکر می‌کنیم.</span></h2>
+          <p class="mt-7 max-w-2xl text-sm leading-9 text-muted">هفت استودیو از یک روز مشخص و یک علاقه مشترک شروع شد؛ جایی که طراحی دیجیتال و قدرت تصویر کنار هم قرار گرفتند. ما تیمی کوچک و چابک هستیم که برای هر پروژه، راه‌حلی متناسب با داستان و هدف برند پیدا می‌کنیم.</p>
+          <div class="mt-10 grid grid-cols-3 gap-5 border-t border-line pt-7">
+            <div><strong class="font-en text-3xl text-gradient">01</strong><p class="mt-2 text-xs text-muted">نگاه اختصاصی</p></div>
+            <div><strong class="font-en text-3xl text-gradient">02</strong><p class="mt-2 text-xs text-muted">توجه به جزئیات</p></div>
+            <div><strong class="font-en text-3xl text-gradient">07</strong><p class="mt-2 text-xs text-muted">شروع یک داستان</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="px-5 py-20 md:px-10 md:py-28">
+      <div class="noise relative mx-auto max-w-[1360px] overflow-hidden border border-gold/25 bg-[radial-gradient(ellipse_at_20%_50%,rgba(201,165,106,.14),transparent_45%),#11110F] px-7 py-14 md:px-16 md:py-20">
+        <div class="absolute -left-10 -top-32 font-en text-[330px] font-extrabold leading-none text-white/[.025]">7</div>
+        <div class="relative flex flex-col items-start justify-between gap-10 md:flex-row md:items-center">
+          <div><p class="mb-4 text-xs text-gold">بیایید چیزی بسازیم <span class="mr-2 font-en text-[10px] tracking-widest">/ LET'S COLLABORATE</span></p><h2 class="max-w-3xl text-3xl font-bold leading-[1.6] md:text-5xl">پروژه بعدی شما،<br>می‌تواند نقطه شروع یک همکاری باشد.</h2></div>
+          <a href="https://wa.me/" target="_blank" rel="noopener" class="gold-button shrink-0 rounded-full px-8 py-4 text-xs font-bold">شروع گفتگو <span class="mr-3">↙</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-line">
+    <div class="mx-auto flex max-w-[1440px] flex-col gap-8 px-6 py-9 md:flex-row md:items-center md:justify-between md:px-12">
+      <a href="#home" class="flex items-center gap-3"><span class="font-en text-sm font-bold tracking-widest">SEVEN STUDIO</span><span class="font-en text-2xl font-extrabold text-gradient">7</span></a>
+      <div class="flex flex-wrap gap-x-7 gap-y-3 text-xs text-muted"><a href="#home" class="hover:text-gold">خانه</a><a href="#services" class="hover:text-gold">خدمات</a><a href="#work" class="hover:text-gold">نمونه‌کارها</a><a href="#about" class="hover:text-gold">درباره ما</a><a href="#contact" class="hover:text-gold">تماس با ما</a></div>
+      <div class="flex items-center gap-5 text-xs text-muted"><a href="#" aria-label="Instagram" class="hover:text-gold">Instagram ↗</a><a href="#" aria-label="Telegram" class="hover:text-gold">Telegram ↗</a><span class="font-en text-[10px]">© 2026 SEVEN STUDIO</span></div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile navigation
+    const menuButton = document.getElementById('menuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+    // Portfolio filters
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const workCards = document.querySelectorAll('.work-card');
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        filterButtons.forEach(item => {
+          item.classList.remove('bg-gold','text-ink','border-gold');
+          item.classList.add('text-muted','border-line');
+        });
+        button.classList.add('bg-gold','text-ink','border-gold');
+        button.classList.remove('text-muted','border-line');
+        workCards.forEach(card => {
+          card.classList.toggle('hidden', filter !== 'all' && card.dataset.category !== filter);
+        });
+      });
+    });
+
+    // Reveal-on-scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Active nav link
+    const sections = document.querySelectorAll('main section[id]');
+    const navLinks = document.querySelectorAll('header nav a');
+    const sectionObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id));
+        }
+      });
+    }, { rootMargin: '-35% 0px -55% 0px' });
+    sections.forEach(section => sectionObserver.observe(section));
+  </script>
+</body>
+</html>
