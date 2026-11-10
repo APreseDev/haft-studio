@@ -1,8 +1,8 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "../gsap.js";
-import { fromRight, flipIn } from "../reveal.js";
+import { fromStart, flipIn } from "../reveal.js";
 import { Icon } from "../components/Icons.jsx";
-import { team } from "../data.js";
+import { useLang } from "../i18n/context.js";
 import { useTilt } from "../hooks.js";
 
 function Member({ m }) {
@@ -30,6 +30,7 @@ function Member({ m }) {
 }
 
 export default function Team() {
+  const { t } = useLang();
   const root = useRef(null);
 
   useLayoutEffect(() => {
@@ -37,8 +38,8 @@ export default function Team() {
     mm.add(
       "(prefers-reduced-motion: no-preference)",
       () => {
-        // عنوان از راست، کارت‌ها مثل ورق‌زدن از پهلو می‌چرخند
-        fromRight(".team .head > *", ".team .head", { stagger: 0.12 });
+        // عنوان از سمت شروع خواندن، کارت‌ها مثل ورق‌زدن از پهلو می‌چرخند
+        fromStart(".team .head > *", ".team .head", { stagger: 0.12 });
         flipIn(".member", ".team .grid", { stagger: 0.16 });
       },
       root,
@@ -50,11 +51,11 @@ export default function Team() {
     <section id="team" className="section team" ref={root}>
       <div className="wrap">
         <div className="head">
-          <p className="eyebrow">۰۴ — تیم</p>
-          <h2>آدم‌های پشت هفت استودیو.</h2>
+          <p className="eyebrow">{t.team.eyebrow}</p>
+          <h2>{t.team.title}</h2>
         </div>
         <div className="grid grid--3">
-          {team.map((m, i) => (
+          {t.team.members.map((m, i) => (
             <Member key={m.role + i} m={m} />
           ))}
         </div>

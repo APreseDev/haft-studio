@@ -27,16 +27,21 @@ export default function Cursor() {
       dx(e.clientX);
       dy(e.clientY);
     };
+    // pointerover با رد شدن از روی هر عنصر می‌آید؛ فقط وقتی حالت (روی لینک/دکمه بودن یا نبودن) عوض شد انیمیشن ساخته می‌شود
+    let wasHot = false;
     const over = (e) => {
-      const hot = e.target.closest && e.target.closest('a, button, input, select, textarea, [data-hover]');
+      const hot = !!(e.target.closest && e.target.closest('a, button, input, select, textarea, [data-hover]'));
+      if (hot === wasHot) return;
+      wasHot = hot;
       gsap.to(r, { scale: hot ? 2.2 : 1, duration: 0.3, ease: 'power3.out', overwrite: 'auto' });
-      r.classList.toggle('is-hot', !!hot);
+      r.classList.toggle('is-hot', hot);
     };
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerover', over);
     return () => {
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerover', over);
+      gsap.killTweensOf([r, d]);
     };
   }, []);
 

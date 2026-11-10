@@ -18,15 +18,34 @@ const LOOK = {
   bloomStrength: 0.3, // شدت درخشش
   bloomThreshold: 0.95, // درخشش فقط روی روشن‌ترین نقطه‌ها
   particleOpacity: 0.5, // شفافیت ذرات
+  // محو شدن عدد ۷ با اسکرول: از ۵۰٪ ارتفاع بخش اول (هیرو) شروع می‌شود و کمی بعد از خروج کامل هیرو تمام می‌شود.
+  fadeStart: 0.5,
+  fadeEnd: 1.1,
+  // --- تنظیمات سرعت ---
+  maxPixelRatio: 1, // سقف وضوح رندر؛ ۱ یعنی بدون وضوح اضافه روی نمایشگرهای رتینا (حدود ۳۶٪ پیکسل کمتر از ۱٫۲۵)
+  bloom: false, // درخشش (چند پاس تمام‌صفحه). ظاهر را خیلی کم عوض می‌کند ولی سنگین‌ترین بخش بود؛ برای روشن‌کردن true بگذارید
+  floaters: 10, // تعداد شکل‌های شناور (نسخه‌ی سبک ۶)
+  particles: 800, // تعداد ذرات (نسخه‌ی سبک ۴۰۰)
+  fps: 60, // سقف فریم در ثانیه وقتی عدد ۷ دیده می‌شود
+  idleFps: 30, // سقف فریم بعد از هیرو، وقتی عدد ۷ کاملاً محو شده و فقط ذرات و شکل‌های کند حرکت می‌کنند
 };
 
-export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced = false } = {}) {
+/**
+ * صحنه‌ی سه‌بعدی پس‌زمینه. خروجی: { dispose, setTheme }.
+ * accent: رنگ تأکید در حالت تیره؛ accentOnLight: رنگ تأکید در حالت روشن؛ theme: 'dark' | 'light'
+ */
+export function createScene(
+  canvas,
+  { accent = '#EADFC8', accentOnLight = '#7A5C22', lite = false, reduced = false, theme: initialTheme = 'dark' } = {}
+) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: !lite,
+    alpha: false, // زمینه همیشه پُر است (setClearColor با آلفای ۱)؛ بافت بدون کانال آلفا کار ترکیب مرورگر را سبک‌تر می‌کند
+    stencil: false, // از stencil استفاده نمی‌شود؛ حافظه‌ی گرافیکی کمتر
     powerPreference: lite ? 'default' : 'high-performance', // پس‌زمینه‌ی تزئینی روی گوشی/دستگاه ضعیف باتری را فشار ندهد
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1 : 1.25)); // سقف کمتر = رندر خیلی سبک‌تر
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, LOOK.maxPixelRatio)); // سقف کمتر = رندر خیلی سبک‌تر
   renderer.setClearColor(0x0a0a0d, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = LOOK.exposure;
@@ -39,7 +58,11 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
 
   // بازتاب محیطی برای درخشش فلز
   const pmrem = new THREE.PMREMGenerator(renderer);
-  const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  const room = new RoomEnvironment();
+  const envTex = pmrem.fromScene(room, 0.04).texture;
+  // صحنه‌ی کمکی و ابزار ساخت بازتاب بعد از ساخته شدن تکسچر لازم نیستند؛ زودتر آزاد می‌شوند (ظاهر عوض نمی‌شود)
+  if (room.dispose) room.dispose();
+  pmrem.dispose();
   scene.environment = envTex;
   scene.environmentIntensity = LOOK.envIntensity;
 
@@ -86,6 +109,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
     roughness: 0.32,
     clearcoat: 0.25,
     clearcoatRoughness: 0.3,
+    transparent: true, // از ابتدا شفاف‌پذیر است تا هنگام اولین محوشدن، شیدر دوباره کامپایل نشود و نپرد
   });
   const seven = new THREE.Mesh(sevenGeo, sevenMat);
   const shell = new THREE.Mesh(
@@ -120,7 +144,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   const solid = new THREE.MeshStandardMaterial({ color: 0x1e1b16, metalness: 0.9, roughness: 0.28 });
   const wire = new THREE.MeshBasicMaterial({ color: accentColor, wireframe: true, transparent: true, opacity: 0.45 });
   const floaterData = [];
-  const count = lite ? 6 : 14;
+  const count = lite ? 6 : LOOK.floaters;
   for (let i = 0; i < count; i++) {
     const m = new THREE.Mesh(geos[i % geos.length], i % 3 === 0 ? wire : solid);
     const ang = rand(0, Math.PI * 2);
@@ -132,7 +156,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
   }
 
   // ذرات
-  const pCount = lite ? 400 : 1200;
+  const pCount = lite ? 400 : LOOK.particles;
   const pos = new Float32Array(pCount * 3);
   for (let i = 0; i < pCount; i++) {
     pos[i * 3] = rand(-26, 26);
@@ -156,7 +180,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
 
   // پست‌پراسسینگ (درخشش)
   // درخشش (bloom) سنگین‌ترین بخش است؛ فقط روی دستگاه‌های قوی (۸ هسته یا بیشتر) فعال می‌شود.
-  const useBloom = !lite && (navigator.hardwareConcurrency || 4) >= 8;
+  const useBloom = LOOK.bloom && !lite && initialTheme === 'dark' && (navigator.hardwareConcurrency || 4) >= 8;
   // کدهای پست‌پراسسینگ فقط روی دستگاه‌های قوی و با import پویا دانلود می‌شوند؛ بقیه‌ی کاربران این بسته را نمی‌گیرند.
   // تا آماده شدن آن، صحنه بدون درخشش رندر می‌شود.
   let composer = null;
@@ -181,6 +205,30 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
       })
       .catch((err) => console.warn('Bloom unavailable', err));
   }
+
+  // حالت تیره/روشن: رنگ زمینه و مه، رنگ خط‌ها و ذرات، و ترکیب ذرات (روی زمینه‌ی روشن، additive دیده نمی‌شود)
+  const PALETTE = {
+    dark: { bg: 0x0a0a0d, accent, blending: THREE.AdditiveBlending, particleOpacity: LOOK.particleOpacity },
+    light: { bg: 0xf6f1e7, accent: accentOnLight, blending: THREE.NormalBlending, particleOpacity: 0.55 },
+  };
+  function applyTheme(name) {
+    const p = PALETTE[name] || PALETTE.dark;
+    renderer.setClearColor(p.bg, 1);
+    scene.fog.color.set(p.bg);
+    [shell.material, ringMat, ring2.material, wire, particles.material].forEach((m) => m.color.set(p.accent));
+    particles.material.blending = p.blending;
+    particles.material.opacity = p.particleOpacity;
+    particles.material.needsUpdate = true;
+    if (name === 'light') {
+      // درخشش (bloom) روی زمینه‌ی روشن کل صفحه را می‌درخشاند؛ در حالت روشن خاموش است (و بعد از آن دوباره ساخته نمی‌شود)
+      bloomOff = true;
+      if (composer) {
+        composer.dispose();
+        composer = null;
+      }
+    }
+  }
+  applyTheme(initialTheme);
 
   // چیدمان بر اساس اندازه‌ی صفحه
   let baseX = -3.4;
@@ -211,9 +259,31 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
 
   // ارتفاع قابل اسکرول فقط وقتی اندازه‌ی صفحه عوض می‌شود محاسبه می‌شود، نه در هر فریم
   let maxScroll = 1;
+  let fadeFrom = 0;
+  let fadeTo = 1;
   const updateMax = () => {
     maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    // محدوده‌ی محوشدن عدد ۷ (به پیکسل) بر اساس ارتفاع بخش اول؛ فقط وقتی اندازه عوض می‌شود محاسبه می‌شود
+    const heroEl = document.getElementById('top');
+    const heroH = (heroEl && heroEl.offsetHeight) || window.innerHeight;
+    fadeFrom = heroH * LOOK.fadeStart;
+    fadeTo = Math.max(fadeFrom + 1, heroH * LOOK.fadeEnd);
   };
+
+  // میزان دیده‌شدن عدد ۷ (۱ = کامل، ۰ = محو). فقط تابعی از موقعیت اسکرول است، پس بالا و پایین‌رفتن خودبه‌خود معکوس می‌شود.
+  let shellOff = false; // وقتی کنترل‌کننده‌ی کیفیت قاب سیمی را خاموش کرد، دوباره روشن نشود
+  let lastFade = -1;
+  const sevenShellOpacity = shell.material.opacity; // ۰٫۱ ؛ شفافیت پایه‌ی قاب سیمی
+  function applyFade(y) {
+    const k = Math.min(1, Math.max(0, (y - fadeFrom) / (fadeTo - fadeFrom)));
+    const vis = 1 - k * k * (3 - 2 * k); // smoothstep
+    if (vis === lastFade) return; // بدون تغییر: کاری نکن
+    lastFade = vis;
+    sevenMat.opacity = vis;
+    shell.material.opacity = sevenShellOpacity * vis;
+    seven.visible = vis > 0.002; // وقتی کاملاً محو است اصلاً رسم نشود
+    shell.visible = !shellOff && vis > 0.002;
+  }
 
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
   const onMove = (e) => {
@@ -232,6 +302,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
     mouse.y += (mouse.ty - mouse.y) * 0.05;
     const p = cur;
     const m = reduced ? 0 : 1;
+    applyFade(window.scrollY);
 
     hero.rotation.y = m * (p * Math.PI * 5 + t * 0.25 + mouse.x * 0.5);
     hero.rotation.x = 0.08 + m * (Math.sin(p * Math.PI * 3) * 0.4 + mouse.y * 0.3);
@@ -263,9 +334,17 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
     else renderer.render(scene, camera);
   }
 
-  resize();
   updateMax();
-  const bodyObserver = new ResizeObserver(updateMax);
+  resize();
+  // چند تغییر اندازه‌ی پشت‌سرهم (مثلاً هنگام انیمیشن یا باز شدن منو) فقط یک بار محاسبه می‌شود (updateMax به layout دست می‌زند)
+  let maxRaf = 0;
+  const bodyObserver = new ResizeObserver(() => {
+    if (maxRaf) return;
+    maxRaf = requestAnimationFrame(() => {
+      maxRaf = 0;
+      updateMax();
+    });
+  });
   bodyObserver.observe(document.body);
   window.addEventListener('load', updateMax);
   window.addEventListener('resize', resize);
@@ -295,6 +374,7 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
         renderer.setPixelRatio(1);
         lastW = 0;
         resize();
+        shellOff = true;
         shell.visible = false;
         floaterData.forEach((f, i) => {
           if (i % 2) f.m.visible = false;
@@ -304,12 +384,18 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
         monitoring = false;
       }
     };
+    // وقتی عدد ۷ کاملاً محو است (بعد از هیرو)، صحنه با نیمی از فریم‌ریت رسم می‌شود. این بخش از صفحه فقط ذرات
+    // و شکل‌های کند دارد و تفاوتش دیده نمی‌شود، ولی کار پردازنده‌ی گرافیکی نصف می‌شود.
+    const MIN_DT = 1000 / LOOK.fps - 2;
+    const MIN_DT_IDLE = 1000 / LOOK.idleFps - 3;
     renderer.setAnimationLoop((now) => {
       const dt = now - last;
-      if (dt < 12) return;
+      const idle = lastFade === 0;
+      if (dt < (idle ? MIN_DT_IDLE : MIN_DT)) return;
       last = now;
       frame();
-      if (monitoring && dt < 250) {
+      // فریم‌های کم‌فریم‌ریتِ عمدی در حالت idle نباید به‌عنوان «دستگاه کند» حساب شوند
+      if (monitoring && !idle && dt < 250) {
         // وقفه‌های بزرگ (مثلاً عوض‌کردن تب) حساب نمی‌شوند
         frames += 1;
         if (frames > WARMUP) {
@@ -329,10 +415,11 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
     window.addEventListener('scroll', frame, { passive: true });
   }
 
-  return function dispose() {
+  function dispose() {
     disposed = true;
     renderer.setAnimationLoop(null);
     bodyObserver.disconnect();
+    if (maxRaf) cancelAnimationFrame(maxRaf);
     window.removeEventListener('load', updateMax);
     window.removeEventListener('resize', resize);
     window.removeEventListener('pointermove', onMove);
@@ -347,5 +434,14 @@ export function createScene(canvas, { accent = '#EADFC8', lite = false, reduced 
     pmrem.dispose();
     if (composer) composer.dispose();
     renderer.dispose();
+  }
+
+  return {
+    dispose,
+    // یک فریم تازه هم رسم می‌شود تا حالت بدون حلقه‌ی انیمیشن (کاهش حرکت یا کیفیت پایین) هم فوراً رنگ عوض کند
+    setTheme(name) {
+      applyTheme(name);
+      frame();
+    },
   };
 }

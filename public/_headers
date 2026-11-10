@@ -4,4 +4,8 @@
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.web3forms.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'sha256-sbaJiojiKCJqdMqviFuCW3RScsfmPVL6/kBg1qzW4/M='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.web3forms.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'
+
+# فایل‌های داخل /assets (جاوااسکریپت، CSS، فونت) هش در اسمشان دارند و با هر بیلد اسم تازه می‌گیرند؛ پس با خیال راحت یک سال کش می‌شوند
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -1,14 +1,14 @@
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from '../gsap.js';
-import { fromLeft, wipeUp } from '../reveal.js';
-import { projects, workIntro } from '../data.js';
+import { fromEnd, wipeUp } from '../reveal.js';
+import { useLang } from '../i18n/context.js';
 import { useTilt } from '../hooks.js';
 
 // عنوانی که داخل [ ] باشد هنوز placeholder است. این موردها فقط در npm run dev دیده می‌شوند، نه در سایت منتشرشده.
 const isPlaceholder = (t) => /^\s*\[.*\]\s*$/.test(t || '');
-const visibleProjects = import.meta.env.DEV ? projects : projects.filter((p) => !isPlaceholder(p.title));
 
 function Project({ p, wide }) {
+  const { num } = useLang();
   const tilt = useTilt(7);
   return (
     <article
@@ -21,12 +21,14 @@ function Project({ p, wide }) {
           className="work__img"
           src={`${import.meta.env.BASE_URL}${p.image}`}
           alt={p.alt || ''}
+          width={p.width || 800}
+          height={p.height || 600}
           loading="lazy"
           decoding="async"
         />
       ) : (
         <span className="work__ghost" aria-hidden="true">
-          ۷
+          {num(7)}
         </span>
       )}
       <div className="work__cap">
@@ -39,6 +41,9 @@ function Project({ p, wide }) {
 }
 
 export default function Work() {
+  const { t } = useLang();
+  const projects = t.work.projects;
+  const visibleProjects = import.meta.env.DEV ? projects : projects.filter((p) => !isPlaceholder(p.title));
   const root = useRef(null);
 
   useLayoutEffect(() => {
@@ -46,8 +51,8 @@ export default function Work() {
     mm.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
-        // عنوان از چپ، کارت‌ها با پرده‌ی بالا‌رونده
-        fromLeft('.work-section .head > *', '.work-section .head', { stagger: 0.12 });
+        // عنوان از سمت پایان خواندن، کارت‌ها با پرده‌ی بالا‌رونده
+        fromEnd('.work-section .head > *', '.work-section .head', { stagger: 0.12 });
         if (!root.current || !root.current.querySelector('.work-grid .work')) return; // هنوز نمونه‌کاری نیست
         wipeUp('.work', '.work-grid', { stagger: 0.16 });
         // عدد ۷ بزرگ پشت هر کارت کمی آرام‌تر از کارت حرکت می‌کند
@@ -68,9 +73,9 @@ export default function Work() {
     <section id="work" className="section work-section" ref={root}>
       <div className="wrap">
         <div className="head">
-          <p className="eyebrow">۰۲ — نمونه‌کارها</p>
-          <h2>کارهایی که حرف می‌زنند.</h2>
-          <p className="sub">{workIntro.sub}</p>
+          <p className="eyebrow">{t.work.eyebrow}</p>
+          <h2>{t.work.title}</h2>
+          <p className="sub">{t.work.sub}</p>
         </div>
         {visibleProjects.length > 0 ? (
           <div className="grid work-grid">
@@ -79,7 +84,7 @@ export default function Work() {
             ))}
           </div>
         ) : (
-          <p className="card work__empty">{workIntro.empty}</p>
+          <p className="card work__empty">{t.work.empty}</p>
         )}
       </div>
     </section>

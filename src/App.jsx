@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import Lenis from 'lenis';
+import { useLang } from './i18n/context.js';
 import { gsap, ScrollTrigger } from './gsap.js';
 import { setLenis } from './lenis.js';
 import { prefersReduced } from './hooks.js';
@@ -21,6 +21,7 @@ const Scene = lazy(() => import('./components/Scene.jsx'));
 const sceneFallback = <div className="scene scene--fallback" aria-hidden="true" />;
 
 export default function App() {
+  const { lang, dir, t } = useLang();
   const [sceneReady, setSceneReady] = useState(false);
 
   // صحنه‌ی سه‌بعدی بعد از اولین نمایش صفحه و در زمان بیکاری مرورگر شروع می‌شود
@@ -40,67 +41,100 @@ export default function App() {
   useEffect(() => {
     if (prefersReduced()) return;
 
-    // اسکرول نرم، هماهنگ با ScrollTrigger
-    const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
-    setLenis(lenis);
-    lenis.on('scroll', ScrollTrigger.update);
-    const tick = (time) => lenis.raf(time * 1000);
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
+    // Lenis برای اولین نمایش لازم نیست؛ جدا و بعد از رندر اول دانلود می‌شود (کم شدن حجم بسته‌ی اصلی)
+    let disposed = false;
+    let cleanup = null;
+    import('lenis').then(({ default: Lenis }) => {
+      if (disposed) return;
 
-    // لینک‌های داخل صفحه با Lenis اسکرول شوند
-    const onClick = (e) => {
-      const a = e.target.closest && e.target.closest('a[href^="#"]');
-      if (!a) return;
-      const id = a.getAttribute('href');
-      if (!id || id.length < 2) {
-        if (id === '#') e.preventDefault();
-        return;
-      }
-      const target = document.querySelector(id);
-      if (!target) return;
-      e.preventDefault();
-      lenis.scrollTo(target, { offset: -72 });
-    };
-    document.addEventListener('click', onClick);
+      // اسکرول نرم، هماهنگ با ScrollTrigger
+      const lenis = new Lenis({
+        duration: 0.9, // کوتاه‌تر = اسکرول سریع‌تر جواب می‌دهد و کمتر «شناور» حس می‌شود
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+      setLenis(lenis);
+      lenis.on('scroll', ScrollTrigger.update);
+      const tick = (time) => lenis.raf(time * 1000);
+      gsap.ticker.add(tick);
+      gsap.ticker.lagSmoothing(0);
+
+      // لینک‌های داخل صفحه با Lenis اسکرول شوند
+      const onClick = (e) => {
+        const a = e.target.closest && e.target.closest('a[href^="#"]');
+        if (!a) return;
+        const id = a.getAttribute('href');
+        if (!id || id.length < 2) {
+          if (id === '#') e.preventDefault();
+          return;
+        }
+        const target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        lenis.scrollTo(target, { offset: -72 });
+      };
+      document.addEventListener('click', onClick);
+
+      cleanup = () => {
+        document.removeEventListener('click', onClick);
+        gsap.ticker.remove(tick);
+        lenis.destroy();
+        setLenis(null);
+      };
+    });
 
     // بعد از آمدن فونت و بارگذاری کامل، جای شروع انیمیشن‌ها دوباره محاسبه شود
-    const refresh = () => ScrollTrigger.refresh();
+    // (فونت و load ممکن است تقریباً هم‌زمان برسند؛ در یک فریم فقط یک بار محاسبه می‌شود)
+    let refreshRaf = 0;
+    const refresh = () => {
+      if (refreshRaf) return;
+      refreshRaf = requestAnimationFrame(() => {
+        refreshRaf = 0;
+        ScrollTrigger.refresh();
+      });
+    };
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
     window.addEventListener('load', refresh);
 
-    // نوار پیشرفت اسکرول
+    return () => {
+      disposed = true;
+      window.removeEventListener('load', refresh);
+      if (refreshRaf) cancelAnimationFrame(refreshRaf);
+      if (cleanup) cleanup();
+    };
+  }, []);
+
+  // نوار پیشرفت اسکرول. از سمت شروع خواندن پر می‌شود، پس با عوض شدن جهت (فارسی/انگلیسی) دوباره ساخته می‌شود.
+  useEffect(() => {
+    if (prefersReduced()) return;
+    gsap.set('.progress', { transformOrigin: dir === 'rtl' ? '100% 50%' : '0% 50%' });
     const progress = gsap.to('.progress', {
       scaleX: 1,
       ease: 'none',
-      scrollTrigger: { start: 0, end: 'max', scrub: 0.2 },
+      scrollTrigger: { start: 0, end: 'max', scrub: true }, // Lenis خودش نرم می‌کند؛ scrub اضافه هر فریم کار می‌ریخت
     });
-
     return () => {
-      document.removeEventListener('click', onClick);
-      window.removeEventListener('load', refresh);
       progress.scrollTrigger && progress.scrollTrigger.kill();
       progress.kill();
-      gsap.ticker.remove(tick);
-      lenis.destroy();
-      setLenis(null);
     };
-  }, []);
+  }, [dir]);
+
+  // با عوض شدن زبان، طول متن‌ها و ارتفاع صفحه عوض می‌شود؛ جای شروع انیمیشن‌ها دوباره محاسبه شود
+  useEffect(() => {
+    const id = requestAnimationFrame(() => ScrollTrigger.refresh());
+    return () => cancelAnimationFrame(id);
+  }, [lang]);
 
   return (
     <>
       <StructuredData />
       <a className="skip-link" href="#main">
-        پرش به محتوا
+        {t.ui.skip}
       </a>
       {sceneReady ? <Suspense fallback={sceneFallback}><Scene /></Suspense> : sceneFallback}
       <Cursor />
       <div className="progress" aria-hidden="true" />
       <Nav />
-      <main id="main" tabIndex={-1}>
+      <main id="main" tabIndex={-1} key={lang}>
         <Hero />
         <Marquee />
         <Services />

@@ -9,17 +9,61 @@
   --muted: #bdb097; /* متن کم‌رنگ‌تر: کرمی-خاکی */
   --accent: #eadfc8; /* باید با ACCENT در data.js یکی باشد */
   --on-accent: #16130c;
+  /* همین رنگ‌ها به‌صورت «r, g, b» هم هستند تا بشود شفافیت‌های مختلف از آن‌ها ساخت (rgba(var(--bg-rgb), 0.5)) */
+  --bg-rgb: 10, 10, 13;
+  --card-rgb: 20, 20, 26;
+  --accent-rgb: 234, 223, 200;
+  --accent-hover: #f4ecd9;
+  --cream: #eadfc8; /* کرمی ثابت (برای نوار سرمه‌ای که در هر دو حالت یکی است) */
+  --work-from: rgba(34, 34, 44, 0.8);
+  --work-to: rgba(14, 14, 18, 0.8);
+  --error-border: #e8a598;
+  --error-text: #f0b3a6;
+  /* وابسته به جهت صفحه (فارسی: راست‌به‌چپ، انگلیسی: چپ‌به‌راست) */
+  --start-origin: 100%; /* سمت شروع خواندن؛ نوار پیشرفت و خط قدم‌ها از این سمت پر می‌شوند */
+  --marquee-shift: 50%; /* جهت حرکت نوار کرمی */
   --font: "Vazirmatn", Tahoma, system-ui, sans-serif;
   --gutter: clamp(16px, 4vw, 40px);
   --maxw: 1240px;
   --nav-h: 61px; /* ارتفاع منوی بالا؛ هیرو این مقدار را از ارتفاع صفحه کم می‌کند */
 }
 
+/* حالت روشن. حالت تیره (ظاهر فعلی سایت) همان مقدارهای بالای :root است و پیش‌فرض می‌ماند. */
+:root[data-theme="light"] {
+  --bg: #f6f1e7;
+  --surface: rgba(255, 252, 246, 0.72);
+  --surface-2: #ebe3d1;
+  --line: rgba(43, 33, 15, 0.14);
+  --line-strong: rgba(43, 33, 15, 0.34);
+  --fg: #1d1810;
+  --muted: #5b513e;
+  --accent: #7a5c22; /* باید با ACCENT_LIGHT در data.js یکی باشد */
+  --on-accent: #fffaf0;
+  --bg-rgb: 246, 241, 231;
+  --card-rgb: 255, 252, 246;
+  --accent-rgb: 122, 92, 34;
+  --accent-hover: #634a1b;
+  --work-from: rgba(255, 252, 246, 0.9);
+  --work-to: rgba(236, 228, 211, 0.9);
+  --error-border: #b3402c;
+  --error-text: #9a2f1d;
+}
+/* رنگ‌پالت مرورگر (اسکرول‌بار، فرم‌ها) هم‌رنگ حالت */
+html[data-theme="light"] {
+  color-scheme: light;
+}
+/* چپ‌به‌راست (انگلیسی) */
+html[dir="ltr"] {
+  direction: ltr;
+  --start-origin: 0%;
+  --marquee-shift: -50%;
+}
+
 * {
   box-sizing: border-box;
 }
 html {
-  direction: rtl; /* راست‌به‌چپ از خود CSS هم تضمین شود */
+  direction: rtl; /* راست‌به‌چپ از خود CSS هم تضمین شود؛ در انگلیسی html[dir="ltr"] بالاتر آن را عوض می‌کند */
   overflow-x: clip; /* عنصرهایی که برای انیمیشن بیرون صفحه‌اند، اسکرول افقی نسازند */
   color-scheme: dark;
   -webkit-text-size-adjust: 100%;
@@ -72,7 +116,7 @@ a {
   background:
     radial-gradient(
       60% 50% at 25% 40%,
-      rgba(234, 223, 200, 0.12),
+      rgba(var(--accent-rgb), 0.12),
       transparent 70%
     ),
     var(--bg);
@@ -107,7 +151,7 @@ main,
   height: 2px;
   background: var(--accent);
   transform: scaleX(0);
-  transform-origin: 100% 50%;
+  transform-origin: var(--start-origin) 50%;
   z-index: 100;
 }
 
@@ -125,10 +169,10 @@ main,
   width: 38px;
   height: 38px;
   border: 1px solid var(--accent);
-  box-shadow: 0 0 0 1px rgba(10, 10, 13, 0.5); /* روی زمینه‌ی روشن هم دیده شود (جایگزین mix-blend-mode که سنگین بود) */
+  box-shadow: 0 0 0 1px rgba(var(--bg-rgb), 0.5); /* روی زمینه‌ی روشن هم دیده شود (جایگزین mix-blend-mode که سنگین بود) */
 }
 .cursor-ring.is-hot {
-  background: rgba(234, 223, 200, 0.18);
+  background: rgba(var(--accent-rgb), 0.18);
 }
 .cursor-dot {
   width: 6px;
@@ -153,7 +197,7 @@ main,
   border-bottom: 1px solid transparent;
 }
 .nav--solid {
-  background: rgba(10, 10, 13, 0.92); /* بدون backdrop-filter: تار کردن پشت منو روی بوم متحرک هر فریم هزینه دارد */
+  background: rgba(var(--bg-rgb), 0.92); /* بدون backdrop-filter: تار کردن پشت منو روی بوم متحرک هر فریم هزینه دارد */
   border-bottom-color: var(--line);
 }
 .nav__inner {
@@ -171,26 +215,22 @@ main,
   align-items: center;
   gap: 12px;
   min-height: 44px;
-  font-weight: 900;
-  font-size: 20px;
 }
-.logo__mark {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: var(--accent);
-  color: var(--on-accent);
-  display: grid;
-  place-items: center;
-  font-size: 24px;
-  font-weight: 900;
-  line-height: 1;
+/* لوگوی اصلی: عکس PNG شفاف به‌صورت mask، با رنگ متن (کرمی در حالت تیره). نسبت ابعاد هر نسخه از خود عکس است و کش‌ و‌ کج نمی‌شود. */
+.logo__img {
+  display: block;
+  flex: none;
+  background-color: var(--fg);
+  -webkit-mask: var(--logo-src) center / contain no-repeat;
+  mask: var(--logo-src) center / contain no-repeat;
 }
-.logo__mark--sm {
-  width: 30px;
-  height: 30px;
-  font-size: 19px;
-  border-radius: 8px;
+.logo__img--mark {
+  height: 40px;
+  aspect-ratio: 171 / 192;
+}
+.logo__img--full {
+  height: 104px;
+  aspect-ratio: 212 / 288;
 }
 .nav__links {
   display: flex;
@@ -222,7 +262,7 @@ main,
   border: 1px solid var(--line-strong);
   background: transparent;
   color: var(--fg);
-  font: 500 16px var(--font);
+  font: 400 16px var(--font);
   cursor: pointer;
   transition:
     background 0.25s,
@@ -236,8 +276,8 @@ main,
   font-weight: 700;
 }
 .btn--solid:hover {
-  background: #f4ecd9;
-  border-color: #f4ecd9;
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 .btn--ghost:hover {
   border-color: var(--accent);
@@ -297,7 +337,7 @@ main,
   border-radius: 999px;
   color: var(--muted);
   font-size: 14px;
-  background: rgba(10, 10, 13, 0.6);
+  background: rgba(var(--bg-rgb), 0.6);
 }
 .dot {
   width: 8px;
@@ -310,6 +350,11 @@ main,
   font-weight: 900;
   line-height: 1.3;
   text-wrap: balance;
+}
+/* حروف لاتین پهن‌تر از فارسی‌اند؛ کمی کوچک‌تر تا هیرو همان ابعاد قبلی را داشته باشد */
+html[lang="en"] .hero__title {
+  font-size: clamp(36px, 5.2vw, 72px);
+  line-height: 1.2;
 }
 .hero__text {
   color: var(--muted);
@@ -341,6 +386,7 @@ main,
 
 /* نوار متحرک */
 .marquee {
+  --marquee-duration: 120s; /* مدت یک دور کامل ردیف؛ با REPEAT در Marquee.jsx هماهنگ است */
   background: var(--accent);
   color: var(--on-accent);
   overflow: hidden;
@@ -349,7 +395,11 @@ main,
 .marquee__track {
   display: flex;
   width: max-content;
-  animation: marquee 30s linear infinite;
+  /* سرعت قبلی (۳۰ ثانیه برای یک ردیف چهارتایی) حفظ شده: ردیف حالا ۴ تکرار دارد، پس مدت چهار برابر است */
+  animation: marquee var(--marquee-duration) linear infinite;
+}
+.marquee.is-offscreen .marquee__track {
+  animation-play-state: paused;
 }
 .marquee__row {
   display: flex;
@@ -371,7 +421,7 @@ main,
 /* در حالت راست‌به‌چپ، ردیف از راست شروع می‌شود و به سمت راست حرکت می‌کند */
 @keyframes marquee {
   to {
-    transform: translateX(50%);
+    transform: translateX(var(--marquee-shift));
   }
 }
 
@@ -422,9 +472,7 @@ h2 {
   border: 1px solid var(--line);
   border-radius: 26px;
   background: rgba(
-    20,
-    20,
-    26,
+    var(--card-rgb),
     0.86
   ); /* بدون تار کردن پشت‌زمینه: روی بوم سه‌بعدی خیلی سنگین بود */
   transition: border-color 0.25s;
@@ -448,7 +496,7 @@ h2 {
   transition: opacity 0.3s;
   background: radial-gradient(
     420px circle at var(--mx, 50%) var(--my, 0%),
-    rgba(234, 223, 200, 0.12),
+    rgba(var(--accent-rgb), 0.12),
     transparent 60%
   );
 }
@@ -497,8 +545,8 @@ h2 {
   height: 340px;
   background: linear-gradient(
     150deg,
-    rgba(34, 34, 44, 0.8),
-    rgba(14, 14, 18, 0.8)
+    var(--work-from),
+    var(--work-to)
   );
 }
 .work.work--wide {
@@ -513,12 +561,12 @@ h2 {
 .work__ghost {
   position: absolute;
   top: -10px;
-  left: 22px;
+  inset-inline-end: 22px; /* همان سمتی که قبلاً در فارسی «چپ» بود */
   font-size: 230px;
   font-weight: 900;
   line-height: 1;
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(234, 223, 200, 0.22);
+  -webkit-text-stroke: 1.5px rgba(var(--accent-rgb), 0.22);
   pointer-events: none;
 }
 .work__cap {
@@ -545,20 +593,17 @@ h2 {
   font-size: 13px;
 }
 
-/* روش کار */
+/* روش کار: هر قدم یک پنل تقریباً هم‌عرض کل صفحه است (بیرون از .wrap) و با اسکرول وارد و خارج می‌شود */
 .steps {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  flex-direction: column;
 }
 .step {
   position: relative;
-  flex: 1 1 230px;
-  min-width: 0;
-  padding-top: 28px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  min-height: clamp(340px, 68svh, 720px);
+  padding-block: 40px;
 }
 .step__line {
   position: absolute;
@@ -567,28 +612,67 @@ h2 {
   left: 0;
   height: 1px;
   background: var(--accent);
-  transform-origin: 100% 50%;
+  transform-origin: var(--start-origin) 50%;
+}
+.step__inner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: clamp(24px, 7vw, 120px);
+  padding-inline: var(--gutter);
 }
 .step__num {
-  font-size: 76px;
+  flex: none;
+  font-size: clamp(120px, 20vw, 280px);
   font-weight: 900;
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 1.5px var(--accent);
 }
+.step__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  max-width: 620px;
+}
 .step h3 {
-  font-size: 22px;
+  font-size: clamp(26px, 3.6vw, 52px);
   font-weight: 700;
+  line-height: 1.4;
 }
 .step p {
   color: var(--muted);
-  font-size: 15px;
+  font-size: clamp(15px, 1.5vw, 19px);
   line-height: 2;
+}
+@media (max-width: 640px) {
+  .step {
+    min-height: clamp(300px, 56svh, 520px);
+  }
+  .step__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .step__num {
+    font-size: 112px;
+  }
 }
 
 /* شعار */
 .manifesto {
-  padding-block: 104px;
+  /* نوار سرمه‌ای: هم‌خانواده‌ی نوار کرمی بالاتر، ولی خنک. به‌جای گرادیان طلایی قبلی */
+  --navy-lift: #1a3160;
+  --navy: #0f1f44;
+  --navy-deep: #0a1330;
+  --on-navy: #cfd8ee; /* متن اصلی: آبیِ کم‌رنگ و خنک */
+  position: relative;
+  padding-block: clamp(96px, 18vh, 176px);
+  background:
+    radial-gradient(60% 90% at 85% 15%, rgba(86, 128, 220, 0.26), transparent 70%),
+    linear-gradient(160deg, var(--navy-lift) 0%, var(--navy) 48%, var(--navy-deep) 100%);
+  border-block: 1px solid var(--line);
 }
 .manifesto__text {
   font-size: clamp(28px, 4.6vw, 60px);
@@ -596,6 +680,11 @@ h2 {
   line-height: 1.6;
   max-width: 1000px;
   text-wrap: balance;
+  color: var(--on-navy);
+}
+/* کلمه‌های مهم با کرمی گرم دیده می‌شوند تا روی زمینه‌ی سرمه‌ای از بقیه‌ی متن جدا باشند */
+.manifesto__text .accent {
+  color: var(--cream);
 }
 
 /* تیم */
@@ -634,7 +723,7 @@ h2 {
   padding: clamp(24px, 5vw, 64px);
   border: 1px solid var(--line);
   border-radius: 34px;
-  background: rgba(20, 20, 26, 0.88);
+  background: rgba(var(--card-rgb), 0.88);
 }
 .contact__box > * {
   min-width: 0;
@@ -714,7 +803,7 @@ textarea {
   padding-block: 28px;
   color: var(--muted);
   font-size: 14px;
-  background: rgba(10, 10, 13, 0.7);
+  background: rgba(var(--bg-rgb), 0.7);
 }
 .footer__inner {
   display: flex;
@@ -730,7 +819,7 @@ textarea {
 .eyebrow,
 h2,
 .sub {
-  text-shadow: 0 0 28px rgba(10, 10, 13, 0.85);
+  text-shadow: 0 0 28px rgba(var(--bg-rgb), 0.85);
 }
 
 /* منوی موبایل */
@@ -754,6 +843,63 @@ h2,
   border-radius: 2px;
   background: var(--fg);
 }
+/* دکمه‌های زبان و حالت تیره/روشن در منوی بالا */
+.nav__tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tool-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.tool-btn--lang {
+  padding: 0 14px;
+  text-decoration: none;
+}
+/* حروف فارسی نباید با letter-spacing از هم باز شوند */
+.tool-btn--lang [lang="fa"] {
+  letter-spacing: 0;
+}
+.tool-btn--lang .lang-short {
+  display: none;
+}
+@media (max-width: 560px) {
+  .tool-btn--lang {
+    padding: 0 10px;
+  }
+  .tool-btn--lang .lang-full {
+    display: none;
+  }
+  .tool-btn--lang .lang-short {
+    display: inline;
+  }
+}
+.tool-btn:hover {
+  background: rgba(var(--accent-rgb), 0.12);
+  border-color: var(--accent);
+}
+/* فلش دکمه‌ها به سمت «جلو» اشاره کند: در فارسی به چپ، در انگلیسی به راست */
+html[dir="ltr"] .btn svg {
+  transform: scaleX(-1);
+}
 .nav__only-menu {
   display: none !important;
 }
@@ -766,10 +912,10 @@ h2,
     -webkit-backdrop-filter: none;
   }
   .card {
-    background: rgba(20, 20, 26, 0.88);
+    background: rgba(var(--card-rgb), 0.88);
   }
   .contact__box {
-    background: rgba(20, 20, 26, 0.9);
+    background: rgba(var(--card-rgb), 0.9);
   }
   /* لایه‌ی تیره‌ی ملایم زیر متن هیرو */
   .hero::before {
@@ -780,7 +926,7 @@ h2,
     background: linear-gradient(
       to bottom,
       transparent 15%,
-      rgba(10, 10, 13, 0.82) 60%
+      rgba(var(--bg-rgb), 0.82) 60%
     );
   }
 }
@@ -821,6 +967,17 @@ h2,
 }
 
 @media (max-width: 420px) {
+  .tool-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 8px;
+  }
+  .nav__tools {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 420px) {
   .nav__cta {
     display: none;
   }
@@ -828,14 +985,8 @@ h2,
     display: inline-flex !important;
     color: var(--accent);
   }
-  .logo {
-    font-size: 18px;
-    gap: 8px;
-  }
-  .logo__mark {
-    width: 34px;
-    height: 34px;
-    font-size: 21px;
+  .logo__img--mark {
+    height: 36px;
   }
 }
 
@@ -947,10 +1098,10 @@ main:focus {
   color: var(--accent);
 }
 input[aria-invalid="true"] {
-  border-color: #e8a598;
+  border-color: var(--error-border);
 }
 .status--error {
-  color: #f0b3a6;
+  color: var(--error-text);
 }
 input:-webkit-autofill,
 textarea:-webkit-autofill,
@@ -981,7 +1132,7 @@ select:-webkit-autofill {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(to top, rgba(10, 10, 13, 0.88), transparent 65%);
+  background: linear-gradient(to top, rgba(var(--bg-rgb), 0.88), transparent 65%);
 }
 .work--img .work__cap {
   z-index: 2;

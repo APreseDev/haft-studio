@@ -1,19 +1,21 @@
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from '../gsap.js';
-import { fromRight, alternateSides } from '../reveal.js';
+import { fromStart, alternateSides } from '../reveal.js';
 import { Icon } from '../components/Icons.jsx';
-import { services } from '../data.js';
+import { serviceIcons } from '../data.js';
+import { useLang } from '../i18n/context.js';
 import { useTilt } from '../hooks.js';
 
 function Card({ s, i }) {
+  const { num } = useLang();
   const tilt = useTilt(8);
   return (
     <article ref={tilt} className="card card--glow service">
       <div className="service__top">
         <span className="service__icon">
-          <Icon name={s.icon} />
+          <Icon name={serviceIcons[i]} />
         </span>
-        <span className="service__n">{String(i + 1).padStart(2, '۰').replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[d])}</span>
+        <span className="service__n">{num(String(i + 1).padStart(2, '0'))}</span>
       </div>
       <h3>{s.title}</h3>
       <p>{s.text}</p>
@@ -22,6 +24,7 @@ function Card({ s, i }) {
 }
 
 export default function Services() {
+  const { t } = useLang();
   const root = useRef(null);
 
   useLayoutEffect(() => {
@@ -29,8 +32,8 @@ export default function Services() {
     mm.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
-        // عنوان از راست، کارت‌ها یکی در میان از راست و چپ
-        fromRight('.services .head > *', '.services .head', { stagger: 0.12 });
+        // عنوان از سمت شروع خواندن، کارت‌ها یکی در میان از دو طرف
+        fromStart('.services .head > *', '.services .head', { stagger: 0.12 });
         alternateSides('.services .service', '.services .grid', { stagger: 0.14 });
       },
       root
@@ -42,11 +45,11 @@ export default function Services() {
     <section id="services" className="section services" ref={root}>
       <div className="wrap">
         <div className="head">
-          <p className="eyebrow">۰۱ — خدمات</p>
-          <h2>هر چه برای دیده‌شدن لازم است، یک‌جا.</h2>
+          <p className="eyebrow">{t.services.eyebrow}</p>
+          <h2>{t.services.title}</h2>
         </div>
         <div className="grid grid--4">
-          {services.map((s, i) => (
+          {t.services.items.map((s, i) => (
             <Card key={s.title} s={s} i={i} />
           ))}
         </div>

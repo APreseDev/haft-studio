@@ -13,6 +13,19 @@ const base = {
 export const Icon = ({ name, size = 26 }) => {
   const p = { ...base, width: size, height: size };
   switch (name) {
+    case 'sun':
+      return (
+        <svg {...p}>
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
+        </svg>
+      );
+    case 'moon':
+      return (
+        <svg {...p}>
+          <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z" />
+        </svg>
+      );
     case 'web':
       return (
         <svg {...p}>

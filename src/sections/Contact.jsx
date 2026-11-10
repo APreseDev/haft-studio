@@ -1,8 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from '../gsap.js';
-import { fromRight, fromLeft, fromBottom } from '../reveal.js';
+import { fromStart, fromEnd, fromBottom } from '../reveal.js';
 import { Icon } from '../components/Icons.jsx';
-import { contact, serviceOptions } from '../data.js';
+import { contact } from '../data.js';
+import { useLang } from '../i18n/context.js';
+import { locales } from '../i18n/locales.js';
 import { sendContact } from '../api.js';
 import { useMagnetic } from '../hooks.js';
 import { cleanPhone, isValidPhone, toInternationalPhone } from '../formUtils.js';
@@ -13,6 +15,8 @@ const mailHref = `mailto:${contact.email}`;
 const instaHref = `https://instagram.com/${contact.instagram.replace(/^@/, '')}`;
 
 export default function Contact() {
+  const { t, dir } = useLang();
+  const c = t.contact;
   const root = useRef(null);
   const submit = useMagnetic(0.25);
   const [status, setStatus] = useState('');
@@ -26,10 +30,10 @@ export default function Contact() {
     mm.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
-        // اطلاعات تماس از راست و فرم از چپ به هم می‌رسند؛ در موبایل (تک‌ستونه) هر دو از پایین
+        // اطلاعات تماس از سمت شروع و فرم از سمت پایان خواندن به هم می‌رسند؛ در موبایل (تک‌ستونه) هر دو از پایین
         if (window.innerWidth >= 769) {
-          fromRight('.contact__info', '.contact__box');
-          fromLeft('form', '.contact__box');
+          fromStart('.contact__info', '.contact__box');
+          fromEnd('form', '.contact__box');
         } else {
           fromBottom('.contact__info, form', '.contact__box');
         }
@@ -57,40 +61,40 @@ export default function Contact() {
       const el = form.elements.namedItem(field);
       if (el && el.focus) el.focus();
     };
-    if (!name) return fail('name', 'لطفاً نام و نام شرکت را وارد کنید.');
-    if (!phone) return fail('phone', 'لطفاً شماره تماس را وارد کنید.');
-    if (!isValidPhone(phone)) return fail('phone', 'شماره تماس معتبر نیست. شماره را فقط با ارقام وارد کنید.');
+    if (!name) return fail('name', c.errors.nameRequired);
+    if (!phone) return fail('phone', c.errors.phoneRequired);
+    if (!isValidPhone(phone)) return fail('phone', c.errors.phoneInvalid);
     setInvalid('');
 
     // فیلد مخفی ضد اسپم: انسان آن را نمی‌بیند و پر نمی‌کند
     if (f.get('botcheck')) {
       setStatusKind('');
-      setStatus('پیام شما ارسال شد. به‌زودی با شما تماس می‌گیریم.');
+      setStatus(c.sent);
       return;
     }
 
     if (typeof navigator !== 'undefined' && navigator.onLine === false) {
       setStatusKind('error');
-      setStatus('به اینترنت وصل نیستید. اتصال را بررسی کنید و دوباره تلاش کنید.');
+      setStatus(c.errors.offline);
       return;
     }
 
     sendingRef.current = true;
     setSending(true);
     setStatusKind('');
-    setStatus('در حال ارسال…');
+    setStatus(c.sending);
     const r = await sendContact({ name, phone, service, message });
     sendingRef.current = false;
     setSending(false);
     if (r.ok) {
-      setStatus('پیام شما ارسال شد. به‌زودی با شما تماس می‌گیریم.');
+      setStatus(c.sent);
       form.reset();
     } else {
       setStatusKind('error');
       setStatus(
         r.reason === 'network' || r.reason === 'timeout'
-          ? 'ارتباط با سرور برقرار نشد. چند لحظه بعد دوباره تلاش کنید یا مستقیم با شماره و ایمیل بالا تماس بگیرید.'
-          : 'ارسال انجام نشد. دوباره تلاش کنید یا مستقیم با شماره و ایمیل بالا تماس بگیرید.'
+          ? c.errors.network
+          : c.errors.failed
       );
     }
   };
@@ -100,9 +104,9 @@ export default function Contact() {
       <div className="wrap">
         <div className="contact__box">
           <div className="contact__info">
-            <p className="eyebrow">۰۵ — تماس</p>
-            <h2>پروژه‌ات را برایمان بگو.</h2>
-            <p className="sub">چند خط درباره‌ی کسب‌وکار و هدفت بنویس. به‌زودی با تو تماس می‌گیریم.</p>
+            <p className="eyebrow">{c.eyebrow}</p>
+            <h2>{c.title}</h2>
+            <p className="sub">{c.sub}</p>
             <ul className="contact__list">
               <li>
                 <Icon name="call" size={22} />
@@ -128,7 +132,7 @@ export default function Contact() {
           <form aria-busy={sending} onSubmit={onSubmit} onInput={() => invalid && setInvalid('')} noValidate>
             <div className="field">
               <label htmlFor="f-name">
-                نام و نام شرکت<span className="req" aria-hidden="true"> *</span>
+                {c.name}<span className="req" aria-hidden="true"> *</span>
               </label>
               <input
                 id="f-name"
@@ -142,13 +146,13 @@ export default function Contact() {
             </div>
             <div className="field">
               <label htmlFor="f-phone">
-                شماره تماس<span className="req" aria-hidden="true"> *</span>
+                {c.phone}<span className="req" aria-hidden="true"> *</span>
               </label>
               <input
                 id="f-phone"
                 name="phone"
                 type="tel"
-                dir="rtl"
+                dir={dir}
                 autoComplete="tel"
                 maxLength={20}
                 aria-required="true"
@@ -156,20 +160,23 @@ export default function Contact() {
               />
             </div>
             <div className="field">
-              <label htmlFor="f-service">چه خدمتی لازم داری؟</label>
+              <label htmlFor="f-service">{c.service}</label>
               <select id="f-service" name="service">
-                {serviceOptions.map((o) => (
-                  <option key={o}>{o}</option>
+                {/* متن گزینه به زبان کاربر است، اما مقدار ارسالی همیشه فارسی می‌ماند تا ایمیل‌های تیم یکدست باشد */}
+                {c.serviceOptions.map((o, i) => (
+                  <option key={o} value={locales.fa.dict.contact.serviceOptions[i]}>
+                    {o}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="field">
-              <label htmlFor="f-msg">درباره‌ی پروژه بنویس</label>
+              <label htmlFor="f-msg">{c.message}</label>
               <textarea id="f-msg" name="message" rows="4" maxLength={2000} />
             </div>
             <input type="checkbox" name="botcheck" className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true" />
             <button ref={submit} type="submit" className="btn btn--solid" disabled={sending}>
-              {sending ? 'در حال ارسال…' : 'ارسال درخواست'}
+              {sending ? c.sending : c.submit}
               <Icon name="arrow" size={20} />
             </button>
             <p className={`status${statusKind === 'error' ? ' status--error' : ''}`} role="status">

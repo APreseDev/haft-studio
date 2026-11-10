@@ -1,9 +1,11 @@
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from '../gsap.js';
-import { manifesto } from '../data.js';
+import { useLang } from '../i18n/context.js';
+import { parseAccentWords } from '../i18n/format.js';
 
 /** شعار تیم. با اسکرول، کلمه‌ها یکی‌یکی روشن می‌شوند. کلمه‌های بین دو ستاره با رنگ تأکید نشان داده می‌شوند. */
 export default function Manifesto() {
+  const { t } = useLang();
   const root = useRef(null);
 
   useLayoutEffect(() => {
@@ -27,23 +29,19 @@ export default function Manifesto() {
     return () => mm.revert();
   }, []);
 
-  const words = manifesto.split(' ').filter(Boolean);
+  const words = parseAccentWords(t.manifesto);
 
   return (
     <section className="manifesto" ref={root}>
       <div className="wrap">
         <p className="manifesto__text">
-          {words.map((w, i) => {
-            const accent = w.startsWith('*') && w.endsWith('*');
-            const text = accent ? w.slice(1, -1) : w;
-            return (
-              <span key={i}>
-                <span className="w">
-                  <span className={`wi ${accent ? 'accent' : ''}`}>{text}</span>
-                </span>{' '}
-              </span>
-            );
-          })}
+          {words.map((w, i) => (
+            <span key={i}>
+              <span className="w">
+                <span className={`wi ${w.accent ? 'accent' : ''}`}>{w.text}</span>
+              </span>{' '}
+            </span>
+          ))}
         </p>
       </div>
     </section>

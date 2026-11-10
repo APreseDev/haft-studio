@@ -1,8 +1,16 @@
 import { useEffect, useState } from 'react';
-import { nav } from '../data.js';
+import { navHrefs } from '../data.js';
+import { useLang } from '../i18n/context.js';
+import { locales, pathForLang } from '../i18n/locales.js';
+import { useTheme } from '../theme/context.js';
+import { Icon } from './Icons.jsx';
 import { useMagnetic } from '../hooks.js';
+import Logo from './Logo.jsx';
 
 export default function Nav() {
+  const { lang, setLang, t } = useLang();
+  const { theme, toggleTheme } = useTheme();
+  const otherLang = Object.keys(locales).find((k) => k !== lang);
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
   const cta = useMagnetic(0.3);
@@ -27,29 +35,57 @@ export default function Nav() {
   return (
     <header className={`nav ${solid || open ? 'nav--solid' : ''}`}>
       <div className="nav__inner">
-        <a href="#top" className="logo" aria-label="هفت استودیو" onClick={close}>
-          <span className="logo__mark">۷</span>
-          <span className="logo__text">هفت استودیو</span>
+        <a href="#top" className="logo" aria-label={t.brand} onClick={close}>
+          <Logo />
         </a>
-        <nav id="main-nav" className={`nav__links ${open ? 'is-open' : ''}`} aria-label="منوی اصلی">
-          {nav.map((l) => (
-            <a key={l.href} href={l.href} onClick={close}>
-              {l.label}
+        <nav id="main-nav" className={`nav__links ${open ? 'is-open' : ''}`} aria-label={t.nav.label}>
+          {navHrefs.map((href, i) => (
+            <a key={href} href={href} onClick={close}>
+              {t.nav.links[i]}
             </a>
           ))}
           <a href="#contact" className="nav__only-menu" onClick={close}>
-            شروع پروژه
+            {t.nav.cta}
           </a>
         </nav>
         <a ref={cta} href="#contact" className="btn btn--ghost nav__cta">
-          شروع پروژه
+          {t.nav.cta}
         </a>
+        <div className="nav__tools">
+          {/* لینک واقعی به نسخه‌ی زبان دیگر: روی دکمه نام زبانی نوشته می‌شود که با کلیک به آن می‌رویم */}
+          <a
+            className="tool-btn tool-btn--lang"
+            href={pathForLang(otherLang)}
+            hrefLang={otherLang}
+            aria-label={t.ui.switchLang}
+            onClick={(e) => {
+              if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+              e.preventDefault();
+              setLang(otherLang);
+            }}
+          >
+            <span lang={otherLang} className="lang-full">
+              {locales[otherLang].label}
+            </span>
+            <span lang={otherLang} className="lang-short" aria-hidden="true">
+              {locales[otherLang].short}
+            </span>
+          </a>
+          <button
+            type="button"
+            className="tool-btn"
+            aria-label={theme === 'dark' ? t.ui.themeToLight : t.ui.themeToDark}
+            onClick={toggleTheme}
+          >
+            <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={20} />
+          </button>
+        </div>
         <button
           type="button"
           className="nav__toggle"
           aria-expanded={open}
           aria-controls="main-nav"
-          aria-label={open ? 'بستن منو' : 'باز کردن منو'}
+          aria-label={open ? t.nav.close : t.nav.open}
           onClick={() => setOpen((o) => !o)}
         >
           <span />

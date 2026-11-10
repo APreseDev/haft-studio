@@ -1,19 +1,28 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import '@fontsource/vazirmatn/400.css';
-import '@fontsource/vazirmatn/500.css';
 import '@fontsource/vazirmatn/700.css';
 import '@fontsource/vazirmatn/900.css';
 import 'lenis/dist/lenis.css';
 import './styles.css';
 import App from './App.jsx';
+import LangProvider from './i18n/LangProvider.jsx';
+import ThemeProvider from './theme/ThemeProvider.jsx';
+import { applyLangToDocument } from './i18n/document.js';
+import { langFromPath } from './i18n/locales.js';
+import { applyThemeToDocument, readStoredTheme } from './theme/context.js';
 
-// سایت فارسی است و باید راست‌به‌چپ باشد، حتی اگر index.html پروژه این دو مقدار را نداشته باشد.
-document.documentElement.setAttribute('dir', 'rtl');
-document.documentElement.setAttribute('lang', 'fa');
+// زبان (از آدرس: «/» فارسی، «/en/» انگلیسی) و حالت تیره/روشن ذخیره‌شده‌ی کاربر قبل از اولین نمایش اعمال می‌شود.
+// (اسکریپت کوچک index.html همین کار را حتی زودتر انجام می‌دهد؛ این‌جا برای اطمینان تکرار شده است.)
+applyLangToDocument(langFromPath());
+applyThemeToDocument(readStoredTheme());
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider>
+      <LangProvider>
+        <App />
+      </LangProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );
