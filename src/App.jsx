@@ -10,7 +10,6 @@ import Marquee from './sections/Marquee.jsx';
 import Services from './sections/Services.jsx';
 import Work from './sections/Work.jsx';
 import Process from './sections/Process.jsx';
-import Manifesto from './sections/Manifesto.jsx';
 import Team from './sections/Team.jsx';
 import Contact from './sections/Contact.jsx';
 import Footer from './sections/Footer.jsx';
@@ -140,7 +139,6 @@ export default function App() {
         <Services />
         <Work />
         <Process />
-        <Manifesto />
         <Team />
         <Contact />
       </main>

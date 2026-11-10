@@ -385,3 +385,7 @@ Static front-end only; no new dependencies for language/theme; keep the React/Vi
 
 ### 22.13 Features outside the current scope
 Backend/CMS, blog, per-language URLs and `hreflang`, more than two languages, an automatic OS-theme mode, an Open Graph image, privacy-policy page, testimonials, analytics, form CAPTCHA, server-side rendering/prerendering.
+
+## Splash screen
+
+`index.html` contains a `#splash` element (logo from `public/logo-full.png`, inline CSS) shown instantly. `src/splash.js` removes it after at least 2.4 s and once the page and fonts are loaded (hard cap 4.5 s); a CSS fallback hides it after 7 s if JavaScript fails. The hero intro timeline in `Hero.jsx` waits for `splashDone`. Adjust `MIN`/`MAX` in `src/splash.js` (and the bar duration in `index.html`) to change the timing.

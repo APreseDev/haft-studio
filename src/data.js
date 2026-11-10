@@ -20,7 +20,8 @@ export const navHrefs = ["#services", "#work", "#process", "#team"];
 export const serviceIcons = ["web", "video", "phone", "mega"];
 
 export const contact = {
-  phone: "۰۹۱2 345 6789",
+  phone1: "0990 860 6685",
+  phone2: "0937 381 9672",
   instagram: "haft-studio",
   email: "haft-studio@gmail.com",
 };

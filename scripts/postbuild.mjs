@@ -40,6 +40,7 @@ enHtml = setContent(enHtml, 'property="og:site_name"', en.brand);
 enHtml = enHtml.replace(
   /<noscript>[\s\S]*?<\/noscript>/,
   `<noscript>
+      <style>#splash { display: none; }</style>
       <div style="padding: 24px">
         <h1>${esc(en.brand)}</h1>
         <p>${esc(en.meta.description)}</p>

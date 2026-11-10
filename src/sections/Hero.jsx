@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { gsap } from '../gsap.js';
+import { splashDone } from '../splash.js';
 import { Icon } from '../components/Icons.jsx';
 import { useMagnetic } from '../hooks.js';
 import { useLang } from '../i18n/context.js';
@@ -23,7 +24,9 @@ export default function Hero() {
   useLayoutEffect(() => {
     const mm = gsap.matchMedia();
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      const tl = gsap.timeline({ defaults: { ease: 'power4.out' }, delay: 0.1 });
+      // تا وقتی لوگوی آغازین در حال رفتن نیست، ورود بخش اول شروع نمی‌شود (وگرنه پشت لوگو اجرا می‌شد و دیده نمی‌شد)
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' }, delay: 0.1, paused: true });
+      splashDone.then(() => tl.play());
       tl.from('.hero .pill', { y: 20, opacity: 0, duration: 0.7 })
         .from('.hero .wi', { yPercent: 120, rotate: 5, duration: 0.9, stagger: 0.06 }, '-=0.45')
         .from('.hero .hero__text', { y: 20, opacity: 0, duration: 0.8 }, '-=0.6')

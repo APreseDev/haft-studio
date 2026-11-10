@@ -11,11 +11,15 @@ import ThemeProvider from './theme/ThemeProvider.jsx';
 import { applyLangToDocument } from './i18n/document.js';
 import { langFromPath } from './i18n/locales.js';
 import { applyThemeToDocument, readStoredTheme } from './theme/context.js';
+import { startSplash } from './splash.js';
 
 // زبان (از آدرس: «/» فارسی، «/en/» انگلیسی) و حالت تیره/روشن ذخیره‌شده‌ی کاربر قبل از اولین نمایش اعمال می‌شود.
 // (اسکریپت کوچک index.html همین کار را حتی زودتر انجام می‌دهد؛ این‌جا برای اطمینان تکرار شده است.)
 applyLangToDocument(langFromPath());
 applyThemeToDocument(readStoredTheme());
+
+// لوگوی آغازین (داخل index.html) چند ثانیه‌ی اول دیده می‌شود؛ پشت آن سایت بارگذاری و آماده می‌شود
+startSplash();
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
