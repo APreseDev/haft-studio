@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { LOGO_PIECES, LOGO_H } from './logoShapes.js';
 
 const rand = (a, b) => a + Math.random() * (b - a);
 
 /**
- * صحنه‌ی سه‌بعدی پس‌زمینه: عدد ۷ فلزی، حلقه‌ها، شکل‌های شناور و ذرات.
+ * صحنه‌ی سه‌بعدی پس‌زمینه: لوگوی فلزی سه‌بعدی (به‌جای ۷)، حلقه‌ها، شکل‌های شناور و ذرات.
  * اسکرول صفحه، حرکت ماوس و زمان، همه روی صحنه اثر می‌گذارند.
  */
 // تنظیمات ظاهر. اگر عدد ۷ هنوز زیادی روشن (سفید) یا زیادی تیره بود، فقط این عددها را عوض کنید.
@@ -83,26 +84,9 @@ export function createScene(
   const group = new THREE.Group();
   scene.add(group);
 
-  // عدد ۷ سه‌بعدی
-  // شکل ۷ با چند نقطه ساخته می‌شود تا به فایل فونت نیازی نباشد.
-  const shape = new THREE.Shape();
-  shape.moveTo(-1.8, 2.5);
-  shape.lineTo(1.8, 2.5);
-  shape.lineTo(1.8, 1.7);
-  shape.lineTo(-0.3, -2.5);
-  shape.lineTo(-1.3, -2.5);
-  shape.lineTo(0.7, 1.7);
-  shape.lineTo(-1.8, 1.7);
-  shape.closePath();
-  const sevenGeo = new THREE.ExtrudeGeometry(shape, {
-    depth: 1.4,
-    bevelEnabled: true,
-    bevelThickness: 0.14,
-    bevelSize: 0.1,
-    bevelSegments: lite ? 2 : 5,
-  });
-  sevenGeo.center();
-
+  // لوگوی سه‌بعدی هفت استودیو (جایگزین عدد ۷ قبلی)
+  // هر تکه‌ی لوگو جدا اکسترود می‌شود تا فاصله‌ی باریک بین تکه‌ها بماند؛ عمق تکه‌ها کمی فرق دارد تا حس لایه‌لایه بدهد.
+  const LOGO_SCALE = 5.2 / LOGO_H; // ارتفاع لوگو در صحنه ≈ ۵٫۲ واحد (هم‌اندازه‌ی ۷ قبلی)
   const sevenMat = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(LOOK.sevenColor),
     metalness: 0.7,
@@ -111,12 +95,25 @@ export function createScene(
     clearcoatRoughness: 0.3,
     transparent: true, // از ابتدا شفاف‌پذیر است تا هنگام اولین محوشدن، شیدر دوباره کامپایل نشود و نپرد
   });
-  const seven = new THREE.Mesh(sevenGeo, sevenMat);
-  const shell = new THREE.Mesh(
-    sevenGeo,
-    new THREE.MeshBasicMaterial({ color: accentColor, wireframe: true, transparent: true, opacity: 0.1 })
-  );
-  shell.scale.setScalar(1.07);
+  const shellMat = new THREE.MeshBasicMaterial({ color: accentColor, wireframe: true, transparent: true, opacity: 0.1 });
+  const seven = new THREE.Group(); // نام قدیمی حفظ شده؛ حالا گروه تکه‌های لوگوست
+  const shell = new THREE.Group();
+  shell.scale.setScalar(1.05);
+  LOGO_PIECES.forEach((pts, i) => {
+    const shape = new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2(x * LOGO_SCALE, y * LOGO_SCALE)));
+    const depth = 0.9 + (i % 3) * 0.28;
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth,
+      bevelEnabled: true,
+      bevelThickness: 0.06,
+      bevelSize: 0.025,
+      bevelOffset: -0.025,
+      bevelSegments: lite ? 1 : 3,
+    });
+    geo.translate(0, 0, -depth / 2);
+    seven.add(new THREE.Mesh(geo, sevenMat));
+    shell.add(new THREE.Mesh(geo, shellMat));
+  });
   const hero = new THREE.Group();
   hero.add(seven, shell);
 
@@ -215,7 +212,7 @@ export function createScene(
     const p = PALETTE[name] || PALETTE.dark;
     renderer.setClearColor(p.bg, 1);
     scene.fog.color.set(p.bg);
-    [shell.material, ringMat, ring2.material, wire, particles.material].forEach((m) => m.color.set(p.accent));
+    [shellMat, ringMat, ring2.material, wire, particles.material].forEach((m) => m.color.set(p.accent));
     particles.material.blending = p.blending;
     particles.material.opacity = p.particleOpacity;
     particles.material.needsUpdate = true;
@@ -275,14 +272,14 @@ export function createScene(
   // میزان دیده‌شدن عدد ۷ (۱ = کامل، ۰ = محو). فقط تابعی از موقعیت اسکرول است، پس بالا و پایین‌رفتن خودبه‌خود معکوس می‌شود.
   let shellOff = false; // وقتی کنترل‌کننده‌ی کیفیت قاب سیمی را خاموش کرد، دوباره روشن نشود
   let lastFade = -1;
-  const sevenShellOpacity = shell.material.opacity; // ۰٫۱ ؛ شفافیت پایه‌ی قاب سیمی
+  const sevenShellOpacity = shellMat.opacity; // ۰٫۱ ؛ شفافیت پایه‌ی قاب سیمی
   function applyFade(y) {
     const k = Math.min(1, Math.max(0, (y - fadeFrom) / (fadeTo - fadeFrom)));
     const vis = 1 - k * k * (3 - 2 * k); // smoothstep
     if (vis === lastFade) return; // بدون تغییر: کاری نکن
     lastFade = vis;
     sevenMat.opacity = vis;
-    shell.material.opacity = sevenShellOpacity * vis;
+    shellMat.opacity = sevenShellOpacity * vis;
     seven.visible = vis > 0.002; // وقتی کاملاً محو است اصلاً رسم نشود
     shell.visible = !shellOff && vis > 0.002;
   }
