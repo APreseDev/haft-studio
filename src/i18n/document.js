@@ -1,4 +1,5 @@
-import { locales } from './locales.js';
+import { DEFAULT_LANG, isLang, locales } from './locales.js';
+import { pathWithLang } from '../routes.js';
 
 const setMeta = (selector, value) => {
   const el = document.head.querySelector(selector);
@@ -17,10 +18,36 @@ export function applyLangToDocument(lang) {
   setMeta('meta[property="og:description"]', dict.meta.description);
   setMeta('meta[property="og:locale"]', dict.meta.ogLocale);
   setMeta('meta[property="og:site_name"]', dict.brand);
-  // canonical و og:url (اگر هنگام بیلد ساخته شده باشند) به نسخه‌ی همین زبان اشاره کنند
-  const alt = document.head.querySelector(`link[rel="alternate"][hreflang="${lang}"]`);
-  if (alt) {
-    document.head.querySelector('link[rel="canonical"]')?.setAttribute('href', alt.href);
-    setMeta('meta[property="og:url"]', alt.href);
+}
+
+/** عنوان و توضیح یک صفحه‌ی داخلی (مثل صفحه‌ی یک نمونه‌کار). بعد از applyLangToDocument صدا زده می‌شود و آن را برای همین صفحه عوض می‌کند. */
+export function applyPageMeta(title, description) {
+  document.title = title;
+  if (description) {
+    setMeta('meta[name="description"]', description);
+    setMeta('meta[property="og:description"]', description);
   }
+  setMeta('meta[property="og:title"]', title);
+}
+
+/**
+ * canonical، og:url و hreflang را با آدرس فعلی هماهنگ می‌کند. این تگ‌ها فقط وقتی هنگام بیلد ساخته شده‌اند
+ * که siteUrl پر باشد؛ اگر نباشند کاری نمی‌کند. (موتور جست‌وجو HTML ثابت هر آدرس را می‌خواند؛ این برای رفتن داخل سایت است.)
+ */
+export function syncPageLinks(pathname) {
+  const canonical = document.head.querySelector('link[rel="canonical"]');
+  if (!canonical) return;
+  let origin;
+  try {
+    origin = new URL(canonical.href).origin;
+  } catch {
+    return;
+  }
+  canonical.setAttribute('href', origin + pathname);
+  setMeta('meta[property="og:url"]', origin + pathname);
+  document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach((link) => {
+    const code = link.getAttribute('hreflang');
+    const target = code === 'x-default' ? DEFAULT_LANG : code;
+    if (isLang(target)) link.setAttribute('href', origin + pathWithLang(pathname, target));
+  });
 }

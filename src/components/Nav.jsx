@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { navHrefs } from '../data.js';
 import { useLang } from '../i18n/context.js';
-import { locales, pathForLang } from '../i18n/locales.js';
+import { locales } from '../i18n/locales.js';
+import { useRouter } from '../router/context.js';
+import { homePath, pathWithLang } from '../routes.js';
 import { useTheme } from '../theme/context.js';
 import { Icon } from './Icons.jsx';
 import { useMagnetic } from '../hooks.js';
@@ -9,6 +11,9 @@ import Logo from './Logo.jsx';
 
 export default function Nav() {
   const { lang, setLang, t } = useLang();
+  const { route, pathname } = useRouter();
+  // در صفحه‌ی اصلی لینک‌ها فقط #بخش‌اند؛ در صفحه‌های دیگر به بخش همان صفحه‌ی اصلی می‌روند
+  const home = route.page === 'home' ? '' : homePath(lang);
   const { theme, toggleTheme } = useTheme();
   const otherLang = Object.keys(locales).find((k) => k !== lang);
   const [solid, setSolid] = useState(false);
@@ -35,27 +40,27 @@ export default function Nav() {
   return (
     <header className={`nav ${solid || open ? 'nav--solid' : ''}`}>
       <div className="nav__inner">
-        <a href="#top" className="logo" aria-label={t.brand} onClick={close}>
+        <a href={`${home}#top`} className="logo" aria-label={t.brand} onClick={close}>
           <Logo />
         </a>
         <nav id="main-nav" className={`nav__links ${open ? 'is-open' : ''}`} aria-label={t.nav.label}>
           {navHrefs.map((href, i) => (
-            <a key={href} href={href} onClick={close}>
+            <a key={href} href={`${home}${href}`} onClick={close}>
               {t.nav.links[i]}
             </a>
           ))}
-          <a href="#contact" className="nav__only-menu" onClick={close}>
+          <a href={`${home}#contact`} className="nav__only-menu" onClick={close}>
             {t.nav.cta}
           </a>
         </nav>
-        <a ref={cta} href="#contact" className="btn btn--ghost nav__cta">
+        <a ref={cta} href={`${home}#contact`} className="btn btn--ghost nav__cta">
           {t.nav.cta}
         </a>
         <div className="nav__tools">
           {/* لینک واقعی به نسخه‌ی زبان دیگر: روی دکمه نام زبانی نوشته می‌شود که با کلیک به آن می‌رویم */}
           <a
             className="tool-btn tool-btn--lang"
-            href={pathForLang(otherLang)}
+            href={pathWithLang(pathname, otherLang)}
             hrefLang={otherLang}
             aria-label={t.ui.switchLang}
             onClick={(e) => {

@@ -1,9 +1,11 @@
-// تنظیمات و اطلاعات مستقل از زبان. متن‌های قابل‌ترجمه‌ی سایت (خدمات، مراحل، شعار، فرم و ...) در src/i18n/fa.js و src/i18n/en.js هستند.
+// تنظیمات و اطلاعات مستقل از زبان. نمونه‌کارها، تیم، خدمات، مراحل کار و عبارت‌های نوار متحرک در src/database.js هستند؛
+// بقیه‌ی متن‌های سایت (عنوان‌ها، فرم و ...) در src/i18n/fa.js و src/i18n/en.js.
+import { services } from "./database.js";
 
 // رنگ تأکید (کرمی) در حالت تیره. اگر عوضش کردید، متغیر --accent در styles.css را هم هم‌رنگ کنید.
-export const ACCENT = "#EADFC8";
+export const ACCENT = "#1A8CFF";
 // رنگ تأکید در حالت روشن (برنزی تیره). باید با --accent در بخش :root[data-theme="light"] در styles.css یکی باشد.
-export const ACCENT_LIGHT = "#7A5C22";
+export const ACCENT_LIGHT = "#0A5FD1";
 
 // آدرس نهایی سایت بعد از اتصال دامنه، مثلاً "https://example.com" (حتماً با https و بدون / آخر).
 // با پر کردن آن، هنگام بیلد خودکار canonical، og:url، sitemap.xml و خط Sitemap در robots.txt ساخته می‌شود.
@@ -13,15 +15,18 @@ export const siteUrl = "";
 // تا لوگو آماده نیست، خالی بماند.
 export const ogImage = "";
 
+// تعداد نمونه‌کارهایی که در بخش «نمونه‌کارها»ی صفحه‌ی اصلی نشان داده می‌شود؛ بقیه فقط در صفحه‌ی «همه‌ی نمونه‌کارها» هستند.
+export const homeWorkCount = 4;
+
 // لینک‌های منوی بالا. برچسب هر لینک (به همین ترتیب) در nav.links داخل فایل متن هر زبان است.
 export const navHrefs = ["#services", "#work", "#process", "#team"];
 
-// آیکون هر خدمت، به ترتیب خدمات در فایل متن هر زبان (services.items)
-export const serviceIcons = ["web", "video", "phone", "mega"];
+// آیکون هر خدمت، به ترتیب جدول services در src/database.js
+export const serviceIcons = services.map((s) => s.icon);
 
 export const contact = {
   phone1: "0990 860 6685",
-  phone2: "0937 381 9672",
+  phone2: "0913 855 9672",
   instagram: "haft-studio",
   email: "haft-studio@gmail.com",
 };

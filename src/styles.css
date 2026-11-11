@@ -1,22 +1,22 @@
 /* هفت استودیو — استایل کل سایت. رنگ‌ها و اندازه‌های اصلی در :root هستند. */
 :root {
-  --bg: #0a0a0d;
-  --surface: rgba(20, 20, 26, 0.72);
-  --surface-2: #1c1c23;
-  --line: rgba(237, 226, 201, 0.14);
-  --line-strong: rgba(237, 226, 201, 0.32);
-  --fg: #ede2c9; /* متن اصلی: کرمی، نه سفید */
-  --muted: #bdb097; /* متن کم‌رنگ‌تر: کرمی-خاکی */
-  --accent: #eadfc8; /* باید با ACCENT در data.js یکی باشد */
-  --on-accent: #16130c;
+  --bg: #04070d;
+  --surface: rgba(8, 14, 26, 0.72);
+  --surface-2: #0b1424;
+  --line: rgba(200, 220, 255, 0.14);
+  --line-strong: rgba(200, 220, 255, 0.32);
+  --fg: #f2f6fc; /* متن اصلی: سفید مایل به آبی */
+  --muted: #98a3b5; /* متن کم‌رنگ‌تر: خاکستریِ خنک */
+  --accent: #1a8cff; /* باید با ACCENT در data.js یکی باشد */
+  --on-accent: #ffffff;
   /* همین رنگ‌ها به‌صورت «r, g, b» هم هستند تا بشود شفافیت‌های مختلف از آن‌ها ساخت (rgba(var(--bg-rgb), 0.5)) */
-  --bg-rgb: 10, 10, 13;
-  --card-rgb: 20, 20, 26;
-  --accent-rgb: 234, 223, 200;
-  --accent-hover: #f4ecd9;
-  --cream: #eadfc8; /* کرمی ثابت (برای نوار سرمه‌ای که در هر دو حالت یکی است) */
-  --work-from: rgba(34, 34, 44, 0.8);
-  --work-to: rgba(14, 14, 18, 0.8);
+  --bg-rgb: 4, 7, 13;
+  --card-rgb: 8, 14, 26;
+  --accent-rgb: 26, 140, 255;
+  --accent-hover: #4aa3ff;
+  --cream: #6db3ff; /* کرمی ثابت (برای نوار سرمه‌ای که در هر دو حالت یکی است) */
+  --work-from: rgba(14, 24, 44, 0.8);
+  --work-to: rgba(5, 9, 18, 0.8);
   --error-border: #e8a598;
   --error-text: #f0b3a6;
   /* وابسته به جهت صفحه (فارسی: راست‌به‌چپ، انگلیسی: چپ‌به‌راست) */
@@ -30,21 +30,21 @@
 
 /* حالت روشن. حالت تیره (ظاهر فعلی سایت) همان مقدارهای بالای :root است و پیش‌فرض می‌ماند. */
 :root[data-theme="light"] {
-  --bg: #f6f1e7;
-  --surface: rgba(255, 252, 246, 0.72);
-  --surface-2: #ebe3d1;
-  --line: rgba(43, 33, 15, 0.14);
-  --line-strong: rgba(43, 33, 15, 0.34);
-  --fg: #1d1810;
-  --muted: #5b513e;
-  --accent: #7a5c22; /* باید با ACCENT_LIGHT در data.js یکی باشد */
-  --on-accent: #fffaf0;
-  --bg-rgb: 246, 241, 231;
-  --card-rgb: 255, 252, 246;
-  --accent-rgb: 122, 92, 34;
-  --accent-hover: #634a1b;
-  --work-from: rgba(255, 252, 246, 0.9);
-  --work-to: rgba(236, 228, 211, 0.9);
+  --bg: #f3f6fb;
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-2: #e3eaf5;
+  --line: rgba(10, 25, 50, 0.14);
+  --line-strong: rgba(10, 25, 50, 0.34);
+  --fg: #0a1220;
+  --muted: #4a5568;
+  --accent: #0a5fd1; /* باید با ACCENT_LIGHT در data.js یکی باشد */
+  --on-accent: #ffffff;
+  --bg-rgb: 243, 246, 251;
+  --card-rgb: 255, 255, 255;
+  --accent-rgb: 10, 95, 209;
+  --accent-hover: #084aa6;
+  --work-from: rgba(255, 255, 255, 0.9);
+  --work-to: rgba(222, 231, 245, 0.9);
   --error-border: #b3402c;
   --error-text: #9a2f1d;
 }
@@ -438,7 +438,8 @@ html[lang="en"] .hero__title {
   font-size: 15px;
   margin-bottom: 14px;
 }
-h2 {
+h2,
+.page-title {
   font-size: clamp(32px, 4.6vw, 58px);
   font-weight: 900;
   line-height: 1.35;
@@ -1141,4 +1142,223 @@ select:-webkit-autofill {
   padding: 40px 30px;
   color: var(--muted);
   text-align: center;
+}
+
+/* ===== صفحه‌ی همه‌ی نمونه‌کارها و صفحه‌ی جزئیات پروژه ===== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.page {
+  padding-top: clamp(120px, 17vh, 176px);
+}
+/* کل کارت نمونه‌کار لینک صفحه‌ی جزئیات است */
+.work__cover {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+}
+.work__cover:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+.work__more {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.filter {
+  padding: 6px 18px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+}
+.filter:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.filter[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.back-link:hover {
+  color: var(--accent);
+}
+[dir="rtl"] .arrow {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+.project__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+.project__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 56px;
+  margin: 0 0 40px;
+  padding: 22px 0;
+  border-block: 1px solid var(--line);
+}
+.project__meta dt {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.project__meta dd {
+  margin: 0;
+  font-weight: 700;
+}
+.project__cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  margin-bottom: 48px;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+}
+.project__cover--ghost {
+  position: relative;
+  background: linear-gradient(150deg, var(--work-from), var(--work-to));
+}
+.project__cover--ghost .work__ghost {
+  top: 50%;
+  inset-inline-end: 6%;
+  transform: translateY(-50%);
+  font-size: clamp(160px, 30vw, 360px);
+}
+.project__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  max-width: 760px;
+}
+.project__body p {
+  font-size: 17px;
+  line-height: 2.1;
+}
+.project__h {
+  margin-top: 12px;
+  font-size: clamp(22px, 2.6vw, 30px);
+}
+.project__results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.project__results li {
+  position: relative;
+  padding-inline-start: 24px;
+  line-height: 1.9;
+}
+.project__results li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.8em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.project__gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 56px;
+}
+.project__gallery figure {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+}
+.project__gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.project-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 64px;
+}
+.project-nav__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 24px 28px;
+}
+.project-nav__item span {
+  color: var(--muted);
+  font-size: 14px;
+}
+.project-nav__item b {
+  font-size: 20px;
+}
+.project-nav__item--next {
+  align-items: flex-end;
+  text-align: end;
+}
+.project-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 56px;
+  padding: 44px 36px;
+}
+.project-cta h2 {
+  font-size: clamp(26px, 3.4vw, 40px);
+}
+.project-cta p {
+  color: var(--muted);
+}
+@media (max-width: 640px) {
+  .project-nav {
+    grid-template-columns: 1fr;
+  }
+  .project-nav__item--next {
+    align-items: flex-start;
+    text-align: start;
+  }
+  .project__meta {
+    gap: 16px 36px;
+  }
+  .project-cta {
+    padding: 32px 24px;
+  }
 }

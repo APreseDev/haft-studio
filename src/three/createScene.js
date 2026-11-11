@@ -9,7 +9,7 @@ const rand = (a, b) => a + Math.random() * (b - a);
  */
 // تنظیمات ظاهر. اگر عدد ۷ هنوز زیادی روشن (سفید) یا زیادی تیره بود، فقط این عددها را عوض کنید.
 const LOOK = {
-  sevenColor: '#B79E70', // کرمی/شامپاینی تیره‌تر، تا زیر نور به سفید نرسد
+  sevenColor: '#3B82D6', // کرمی/شامپاینی تیره‌تر، تا زیر نور به سفید نرسد
   exposure: 0.95, // روشنایی کلی صحنه
   envIntensity: 0.35, // شدت بازتاب محیط روی فلز
   keyLight: 0.8, // نور اصلی
@@ -36,7 +36,7 @@ const LOOK = {
  */
 export function createScene(
   canvas,
-  { accent = '#EADFC8', accentOnLight = '#7A5C22', lite = false, reduced = false, theme: initialTheme = 'dark' } = {}
+  { accent = '#1A8CFF', accentOnLight = '#0A5FD1', lite = false, reduced = false, theme: initialTheme = 'dark' } = {}
 ) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -46,12 +46,12 @@ export function createScene(
     powerPreference: lite ? 'default' : 'high-performance', // پس‌زمینه‌ی تزئینی روی گوشی/دستگاه ضعیف باتری را فشار ندهد
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, LOOK.maxPixelRatio)); // سقف کمتر = رندر خیلی سبک‌تر
-  renderer.setClearColor(0x0a0a0d, 1);
+  renderer.setClearColor(0x04070d, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = LOOK.exposure;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0a0a0d, 0.03);
+  scene.fog = new THREE.FogExp2(0x04070d, 0.03);
 
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 120);
   camera.position.set(0, 0, 14);
@@ -69,14 +69,14 @@ export function createScene(
   const accentColor = new THREE.Color(accent);
 
   // نورها
-  const key = new THREE.DirectionalLight(0xfff0d6, LOOK.keyLight);
+  const key = new THREE.DirectionalLight(0xd6e8ff, LOOK.keyLight);
   key.position.set(5, 6, 8);
   scene.add(key);
   const accentLight = new THREE.PointLight(accentColor, LOOK.accentLight, 40, 2);
   accentLight.position.set(-6, 2, 5);
   scene.add(accentLight);
   // نور کناری کهربایی (به‌جای نور فیروزه‌ای قبلی) تا همه‌چیز در تن کرمی بماند
-  const coolLight = new THREE.PointLight(0xc9a36b, LOOK.warmLight, 40, 2);
+  const coolLight = new THREE.PointLight(0x2f7fff, LOOK.warmLight, 40, 2);
   coolLight.position.set(7, -3, 4);
   scene.add(coolLight);
 
@@ -141,7 +141,7 @@ export function createScene(
     new THREE.TorusGeometry(0.34, 0.12, 12, 28),
     new THREE.BoxGeometry(0.6, 0.6, 0.6),
   ];
-  const solid = new THREE.MeshStandardMaterial({ color: 0x1e1b16, metalness: 0.9, roughness: 0.28 });
+  const solid = new THREE.MeshStandardMaterial({ color: 0x161b24, metalness: 0.9, roughness: 0.28 });
   const wire = new THREE.MeshBasicMaterial({ color: accentColor, wireframe: true, transparent: true, opacity: 0.45 });
   const floaterData = [];
   const count = lite ? 6 : LOOK.floaters;
@@ -208,8 +208,8 @@ export function createScene(
 
   // حالت تیره/روشن: رنگ زمینه و مه، رنگ خط‌ها و ذرات، و ترکیب ذرات (روی زمینه‌ی روشن، additive دیده نمی‌شود)
   const PALETTE = {
-    dark: { bg: 0x0a0a0d, accent, blending: THREE.AdditiveBlending, particleOpacity: LOOK.particleOpacity },
-    light: { bg: 0xf6f1e7, accent: accentOnLight, blending: THREE.NormalBlending, particleOpacity: 0.55 },
+    dark: { bg: 0x04070d, accent, blending: THREE.AdditiveBlending, particleOpacity: LOOK.particleOpacity },
+    light: { bg: 0xf3f6fb, accent: accentOnLight, blending: THREE.NormalBlending, particleOpacity: 0.55 },
   };
   function applyTheme(name) {
     const p = PALETTE[name] || PALETTE.dark;
@@ -249,7 +249,9 @@ export function createScene(
     if (composer) composer.setSize(w, h);
     camera.aspect = w / h;
     const wide = camera.aspect > 1.1;
-    baseX = wide ? -3.6 : 0;
+    // فارسی (راست‌به‌چپ): متن سمت راست است و ۷ سمت چپ. انگلیسی (چپ‌به‌راست): متن سمت چپ است و ۷ باید سمت راست باشد.
+    const side = document.documentElement.getAttribute('dir') === 'ltr' ? 1 : -1;
+    baseX = wide ? 3.6 * side : 0;
     baseY = wide ? 0 : 3.4;
     baseScale = wide ? 1 : 0.62;
     baseZ = wide ? 14 : 18;
@@ -348,6 +350,12 @@ export function createScene(
   bodyObserver.observe(document.body);
   window.addEventListener('load', updateMax);
   window.addEventListener('resize', resize);
+  // با عوض شدن زبان (و جهت صفحه)، جای عدد ۷ هم عوض شود
+  const dirObserver = new MutationObserver(() => {
+    lastW = 0;
+    resize();
+  });
+  dirObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['dir'] });
   if (!reduced) {
     window.addEventListener('pointermove', onMove, { passive: true });
     // سقف حدود ۶۰ فریم در ثانیه: روی نمایشگرهای ۱۲۰/۱۴۴ هرتز رندر و سرعت انیمیشن دو برابر نشود
@@ -419,6 +427,7 @@ export function createScene(
     disposed = true;
     renderer.setAnimationLoop(null);
     bodyObserver.disconnect();
+    dirObserver.disconnect();
     if (maxRaf) cancelAnimationFrame(maxRaf);
     window.removeEventListener('load', updateMax);
     window.removeEventListener('resize', resize);

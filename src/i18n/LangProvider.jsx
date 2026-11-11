@@ -1,37 +1,26 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo } from 'react';
 import { LangContext } from './context.js';
 import { applyLangToDocument } from './document.js';
 import { localizeDigits } from './format.js';
-import { isLang, langFromPath, locales, pathForLang } from './locales.js';
+import { isLang, locales } from './locales.js';
+import { useRouter } from '../router/context.js';
+import { pathWithLang } from '../routes.js';
 
+// زبان از آدرس می‌آید (تنها منبع حقیقت): «/…» فارسی و «/en/…» انگلیسی. عوض کردن زبان یعنی رفتن به همان صفحه در زبان دیگر.
 export default function LangProvider({ children }) {
-  const [lang, setLangState] = useState(() => langFromPath());
+  const { route, pathname, navigate } = useRouter();
+  const lang = route.lang;
 
-  const setLang = useCallback((next) => {
-    if (!isLang(next)) return;
-    // lang و dir قبل از رندر دوباره عوض می‌شوند تا انیمیشن‌های بخش‌ها (که هنگام ساخته‌شدن جهت را می‌خوانند) جهت درست را ببینند
-    applyLangToDocument(next);
-    // آدرس هم عوض می‌شود (بدون بارگذاری دوباره و بدون پرش اسکرول) تا هر زبان لینک جدا داشته باشد
-    try {
-      window.history.pushState({}, '', pathForLang(next) + window.location.hash);
-    } catch {
-      /* history در دسترس نیست؛ فقط زبان صفحه عوض می‌شود */
-    }
-    setLangState(next);
-  }, []);
+  const setLang = useCallback(
+    (next) => {
+      if (!isLang(next) || next === lang) return;
+      // بدون پرش اسکرول؛ #بخش هم نگه داشته می‌شود
+      navigate(pathWithLang(pathname, next) + window.location.hash, { scroll: false });
+    },
+    [lang, pathname, navigate]
+  );
 
-  // دکمه‌ی «بازگشت/جلو» مرورگر: زبان از آدرس تازه خوانده می‌شود
-  useEffect(() => {
-    const onPop = () => {
-      const next = langFromPath();
-      applyLangToDocument(next);
-      setLangState(next);
-    };
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
-  }, []);
-
-  // همگام‌سازی بعد از اولین نمایش (اسکریپت index.html و main.jsx معمولاً قبلاً این کار را کرده‌اند)
+  // همگام‌سازی lang و dir صفحه (اسکریپت index.html و main.jsx معمولاً قبلاً این کار را کرده‌اند)
   useLayoutEffect(() => {
     applyLangToDocument(lang);
   }, [lang]);

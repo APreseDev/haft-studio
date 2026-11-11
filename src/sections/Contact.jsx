@@ -186,14 +186,18 @@ export default function Contact() {
               <label htmlFor="f-service">{c.service}</label>
               <select id="f-service" name="service">
                 {/* متن گزینه به زبان کاربر است، اما مقدار ارسالی همیشه فارسی می‌ماند تا ایمیل‌های تیم یکدست باشد */}
-                {c.serviceOptions.map((o, i) => (
-                  <option
-                    key={o}
-                    value={locales.fa.dict.contact.serviceOptions[i]}
-                  >
-                    {o}
-                  </option>
-                ))}
+                {c.serviceOptions.map((o, i) => {
+                  console.log(c);
+
+                  return (
+                    <option
+                      key={o}
+                      value={locales.fa.dict.contact.serviceOptions[i]}
+                    >
+                      {o}
+                    </option>
+                  );
+                })}
               </select>
             </div>
             <div className="field">

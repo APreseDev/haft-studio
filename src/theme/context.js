@@ -5,7 +5,7 @@ export const THEMES = ['dark', 'light'];
 export const DEFAULT_THEME = 'dark';
 export const THEME_STORAGE_KEY = 'haft-theme';
 // رنگ نوار مرورگر موبایل (باید با --bg هر حالت در styles.css یکی باشد)
-export const THEME_COLORS = { dark: '#0a0a0d', light: '#f6f1e7' };
+export const THEME_COLORS = { dark: '#04070d', light: '#f3f6fb' };
 
 export const isTheme = (x) => THEMES.includes(x);
 

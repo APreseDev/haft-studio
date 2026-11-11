@@ -1,8 +1,18 @@
 // English texts. Keep the structure identical to fa.js. Words wrapped in asterisks (*like this*) are shown in the accent color.
+import {
+  marquee,
+  processSteps,
+  projects,
+  services,
+  team,
+} from "../database.js";
+import { localize } from "./localizeData.js";
+
 export default {
   brand: "Haft Studio",
   numerals: "0123456789",
   intl: "en-US",
+  listSeparator: ", ",
   meta: {
     title: "Haft Studio | Web Design, Video & Advertising",
     description:
@@ -30,92 +40,58 @@ export default {
     cta2: "View services",
     scroll: "Scroll",
   },
-  marquee: ["Web design", "Instagram video", "Page management", "Ad campaigns"],
+  marquee: localize(marquee, "en"), // src/database.js (جدول marquee)
   services: {
     eyebrow: "01 — Services",
     title: "Everything you need to be seen, in one place.",
-    items: [
-      {
-        title: "Web design",
-        text: "Fast, mobile-friendly company sites and landing pages that match your brand identity.",
-      },
-      {
-        title: "Instagram video & reels",
-        text: "Idea, filming, editing and motion graphics: videos that get watched to the very last second.",
-      },
-      {
-        title: "Content & page management",
-        text: "Content calendar, post and story design, and regular production for your brand’s social media.",
-      },
-      {
-        title: "Campaigns & advertising",
-        text: "Campaign design and advertising creative to introduce your product and win new customers.",
-      },
-    ],
+    items: localize(services, "en"), // src/database.js (جدول services)
   },
   work: {
     eyebrow: "02 — Work",
     title: "Work that speaks for itself.",
     sub: "The first Haft Studio projects will be published here.",
     empty: "Our portfolio will be added here soon.",
-    projects: [
-      {
-        tag: "Web design",
-        title: "[Project one name]",
-        hint: "Space for a sample image or video",
-      },
-      {
-        tag: "Instagram reels",
-        title: "[Project two name]",
-        hint: "Space for a sample",
-      },
-      {
-        tag: "Ad campaign",
-        title: "[Project three name]",
-        hint: "Space for a sample",
-      },
-      {
-        tag: "Page management",
-        title: "[Project four name]",
-        hint: "Space for a sample image or video",
-      },
-    ],
+    viewAll: "View all projects",
+    open: "View project details",
+    // Projects live in src/database.js (table: projects)
+    projects: localize(projects, "en"),
+  },
+  worksPage: {
+    eyebrow: "Work",
+    title: "All of our work",
+    sub: "The projects we have built. Open any of them to see the details.",
+    all: "All",
+    filterLabel: "Filter by category",
+  },
+  projectPage: {
+    back: "All projects",
+    client: "Client",
+    year: "Year",
+    services: "Services",
+    results: "Results",
+    visit: "Visit the project",
+    gallery: "Project images",
+    more: "More projects",
+    prev: "Previous project",
+    next: "Next project",
+    cta: "Have a project in mind?",
+    ctaText: "Tell us about it and let’s build the idea together.",
+    notFoundTitle: "Project not found",
+    notFoundText:
+      "The address may be wrong, or the project may have been removed.",
   },
   process: {
     eyebrow: "03 — Process",
     title: "From the first conversation to launch, in four steps.",
-    steps: [
-      {
-        title: "Conversation & discovery",
-        text: "We get to know your brand, audience and goal so the path becomes clear.",
-      },
-      {
-        title: "Idea & strategy",
-        text: "We finalize the creative idea and the execution plan together before production starts.",
-      },
-      {
-        title: "Design & production",
-        text: "The website, video and content are made, and we ask for your feedback at every stage.",
-      },
-      {
-        title: "Launch & growth",
-        text: "We publish the work and measure the result so the next step is even better.",
-      },
-    ],
+    steps: localize(processSteps, "en"), // src/database.js (جدول processSteps)
   },
   manifesto:
     "We have only just begun; for us, every project is the *most* *important* *project* *of* *the* *year.*",
   team: {
     eyebrow: "04 — Team",
     title: "The people behind Haft Studio.",
-    members: [
-      {
-        name: "Amirmohsen Dehghan",
-        role: "web veveloper",
-        photo: "./ADehghan.jfif",
-      },
-      { name: "Amirhossein Dashti", role: "writer", photo: "./dashti.jfif" },
-    ],
+    // src/database.js (جدول team)
+    members: localize(team, "en"),
   },
   contact: {
     eyebrow: "05 — Contact",

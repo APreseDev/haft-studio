@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>هفت استودیو | طراحی سایت، ویدیو و تبلیغات</title>
     <meta name="description" content="هفت استودیو: طراحی سایت، ویدیو و ریلز اینستاگرام، مدیریت محتوا و پیج، و طراحی کمپین تبلیغاتی." />
-    <meta name="theme-color" content="#0a0a0d" />
+    <meta name="theme-color" content="#04070d" />
     <style>
       /* صفحه‌ی آغازین: لوگو چند ثانیه نشان داده می‌شود تا کاربر بارگذاری اولیه‌ی سایت را نبیند (کنترل رفتنش: src/splash.js) */
       #splash {
@@ -20,7 +20,7 @@
         align-items: center;
         justify-content: center;
         gap: 28px;
-        background: #0a0a0d;
+        background: #04070d;
         transition: opacity 0.6s ease, visibility 0.6s;
         /* اگر جاوااسکریپت اجرا نشد، بعد از ۷ ثانیه خودش کنار می‌رود */
         animation: splash-failsafe 0.4s ease 7s forwards;
@@ -40,19 +40,19 @@
       .splash__bar {
         width: 72px;
         height: 2px;
-        background: #ede2c9;
+        background: #f2f6fc;
         opacity: 0.55;
         transform-origin: 50% 50%;
         animation: splash-bar 2.4s cubic-bezier(0.4, 0, 0.2, 1) both;
       }
       html[data-theme="light"] #splash {
-        background: #f6f1e7;
+        background: #f3f6fb;
       }
       html[data-theme="light"] #splash img {
         filter: invert(1);
       }
       html[data-theme="light"] .splash__bar {
-        background: #1d1810;
+        background: #0a1220;
       }
       @keyframes splash-in {
         from { opacity: 0; transform: translateY(10px) scale(0.97); }
@@ -79,7 +79,7 @@
     <meta name="twitter:card" content="summary" />
     <!-- زبان (از آدرس: /en/ انگلیسی) و حالت (تیره/روشن) ذخیره‌شده را پیش از اولین نمایش می‌گذارد تا هنگام بارگذاری چشمک نزند.
          اگر متن این اسکریپت را عوض کردید، هش آن را در public/_headers (script-src) هم به‌روز کنید: PROJECT_DOCUMENTATION.md -->
-    <script>(function(){try{var d=document.documentElement,p=location.pathname;var l=/\/en(\/|$)/.test(p)?'en':'fa';d.setAttribute('lang',l);d.setAttribute('dir',l==='en'?'ltr':'rtl');var t=window.localStorage.getItem('haft-theme');if(t==='light'||t==='dark'){d.setAttribute('data-theme',t);if(t==='light'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#f6f1e7');}}}catch(e){}})();</script>
+    <script>(function(){try{var d=document.documentElement,p=location.pathname;var l=/\/en(\/|$)/.test(p)?'en':'fa';d.setAttribute('lang',l);d.setAttribute('dir',l==='en'?'ltr':'rtl');var t=window.localStorage.getItem('haft-theme');if(t==='light'||t==='dark'){d.setAttribute('data-theme',t);if(t==='light'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#f3f6fb');}}}catch(e){}})();</script>
   </head>
   <body>
     <noscript>

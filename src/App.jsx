@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useLang } from './i18n/context.js';
+import { useRouter } from './router/context.js';
 import { gsap, ScrollTrigger } from './gsap.js';
 import { setLenis } from './lenis.js';
 import { prefersReduced } from './hooks.js';
@@ -10,10 +11,13 @@ import Marquee from './sections/Marquee.jsx';
 import Services from './sections/Services.jsx';
 import Work from './sections/Work.jsx';
 import Process from './sections/Process.jsx';
+import Manifesto from './sections/Manifesto.jsx';
 import Team from './sections/Team.jsx';
 import Contact from './sections/Contact.jsx';
 import Footer from './sections/Footer.jsx';
 import StructuredData from './components/StructuredData.jsx';
+import WorksPage from './pages/WorksPage.jsx';
+import ProjectPage from './pages/ProjectPage.jsx';
 
 // کتابخانه‌ی Three.js حجیم‌ترین بخش سایت است. جدا و دیرتر بارگذاری می‌شود تا متن‌ها و منو فوراً دیده شوند.
 const Scene = lazy(() => import('./components/Scene.jsx'));
@@ -21,6 +25,9 @@ const sceneFallback = <div className="scene scene--fallback" aria-hidden="true" 
 
 export default function App() {
   const { lang, dir, t } = useLang();
+  const { route } = useRouter();
+  // با عوض شدن زبان یا صفحه، محتوای اصلی دوباره ساخته می‌شود (انیمیشن‌ها پاک و از نو ساخته می‌شوند)
+  const pageKey = `${lang}:${route.page}:${route.slug}`;
   const [sceneReady, setSceneReady] = useState(false);
 
   // صحنه‌ی سه‌بعدی بعد از اولین نمایش صفحه و در زمان بیکاری مرورگر شروع می‌شود
@@ -117,11 +124,11 @@ export default function App() {
     };
   }, [dir]);
 
-  // با عوض شدن زبان، طول متن‌ها و ارتفاع صفحه عوض می‌شود؛ جای شروع انیمیشن‌ها دوباره محاسبه شود
+  // با عوض شدن زبان یا صفحه، طول متن‌ها و ارتفاع صفحه عوض می‌شود؛ جای شروع انیمیشن‌ها دوباره محاسبه شود
   useEffect(() => {
     const id = requestAnimationFrame(() => ScrollTrigger.refresh());
     return () => cancelAnimationFrame(id);
-  }, [lang]);
+  }, [pageKey]);
 
   return (
     <>
@@ -133,14 +140,21 @@ export default function App() {
       <Cursor />
       <div className="progress" aria-hidden="true" />
       <Nav />
-      <main id="main" tabIndex={-1} key={lang}>
-        <Hero />
-        <Marquee />
-        <Services />
-        <Work />
-        <Process />
-        <Team />
-        <Contact />
+      <main id="main" tabIndex={-1} key={pageKey}>
+        {route.page === 'works' && <WorksPage />}
+        {route.page === 'project' && <ProjectPage slug={route.slug} />}
+        {route.page === 'home' && (
+          <>
+            <Hero />
+            <Marquee />
+            <Services />
+            <Work />
+            <Process />
+            <Manifesto />
+            <Team />
+            <Contact />
+          </>
+        )}
       </main>
       <Footer />
     </>

@@ -56,7 +56,7 @@ Node: `^20.19.0 || >=22.12.0` (`engines`); `.nvmrc` pins `22`. External service:
 
 - **Single page, no router.** `src/main.jsx` mounts `<ThemeProvider><LangProvider><App/></LangProvider></ThemeProvider>`.
 - **Sections** (`src/sections/*`) are self-contained: each owns its markup and, where needed, a `gsap.matchMedia()` block in `useLayoutEffect` that is only active under `prefers-reduced-motion: no-preference` and is reverted on unmount.
-- **Content** is not in the components. Language-independent configuration lives in `src/data.js`; all translatable text lives in `src/i18n/fa.js` and `src/i18n/en.js`.
+- **Content** is not in the components. Language-independent configuration lives in `src/data.js`; repeating records (projects, team, services, process steps, marquee) live in `src/database.js` (each text as `{ fa, en }`); the remaining translatable text lives in `src/i18n/fa.js` and `src/i18n/en.js`.
 - **Global state** is limited to two React contexts: language (`src/i18n`) and theme (`src/theme`). Theme persists to `localStorage`; the language comes from the URL (`/` = Persian, `/en/` = English).
 - **Background scene** is a lazily loaded `<Scene/>` (a fixed `<canvas>`) driven by `src/three/createScene.js`, outside the keyed `<main>` so it is not recreated when the language changes.
 - **Styling** is one global stylesheet (`src/styles.css`) using CSS custom properties for colors and direction.
@@ -71,7 +71,6 @@ Node: `^20.19.0 || >=22.12.0` (`engines`); `.nvmrc` pins `22`. External service:
 ├── README.md, OWNER-CONTENT.md, DEPLOYMENT.md, PROJECT_STATUS.md   (Persian owner docs)
 ├── PROJECT_DOCUMENTATION.md    this file
 ├── docs/QA-CHECKLIST.md        manual test checklist (Persian)
-├── prompts/                    the phase prompts this work was executed from (README.md + phase-01..07)
 ├── scripts/postbuild.mjs       canonical / og:url / sitemap.xml / robots Sitemap line
 ├── .github/
 │   ├── dependabot.yml
@@ -90,11 +89,13 @@ Node: `^20.19.0 || >=22.12.0` (`engines`); `.nvmrc` pins `22`. External service:
 │   ├── styles.css
 │   ├── components/             Cursor, Icons, Logo, Nav, Scene, StructuredData
 │   ├── sections/               Hero, Marquee, Services, Work, Process, Manifesto, Team, Contact, Footer
-│   ├── i18n/                   fa.js, en.js, locales.js, context.js, LangProvider.jsx, document.js, format.js
+│   ├── database.js             mock database: projects, team, services, processSteps, marquee ({ fa, en } per text)
+│   ├── routes.js, projects.js  URL helpers and project helpers (shared with scripts/postbuild.mjs)
+│   ├── router/                 RouterProvider.jsx, context.js (tiny router)
+│   ├── pages/                  WorksPage.jsx, ProjectPage.jsx
+│   ├── i18n/                   fa.js, en.js, locales.js, localizeData.js, context.js, LangProvider.jsx, document.js, format.js
 │   ├── theme/                  context.js, ThemeProvider.jsx
 │   └── three/createScene.js
-├── test/                       older snapshots (v0–v4, haft-studio-*) and zips from earlier work; not part of the build
-└── seven-studio-ui-1.html      early static prototype; not part of the build
 ```
 
 `node_modules/` and `dist/` are git-ignored.
@@ -233,7 +234,7 @@ Design choices to be aware of: the large "7" motifs that remain are intentional 
 ## 14. Persian / English language system
 
 - `src/i18n/locales.js` — registry: `fa` (`rtl`, "فارسی", `FA`) and `en` (`ltr`, "English", `EN`); `DEFAULT_LANG = 'fa'`; `langFromPath()` reads the language from the URL and `pathForLang(lang)` returns `/` or `/en/` (respecting `VITE_BASE`). The language switch in `Nav.jsx` is a real link to the other version whose label shows the language you will switch to ("English" on the Persian site, "فارسی" on the English site; "EN"/"FA" on narrow screens). A click switches client-side with `history.pushState`; back/forward is handled by a `popstate` listener in `LangProvider`.
-- `src/i18n/fa.js` / `en.js` — dictionaries with identical structure: `brand`, `numerals`, `intl`, `meta`, `ui`, `nav`, `hero`, `marquee`, `services`, `work`, `process`, `manifesto`, `team`, `contact` (labels, options, errors, status), `footer`. Words wrapped in `*asterisks*` (hero title, manifesto) are rendered in the accent color via `parseAccentWords()`.
+- `src/i18n/fa.js` / `en.js` — dictionaries with identical structure (records such as projects/team/services/steps/marquee are pulled from `src/database.js` via `localize()`): `brand`, `numerals`, `intl`, `meta`, `ui`, `nav`, `hero`, `marquee`, `services`, `work`, `process`, `manifesto`, `team`, `contact` (labels, options, errors, status), `footer`. Words wrapped in `*asterisks*` (hero title, manifesto) are rendered in the accent color via `parseAccentWords()`.
 - `LangProvider` exposes `{ lang, dir, t, setLang, num }`; `useLang()` reads it. `setLang()` first updates the document (`applyLangToDocument`: `lang`, `dir`, `<title>`, description, `og:*`), stores the choice, then updates state.
 - `num(n)` maps digits through the dictionary's `numerals`.
 - `index.html` contains a small inline script that applies the stored language/theme **before first paint** (no flash). It must know the direction of each language (`{fa:'rtl', en:'ltr'}`). Its SHA-256 is whitelisted in the Report-Only CSP in `public/_headers`.
@@ -318,7 +319,7 @@ Debug URL flags: `?noscene` (no 3D), `?lite` (light 3D).
 7. Form e-mails: subject and sender name are Persian; the service value is Persian; the visitor's language is not sent.
 8. The light theme's 3D look has not been seen with the real renderer; a visual pass is recommended.
 9. The CSP is report-only and the `style-src` still allows `'unsafe-inline'` (needed by inline `style` attributes such as the logo mask variable).
-10. `public/favicon.svg`, `test/` and `seven-studio-ui-1.html` are unused leftovers.
+10. Unused leftovers (`test/`, `prompts/`, `seven-studio-ui-1.html`, unused images and `favicon.svg`) were removed from this copy.
 
 ---
 
@@ -389,3 +390,16 @@ Backend/CMS, blog, per-language URLs and `hreflang`, more than two languages, an
 ## Splash screen
 
 `index.html` contains a `#splash` element (logo from `public/logo-full.png`, inline CSS) shown instantly. `src/splash.js` removes it after at least 2.4 s and once the page and fonts are loaded (hard cap 4.5 s); a CSS fallback hides it after 7 s if JavaScript fails. The hero intro timeline in `Hero.jsx` waits for `splashDone`. Adjust `MIN`/`MAX` in `src/splash.js` (and the bar duration in `index.html`) to change the timing.
+
+## Pages and routing (works list + project detail)
+
+The site has three kinds of pages per language: home (`/`, `/en/`), all works (`/works/`, `/en/works/`) and one detail page per project (`/works/<slug>/`, `/en/works/<slug>/`).
+
+- `src/routes.js` parses/builds these URLs (`parsePath`, `homePath`, `worksPath`, `projectPath`, `pathWithLang`). The URL is the single source of truth for language and page.
+- `src/router/RouterProvider.jsx` is a tiny router (no extra dependency). Ordinary `<a href>` links to other app pages are intercepted and switched with `history.pushState`; they stay real links (crawlable, open in a new tab, etc.). It also scrolls to the top or to the `#section` after navigation and keeps `canonical`/`hreflang` in sync.
+- `App.jsx` renders `Home sections`, `pages/WorksPage.jsx` or `pages/ProjectPage.jsx` inside `<main key=…>` so GSAP animations are rebuilt per page.
+- The home "Work" section shows only the first `homeWorkCount` projects (`src/data.js`) plus a "View all" button.
+- `scripts/postbuild.mjs` writes one HTML file per page and language (so hosts like Cloudflare Pages / GitHub Pages serve every URL directly) and, when `siteUrl` is set, canonical + hreflang + all pages in `sitemap.xml`.
+
+### Mock database (`src/database.js`)
+Repeating content (projects, team, services, process steps, marquee) lives only in `src/database.js`. Each text is `{ fa, en }`; `src/i18n/localizeData.js` (`localize(value, lang)`) flattens it per language, and `fa.js` / `en.js` call it (`work.projects`, `team.members`, `services.items`, `process.steps`, `marquee`). A missing/empty English value falls back to the Persian one. Every table has a full commented template record above it. Language-neutral fields (`slug`, `image`, `link`, `icon`, `photo`, `src`, `width`, `height`) are plain values. `serviceIcons` in `src/data.js` is derived from the `services` table. A project needs a unique `slug`; titles wrapped in `[ ]` are placeholders shown only in `npm run dev`.
