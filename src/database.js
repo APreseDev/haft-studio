@@ -155,7 +155,7 @@ export const projects = [
 export const team = [
   {
     name: { fa: "امیرمحسن دهقان", en: "Amirmohsen Dehghan" },
-    role: { fa: "مدیر و طراح سایت", en: "Executive & Web Developer" },
+    role: { fa: "طراح و مدیر سایت", en: "Executive & Web Developer" },
     photo: "./team/mohsen.jfif",
   },
   {
