@@ -8,6 +8,6 @@ export const isPlaceholder = (title) => /^\s*\[.*\]\s*$/.test(title || '');
  * اگر slug نوشته نشده باشد، از شماره‌ی ترتیب ساخته می‌شود (project-1, project-2, ...).
  */
 export function getProjects(dict, { includePlaceholders = false } = {}) {
-  const all = dict.work.projects.map((p, i) => ({ ...p, slug: p.slug || `project-${i + 1}` }));
-  return includePlaceholders ? all : all.filter((p) => !isPlaceholder(p.title));
+  const allProjects = dict.work.projects.map((project, index) => ({ ...project, slug: project.slug || `project-${index + 1}` }));
+  return includePlaceholders ? allProjects : allProjects.filter((project) => !isPlaceholder(project.title));
 }

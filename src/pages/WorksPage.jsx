@@ -8,32 +8,32 @@ import ProjectCard from '../components/ProjectCard.jsx';
 
 /** صفحه‌ی «همه‌ی نمونه‌کارها»: همه‌ی پروژه‌ها با فیلتر دسته. */
 export default function WorksPage() {
-  const { t } = useLang();
+  const { translations } = useLang();
   const projects = useProjects();
   const [tag, setTag] = useState('');
   const root = useRef(null);
 
-  const tags = useMemo(() => [...new Set(projects.map((p) => p.tag))], [projects]);
-  const shown = tag ? projects.filter((p) => p.tag === tag) : projects;
+  const tags = useMemo(() => [...new Set(projects.map((project) => project.tag))], [projects]);
+  const shown = tag ? projects.filter((project) => project.tag === tag) : projects;
 
-  usePageMeta(`${t.worksPage.title} | ${t.brand}`, t.worksPage.sub);
+  usePageMeta(`${translations.worksPage.title} | ${translations.brand}`, translations.worksPage.sub);
 
   useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add(
+    const mediaContext = gsap.matchMedia();
+    mediaContext.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
         fromBottom('.works-page .head > *', '.works-page .head', { stagger: 0.12 });
       },
       root
     );
-    return () => mm.revert();
+    return () => mediaContext.revert();
   }, []);
 
   // با عوض شدن فیلتر، کارت‌های تازه با همان پرده‌ی بالا‌رونده وارد می‌شوند
   useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add(
+    const mediaContext = gsap.matchMedia();
+    mediaContext.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
         if (!root.current || !root.current.querySelector('.work-grid .work')) return;
@@ -41,26 +41,26 @@ export default function WorksPage() {
       },
       root
     );
-    return () => mm.revert();
+    return () => mediaContext.revert();
   }, [tag]);
 
   return (
     <section className="section page works-page" ref={root}>
       <div className="wrap">
         <div className="head">
-          <p className="eyebrow">{t.worksPage.eyebrow}</p>
-          <h1 className="page-title">{t.worksPage.title}</h1>
-          <p className="sub">{t.worksPage.sub}</p>
+          <p className="eyebrow">{translations.worksPage.eyebrow}</p>
+          <h1 className="page-title">{translations.worksPage.title}</h1>
+          <p className="sub">{translations.worksPage.sub}</p>
         </div>
 
         {tags.length > 1 && (
-          <div className="filters" role="group" aria-label={t.worksPage.filterLabel}>
+          <div className="filters" role="group" aria-label={translations.worksPage.filterLabel}>
             <button type="button" className="chip filter" aria-pressed={tag === ''} onClick={() => setTag('')}>
-              {t.worksPage.all}
+              {translations.worksPage.all}
             </button>
-            {tags.map((x) => (
-              <button key={x} type="button" className="chip filter" aria-pressed={tag === x} onClick={() => setTag(x)}>
-                {x}
+            {tags.map((tagName) => (
+              <button key={tagName} type="button" className="chip filter" aria-pressed={tag === tagName} onClick={() => setTag(tagName)}>
+                {tagName}
               </button>
             ))}
           </div>
@@ -68,12 +68,12 @@ export default function WorksPage() {
 
         {shown.length > 0 ? (
           <div className="grid work-grid" key={tag}>
-            {shown.map((p, i) => (
-              <ProjectCard key={p.slug} p={p} wide={i % 4 === 0 || i % 4 === 3} />
+            {shown.map((project, index) => (
+              <ProjectCard key={project.slug} project={project} wide={index % 4 === 0 || index % 4 === 3} />
             ))}
           </div>
         ) : (
-          <p className="card work__empty">{t.work.empty}</p>
+          <p className="card work__empty">{translations.work.empty}</p>
         )}
       </div>
     </section>

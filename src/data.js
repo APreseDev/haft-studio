@@ -2,10 +2,10 @@
 // بقیه‌ی متن‌های سایت (عنوان‌ها، فرم و ...) در src/i18n/fa.js و src/i18n/en.js.
 import { services } from "./database.js";
 
-// رنگ تأکید (کرمی) در حالت تیره. اگر عوضش کردید، متغیر --accent در styles.css را هم هم‌رنگ کنید.
-export const ACCENT = "#1A8CFF";
-// رنگ تأکید در حالت روشن (برنزی تیره). باید با --accent در بخش :root[data-theme="light"] در styles.css یکی باشد.
-export const ACCENT_LIGHT = "#0A5FD1";
+// رنگ تأکید (زرد) در حالت تیره. اگر عوضش کردید، متغیر --accent در styles.css را هم هم‌رنگ کنید.
+export const ACCENT = "#FFC93C";
+// رنگ تأکید در حالت روشن برای خطوط و ذرات سه‌بعدی (زرد تیره‌تر تا روی نقره‌ای دیده شود).
+export const ACCENT_LIGHT = "#C98F00";
 
 // آدرس نهایی سایت بعد از اتصال دامنه، مثلاً "https://example.com" (حتماً با https و بدون / آخر).
 // با پر کردن آن، هنگام بیلد خودکار canonical، og:url، sitemap.xml و خط Sitemap در robots.txt ساخته می‌شود.
@@ -13,7 +13,7 @@ export const ACCENT_LIGHT = "#0A5FD1";
 export const siteUrl = "";
 // (اختیاری) نام فایل تصویر پیش‌نمایش لینک داخل پوشه‌ی public، مثلاً "og.png" (ترجیحاً ۱۲۰۰×۶۳۰).
 // تا لوگو آماده نیست، خالی بماند.
-export const ogImage = "";
+export const ogImage = "og.png";
 
 // تعداد نمونه‌کارهایی که در بخش «نمونه‌کارها»ی صفحه‌ی اصلی نشان داده می‌شود؛ بقیه فقط در صفحه‌ی «همه‌ی نمونه‌کارها» هستند.
 export const homeWorkCount = 4;
@@ -22,7 +22,7 @@ export const homeWorkCount = 4;
 export const navHrefs = ["#services", "#work", "#process", "#team"];
 
 // آیکون هر خدمت، به ترتیب جدول services در src/database.js
-export const serviceIcons = services.map((s) => s.icon);
+export const serviceIcons = services.map((service) => service.icon);
 
 export const contact = {
   phone1: "0990 860 6685",

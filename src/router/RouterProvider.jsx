@@ -5,16 +5,16 @@ import { getLenis } from '../lenis.js';
 import { isAppPath, parsePath } from '../routes.js';
 
 function scrollToHash(hash) {
-  let el = null;
+  let element = null;
   try {
-    el = hash ? document.querySelector(decodeURIComponent(hash)) : null;
+    element = hash ? document.querySelector(decodeURIComponent(hash)) : null;
   } catch {
-    el = null;
+    element = null;
   }
   const lenis = getLenis();
-  if (el) {
-    if (lenis) lenis.scrollTo(el, { offset: -72 });
-    else el.scrollIntoView();
+  if (element) {
+    if (lenis) lenis.scrollTo(element, { offset: -72 });
+    else element.scrollIntoView();
     return;
   }
   if (lenis) lenis.scrollTo(0, { immediate: true });
@@ -30,10 +30,10 @@ export default function RouterProvider({ children }) {
   const [tick, setTick] = useState(0);
   const scrollRequest = useRef(null);
 
-  const navigate = useCallback((to, { replace = false, scroll = true } = {}) => {
-    const url = new URL(to, window.location.href);
+  const navigate = useCallback((destination, { replace = false, scroll = true } = {}) => {
+    const url = new URL(destination, window.location.href);
     if (url.origin !== window.location.origin) {
-      window.location.assign(to);
+      window.location.assign(destination);
       return;
     }
     // lang و dir پیش از رندر عوض می‌شوند تا انیمیشن‌هایی که هنگام ساخته‌شدن جهت را می‌خوانند، جهت درست را ببینند
@@ -41,12 +41,12 @@ export default function RouterProvider({ children }) {
     try {
       window.history[replace ? 'replaceState' : 'pushState']({}, '', url.pathname + url.search + url.hash);
     } catch {
-      window.location.assign(to);
+      window.location.assign(destination);
       return;
     }
     scrollRequest.current = scroll ? { hash: url.hash } : null;
     setPathname(url.pathname);
-    setTick((n) => n + 1);
+    setTick((count) => count + 1);
   }, []);
 
   // دکمه‌ی «بازگشت/جلو» مرورگر
@@ -61,20 +61,20 @@ export default function RouterProvider({ children }) {
 
   // کلیک روی لینک‌های داخل سایت
   useEffect(() => {
-    const onClick = (e) => {
-      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      const a = e.target.closest && e.target.closest('a[href]');
-      if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
-      const href = a.getAttribute('href');
+    const onClick = (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = event.target.closest && event.target.closest('a[href]');
+      if (!anchor || (anchor.target && anchor.target !== '_self') || anchor.hasAttribute('download')) return;
+      const href = anchor.getAttribute('href');
       if (!href || href.startsWith('#')) return; // لینک‌های «#…» را خود App با Lenis اسکرول می‌کند
       let url;
       try {
-        url = new URL(a.href);
+        url = new URL(anchor.href);
       } catch {
         return;
       }
       if (url.origin !== window.location.origin || !isAppPath(url.pathname)) return;
-      e.preventDefault();
+      event.preventDefault();
       navigate(url.pathname + url.search + url.hash);
     };
     document.addEventListener('click', onClick);
@@ -83,15 +83,15 @@ export default function RouterProvider({ children }) {
 
   // بعد از رفتن به صفحه‌ی تازه: بالای صفحه یا (اگر #بخش داشت) همان بخش
   useLayoutEffect(() => {
-    const req = scrollRequest.current;
-    if (!req) return;
+    const pendingScroll = scrollRequest.current;
+    if (!pendingScroll) return;
     scrollRequest.current = null;
-    if (!req.hash) {
+    if (!pendingScroll.hash) {
       scrollToHash('');
       return;
     }
-    const id = requestAnimationFrame(() => scrollToHash(req.hash));
-    return () => cancelAnimationFrame(id);
+    const frameId = requestAnimationFrame(() => scrollToHash(pendingScroll.hash));
+    return () => cancelAnimationFrame(frameId);
   }, [tick]);
 
   // canonical / hreflang (اگر هنگام بیلد ساخته شده باشند) با صفحه‌ی فعلی هماهنگ شوند

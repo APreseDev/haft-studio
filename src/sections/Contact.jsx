@@ -14,13 +14,14 @@ import {
 } from "../formUtils.js";
 
 // شماره‌ی فارسی را برای لینک تماس به فرمت بین‌المللی (+98...) تبدیل می‌کند
-const telHref = `tel:${toInternationalPhone(contact.phone)}`;
+const mainPhoneHref = `tel:${toInternationalPhone(contact.phone1)}`;
+const secondPhoneHref = `tel:${toInternationalPhone(contact.phone2)}`;
 const mailHref = `mailto:${contact.email}`;
 const instaHref = `https://instagram.com/${contact.instagram.replace(/^@/, "")}`;
 
 export default function Contact() {
-  const { t, dir } = useLang();
-  const c = t.contact;
+  const { translations, dir } = useLang();
+  const contactText = translations.contact;
   const root = useRef(null);
   const submit = useMagnetic(0.25);
   const [status, setStatus] = useState("");
@@ -30,8 +31,8 @@ export default function Contact() {
   const [invalid, setInvalid] = useState(""); // '' | 'name' | 'phone'
 
   useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add(
+    const mediaContext = gsap.matchMedia();
+    mediaContext.add(
       "(prefers-reduced-motion: no-preference)",
       () => {
         // اطلاعات تماس از سمت شروع و فرم از سمت پایان خواندن به هم می‌رسند؛ در موبایل (تک‌ستونه) هر دو از پایین
@@ -44,61 +45,61 @@ export default function Contact() {
       },
       root,
     );
-    return () => mm.revert();
+    return () => mediaContext.revert();
   }, []);
 
   // پیام از طریق src/api.js به ایمیل تیم فرستاده می‌شود.
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (event) => {
+    event.preventDefault();
     if (sendingRef.current) return;
-    const form = e.currentTarget; // قبل از await گرفته می‌شود
-    const f = new FormData(form);
-    const name = String(f.get("name") || "").trim();
-    const phone = cleanPhone(String(f.get("phone") || ""));
-    const service = String(f.get("service") || "");
-    const message = String(f.get("message") || "").trim();
+    const form = event.currentTarget; // قبل از await گرفته می‌شود
+    const formData = new FormData(form);
+    const name = String(formData.get("name") || "").trim();
+    const phone = cleanPhone(String(formData.get("phone") || ""));
+    const service = String(formData.get("service") || "");
+    const message = String(formData.get("message") || "").trim();
 
     const fail = (field, text) => {
       setInvalid(field);
       setStatusKind("error");
       setStatus(text);
-      const el = form.elements.namedItem(field);
-      if (el && el.focus) el.focus();
+      const fieldElement = form.elements.namedItem(field);
+      if (fieldElement && fieldElement.focus) fieldElement.focus();
     };
-    if (!name) return fail("name", c.errors.nameRequired);
-    if (!phone) return fail("phone", c.errors.phoneRequired);
-    if (!isValidPhone(phone)) return fail("phone", c.errors.phoneInvalid);
+    if (!name) return fail("name", contactText.errors.nameRequired);
+    if (!phone) return fail("phone", contactText.errors.phoneRequired);
+    if (!isValidPhone(phone)) return fail("phone", contactText.errors.phoneInvalid);
     setInvalid("");
 
     // فیلد مخفی ضد اسپم: انسان آن را نمی‌بیند و پر نمی‌کند
-    if (f.get("botcheck")) {
+    if (formData.get("botcheck")) {
       setStatusKind("");
-      setStatus(c.sent);
+      setStatus(contactText.sent);
       return;
     }
 
     if (typeof navigator !== "undefined" && navigator.onLine === false) {
       setStatusKind("error");
-      setStatus(c.errors.offline);
+      setStatus(contactText.errors.offline);
       return;
     }
 
     sendingRef.current = true;
     setSending(true);
     setStatusKind("");
-    setStatus(c.sending);
-    const r = await sendContact({ name, phone, service, message });
+    setStatus(contactText.sending);
+    const result = await sendContact({ name, phone, service, message });
     sendingRef.current = false;
     setSending(false);
-    if (r.ok) {
-      setStatus(c.sent);
+    if (result.ok) {
+      setStatus(contactText.sent);
       form.reset();
     } else {
       setStatusKind("error");
       setStatus(
-        r.reason === "network" || r.reason === "timeout"
-          ? c.errors.network
-          : c.errors.failed,
+        result.reason === "network" || result.reason === "timeout"
+          ? contactText.errors.network
+          : contactText.errors.failed,
       );
     }
   };
@@ -108,19 +109,19 @@ export default function Contact() {
       <div className="wrap">
         <div className="contact__box">
           <div className="contact__info">
-            <p className="eyebrow">{c.eyebrow}</p>
-            <h2>{c.title}</h2>
-            <p className="sub">{c.sub}</p>
+            <p className="eyebrow">{contactText.eyebrow}</p>
+            <h2>{contactText.title}</h2>
+            <p className="sub">{contactText.sub}</p>
             <ul className="contact__list">
               <li>
                 <Icon name="call" size={22} />
-                <a href={telHref}>
+                <a href={mainPhoneHref}>
                   <bdi>{contact.phone1}</bdi>
                 </a>
               </li>
               <li>
                 <Icon name="call" size={22} />
-                <a href={telHref}>
+                <a href={secondPhoneHref}>
                   <bdi>{contact.phone2}</bdi>
                 </a>
               </li>
@@ -147,7 +148,7 @@ export default function Contact() {
           >
             <div className="field">
               <label htmlFor="f-name">
-                {c.name}
+                {contactText.name}
                 <span className="req" aria-hidden="true">
                   {" "}
                   *
@@ -165,7 +166,7 @@ export default function Contact() {
             </div>
             <div className="field">
               <label htmlFor="f-phone">
-                {c.phone}
+                {contactText.phone}
                 <span className="req" aria-hidden="true">
                   {" "}
                   *
@@ -183,25 +184,23 @@ export default function Contact() {
               />
             </div>
             <div className="field">
-              <label htmlFor="f-service">{c.service}</label>
+              <label htmlFor="f-service">{contactText.service}</label>
               <select id="f-service" name="service">
                 {/* متن گزینه به زبان کاربر است، اما مقدار ارسالی همیشه فارسی می‌ماند تا ایمیل‌های تیم یکدست باشد */}
-                {c.serviceOptions.map((o, i) => {
-                  console.log(c);
-
+                {contactText.serviceOptions.map((optionLabel, optionIndex) => {
                   return (
                     <option
-                      key={o}
-                      value={locales.fa.dict.contact.serviceOptions[i]}
+                      key={optionLabel}
+                      value={locales.fa.dict.contact.serviceOptions[optionIndex]}
                     >
-                      {o}
+                      {optionLabel}
                     </option>
                   );
                 })}
               </select>
             </div>
             <div className="field">
-              <label htmlFor="f-msg">{c.message}</label>
+              <label htmlFor="f-msg">{contactText.message}</label>
               <textarea id="f-msg" name="message" rows="4" maxLength={2000} />
             </div>
             <input
@@ -218,7 +217,7 @@ export default function Contact() {
               className="btn btn--solid"
               disabled={sending}
             >
-              {sending ? c.sending : c.submit}
+              {sending ? contactText.sending : contactText.submit}
               <Icon name="arrow" size={20} />
             </button>
             <p

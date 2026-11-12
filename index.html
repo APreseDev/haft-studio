@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="dns-prefetch" href="https://api.web3forms.com" />
     <link rel="preload" as="image" href="/logo-mark.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>هفت استودیو | طراحی سایت، ویدیو و تبلیغات</title>
     <meta name="description" content="هفت استودیو: طراحی سایت، ویدیو و ریلز اینستاگرام، مدیریت محتوا و پیج، و طراحی کمپین تبلیغاتی." />
-    <meta name="theme-color" content="#04070d" />
+    <meta name="theme-color" content="#2b2d31" />
     <style>
       /* صفحه‌ی آغازین: لوگو چند ثانیه نشان داده می‌شود تا کاربر بارگذاری اولیه‌ی سایت را نبیند (کنترل رفتنش: src/splash.js) */
       #splash {
@@ -20,7 +21,7 @@
         align-items: center;
         justify-content: center;
         gap: 28px;
-        background: #04070d;
+        background: #2b2d31;
         transition: opacity 0.6s ease, visibility 0.6s;
         /* اگر جاوااسکریپت اجرا نشد، بعد از ۷ ثانیه خودش کنار می‌رود */
         animation: splash-failsafe 0.4s ease 7s forwards;
@@ -46,7 +47,7 @@
         animation: splash-bar 2.4s cubic-bezier(0.4, 0, 0.2, 1) both;
       }
       html[data-theme="light"] #splash {
-        background: #f3f6fb;
+        background: #d9dadc;
       }
       html[data-theme="light"] #splash img {
         filter: invert(1);
@@ -77,9 +78,9 @@
     <meta property="og:title" content="هفت استودیو | طراحی سایت، ویدیو و تبلیغات" />
     <meta property="og:description" content="هفت استودیو: طراحی سایت، ویدیو و ریلز اینستاگرام، مدیریت محتوا و پیج، و طراحی کمپین تبلیغاتی." />
     <meta name="twitter:card" content="summary" />
-    <!-- زبان (از آدرس: /en/ انگلیسی) و حالت (تیره/روشن) ذخیره‌شده را پیش از اولین نمایش می‌گذارد تا هنگام بارگذاری چشمک نزند.
-         اگر متن این اسکریپت را عوض کردید، هش آن را در public/_headers (script-src) هم به‌روز کنید: PROJECT_DOCUMENTATION.md -->
-    <script>(function(){try{var d=document.documentElement,p=location.pathname;var l=/\/en(\/|$)/.test(p)?'en':'fa';d.setAttribute('lang',l);d.setAttribute('dir',l==='en'?'ltr':'rtl');var t=window.localStorage.getItem('haft-theme');if(t==='light'||t==='dark'){d.setAttribute('data-theme',t);if(t==='light'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#f3f6fb');}}}catch(e){}})();</script>
+    <!-- زبان (از آدرس: /fa/ فارسی، بقیه انگلیسی) و حالت (تیره/روشن) ذخیره‌شده را پیش از اولین نمایش می‌گذارد تا هنگام بارگذاری چشمک نزند.
+         اگر متن این اسکریپت را عوض کردید، هش آن را در public/_headers (script-src) هم به‌روز کنید: PROJECT_OVERVIEW.fa.md -->
+    <script>(function(){try{var root=document.documentElement,pathname=location.pathname;var lang=/\/fa(\/|$)/.test(pathname)?'fa':'en';root.setAttribute('lang',lang);root.setAttribute('dir',lang==='fa'?'rtl':'ltr');var storedTheme=window.localStorage.getItem('haft-theme');if(storedTheme==='light'||storedTheme==='dark'){root.setAttribute('data-theme',storedTheme);if(storedTheme==='light'){var themeColorMeta=document.querySelector('meta[name="theme-color"]');if(themeColorMeta)themeColorMeta.setAttribute('content','#d9dadc');}}}catch(error){}})();</script>
   </head>
   <body>
     <noscript>

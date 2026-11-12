@@ -5,14 +5,14 @@ export const THEMES = ['dark', 'light'];
 export const DEFAULT_THEME = 'dark';
 export const THEME_STORAGE_KEY = 'haft-theme';
 // رنگ نوار مرورگر موبایل (باید با --bg هر حالت در styles.css یکی باشد)
-export const THEME_COLORS = { dark: '#04070d', light: '#f3f6fb' };
+export const THEME_COLORS = { dark: '#2b2d31', light: '#d9dadc' };
 
-export const isTheme = (x) => THEMES.includes(x);
+export const isTheme = (value) => THEMES.includes(value);
 
 export function readStoredTheme() {
   try {
-    const v = window.localStorage.getItem(THEME_STORAGE_KEY);
-    return isTheme(v) ? v : DEFAULT_THEME;
+    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return isTheme(storedTheme) ? storedTheme : DEFAULT_THEME;
   } catch {
     return DEFAULT_THEME;
   }
@@ -37,7 +37,7 @@ export const ThemeContext = createContext(null);
 
 /** theme ('dark' | 'light')، setTheme(name) و toggleTheme() */
 export function useTheme() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme باید داخل <ThemeProvider> استفاده شود.');
-  return ctx;
+  const context = useContext(ThemeContext);
+  if (!context) throw new Error('useTheme باید داخل <ThemeProvider> استفاده شود.');
+  return context;
 }

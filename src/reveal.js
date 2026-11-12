@@ -1,34 +1,36 @@
 import { gsap } from './gsap.js';
 
 // فاصله‌ی شروع حرکت: در موبایل کمتر تا از لبه‌ی صفحه خیلی دور نشود.
-const dist = () => (window.innerWidth < 769 ? 32 : 90);
-const at = (trigger, start = 'top 82%') => ({ trigger, start });
+const travelDistance = () => (window.innerWidth < 769 ? 32 : 90);
+// دستگاه ضعیف یا صفحه‌ی کوچک: چرخش سه‌بعدی کارت‌ها حذف می‌شود (فقط جابه‌جایی و محو شدن)
+const simple = () => window.innerWidth < 769 || (navigator.hardwareConcurrency || 8) <= 4;
+const scrollTriggerFor = (trigger, start = 'top 82%') => ({ trigger, start });
 
 /** جهت صفحه: ۱ برای راست‌به‌چپ (فارسی) و ۱- برای چپ‌به‌راست (انگلیسی). از attribute صفحه خوانده می‌شود. */
 export const dirSign = () => (document.documentElement.getAttribute('dir') === 'ltr' ? -1 : 1);
 
 /** از سمت شروع خواندن وارد می‌شود (در فارسی از راست، در انگلیسی از چپ). */
 export const fromStart = (targets, trigger, vars = {}) =>
-  gsap.from(targets, { x: dirSign() * dist(), opacity: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: at(trigger), ...vars });
+  gsap.from(targets, { x: dirSign() * travelDistance(), opacity: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: scrollTriggerFor(trigger), ...vars });
 
 /** از سمت پایان خواندن وارد می‌شود (در فارسی از چپ، در انگلیسی از راست). */
 export const fromEnd = (targets, trigger, vars = {}) =>
-  gsap.from(targets, { x: -dirSign() * dist(), opacity: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: at(trigger), ...vars });
+  gsap.from(targets, { x: -dirSign() * travelDistance(), opacity: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: scrollTriggerFor(trigger), ...vars });
 
 /** از پایین بالا می‌آید. */
 export const fromBottom = (targets, trigger, vars = {}) =>
-  gsap.from(targets, { y: 60, opacity: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: at(trigger), ...vars });
+  gsap.from(targets, { y: 60, opacity: 0, duration: 0.8, ease: 'power3.out', scrollTrigger: scrollTriggerFor(trigger), ...vars });
 
 /** یکی در میان از راست و چپ، با کمی چرخش سه‌بعدی. */
 export const alternateSides = (targets, trigger, vars = {}) =>
   gsap.from(targets, {
-    x: (i) => (i % 2 === 0 ? 1 : -1) * dist(),
-    rotationY: (i) => (i % 2 === 0 ? -12 : 12),
-    transformPerspective: 900,
+    x: (index) => (index % 2 === 0 ? 1 : -1) * travelDistance(),
+    rotationY: (index) => (simple() ? 0 : index % 2 === 0 ? -12 : 12),
+    transformPerspective: simple() ? 0 : 900,
     opacity: 0,
     duration: 0.9,
     ease: 'power3.out',
-    scrollTrigger: at(trigger),
+    scrollTrigger: scrollTriggerFor(trigger),
     ...vars,
   });
 
@@ -40,19 +42,20 @@ export const wipeUp = (targets, trigger, vars = {}) =>
     opacity: 0,
     duration: 0.9,
     ease: 'power3.out',
-    scrollTrigger: at(trigger),
+    scrollTrigger: scrollTriggerFor(trigger),
     ...vars,
   });
 
 /** مثل ورق‌زدن کارت: از پهلو می‌چرخد و بزرگ می‌شود. */
 export const flipIn = (targets, trigger, vars = {}) =>
   gsap.from(targets, {
-    rotationY: (i) => (i % 2 === 0 ? -50 : 50),
+    rotationY: (index) => (simple() ? 0 : index % 2 === 0 ? -50 : 50),
+    y: simple() ? 40 : 0,
     scale: 0.9,
-    transformPerspective: 800,
+    transformPerspective: simple() ? 0 : 800,
     opacity: 0,
     duration: 0.9,
     ease: 'power3.out',
-    scrollTrigger: at(trigger),
+    scrollTrigger: scrollTriggerFor(trigger),
     ...vars,
   });

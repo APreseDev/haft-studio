@@ -24,7 +24,7 @@ const Scene = lazy(() => import('./components/Scene.jsx'));
 const sceneFallback = <div className="scene scene--fallback" aria-hidden="true" />;
 
 export default function App() {
-  const { lang, dir, t } = useLang();
+  const { lang, dir, translations } = useLang();
   const { route } = useRouter();
   // با عوض شدن زبان یا صفحه، محتوای اصلی دوباره ساخته می‌شود (انیمیشن‌ها پاک و از نو ساخته می‌شوند)
   const pageKey = `${lang}:${route.page}:${route.slug}`;
@@ -37,11 +37,11 @@ export default function App() {
     if (conn && conn.saveData) return;
     const start = () => setSceneReady(true);
     if ('requestIdleCallback' in window) {
-      const id = window.requestIdleCallback(start, { timeout: 1500 });
-      return () => window.cancelIdleCallback(id);
+      const idleCallbackId = window.requestIdleCallback(start, { timeout: 1500 });
+      return () => window.cancelIdleCallback(idleCallbackId);
     }
-    const t = setTimeout(start, 400);
-    return () => clearTimeout(t);
+    const timeoutId = setTimeout(start, 400);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function App() {
       // اسکرول نرم، هماهنگ با ScrollTrigger
       const lenis = new Lenis({
         duration: 0.9, // کوتاه‌تر = اسکرول سریع‌تر جواب می‌دهد و کمتر «شناور» حس می‌شود
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        easing: (progress) => Math.min(1, 1.001 - Math.pow(2, -10 * progress)),
       });
       setLenis(lenis);
       lenis.on('scroll', ScrollTrigger.update);
@@ -65,17 +65,17 @@ export default function App() {
       gsap.ticker.lagSmoothing(0);
 
       // لینک‌های داخل صفحه با Lenis اسکرول شوند
-      const onClick = (e) => {
-        const a = e.target.closest && e.target.closest('a[href^="#"]');
-        if (!a) return;
-        const id = a.getAttribute('href');
-        if (!id || id.length < 2) {
-          if (id === '#') e.preventDefault();
+      const onClick = (event) => {
+        const anchor = event.target.closest && event.target.closest('a[href^="#"]');
+        if (!anchor) return;
+        const selector = anchor.getAttribute('href');
+        if (!selector || selector.length < 2) {
+          if (selector === '#') event.preventDefault();
           return;
         }
-        const target = document.querySelector(id);
+        const target = document.querySelector(selector);
         if (!target) return;
-        e.preventDefault();
+        event.preventDefault();
         lenis.scrollTo(target, { offset: -72 });
       };
       document.addEventListener('click', onClick);
@@ -126,15 +126,15 @@ export default function App() {
 
   // با عوض شدن زبان یا صفحه، طول متن‌ها و ارتفاع صفحه عوض می‌شود؛ جای شروع انیمیشن‌ها دوباره محاسبه شود
   useEffect(() => {
-    const id = requestAnimationFrame(() => ScrollTrigger.refresh());
-    return () => cancelAnimationFrame(id);
+    const frameId = requestAnimationFrame(() => ScrollTrigger.refresh());
+    return () => cancelAnimationFrame(frameId);
   }, [pageKey]);
 
   return (
     <>
       <StructuredData />
       <a className="skip-link" href="#main">
-        {t.ui.skip}
+        {translations.ui.skip}
       </a>
       {sceneReady ? <Suspense fallback={sceneFallback}><Scene /></Suspense> : sceneFallback}
       <Cursor />

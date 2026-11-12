@@ -1,22 +1,22 @@
-// آدرس‌های سایت. هر زبان زیرمسیر خودش را دارد (فارسی روی خود آدرس پایه، بقیه با پیشوند کد زبان):
-//   «/»  «/works/»  «/works/<slug>/»        فارسی
-//   «/en/»  «/en/works/»  «/en/works/<slug>/»   انگلیسی
+// آدرس‌های سایت. زبان پیش‌فرض (انگلیسی) روی خود آدرس پایه است و بقیه با پیشوند کد زبان:
+//   «/»  «/works/»  «/works/<slug>/»        انگلیسی
+//   «/fa/»  «/fa/works/»  «/fa/works/<slug>/»   فارسی
 import { DEFAULT_LANG, isLang } from './i18n/locales.js';
 
 // آدرس پایه‌ی سایت (در Vite از VITE_BASE می‌آید؛ پیش‌فرض "/")
 const BASE = import.meta.env.BASE_URL || '/';
 
-const safeDecode = (s) => {
+const safeDecode = (encoded) => {
   try {
-    return decodeURIComponent(s);
+    return decodeURIComponent(encoded);
   } catch {
-    return s;
+    return encoded;
   }
 };
 
 const segmentsOf = (pathname) => {
   const rest = pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname.replace(/^\/+/, '');
-  return rest.split('/').filter((s) => s && s !== 'index.html');
+  return rest.split('/').filter((segment) => segment && segment !== 'index.html');
 };
 
 /** آدرس را به { lang, page: 'home' | 'works' | 'project', slug } تبدیل می‌کند. آدرس ناشناخته به صفحه‌ی اصلی می‌رود. */

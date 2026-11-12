@@ -59,7 +59,7 @@ export const projects = [
       fa: ["طراحی سایت", "طراحی رابط گرافیکی", "انیمیشن شخصی‌سازی‌شده"],
       en: ["Web design", "Graphic interface design", "Custom animation"],
     },
-    image: "products/dayan-web/dayan.jfif",
+    image: "products/dayan-web/dayan.webp",
     alt: {
       fa: "صفحه‌ی اصلی سایت فروشگاهی تاسیسات دایان",
       en: "Home page of the Tasisat Dayan online store",
@@ -156,12 +156,12 @@ export const team = [
   {
     name: { fa: "امیرمحسن دهقان", en: "Amirmohsen Dehghan" },
     role: { fa: "مدیر و طراح سایت", en: "Executive & Web Developer" },
-    photo: "./team/mohsen.jfif",
+    photo: "team/mohsen.webp",
   },
   {
     name: { fa: "متین دهقان", en: "Matin dehghan" },
     role: { fa: "مدیر اجرایی و تدوین‌گر", en: "Executive & Editor" },
-    photo: "./team/matin.jfif",
+    photo: "team/matin.webp",
   },
   {
     name: { fa: "امیرحسین دشتی", en: "Amirhossein Dashti" },
@@ -169,7 +169,7 @@ export const team = [
       fa: "روابط‌عمومی و تولیدمحتوا",
       en: "Public Relations & Content Manager",
     },
-    photo: "./team/dashti.jfif",
+    photo: "team/dashti.webp",
   },
   {
     name: { fa: "سانیار کامه", en: "Saniar Kame" },

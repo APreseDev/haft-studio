@@ -8,15 +8,15 @@ import { homeWorkCount } from '../data.js';
 import { worksPath } from '../routes.js';
 
 export default function Work() {
-  const { lang, t } = useLang();
+  const { lang, translations } = useLang();
   const projects = useProjects();
   // در صفحه‌ی اصلی فقط چند نمونه‌ی اول؛ بقیه در صفحه‌ی «همه‌ی نمونه‌کارها»
   const visibleProjects = projects.slice(0, homeWorkCount);
   const root = useRef(null);
 
   useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add(
+    const mediaContext = gsap.matchMedia();
+    mediaContext.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
         // عنوان از سمت پایان خواندن، کارت‌ها با پرده‌ی بالا‌رونده
@@ -24,40 +24,40 @@ export default function Work() {
         if (!root.current || !root.current.querySelector('.work-grid .work')) return; // هنوز نمونه‌کاری نیست
         wipeUp('.work', '.work-grid', { stagger: 0.16 });
         // عدد ۷ بزرگ پشت هر کارت کمی آرام‌تر از کارت حرکت می‌کند
-        gsap.utils.toArray('.work__ghost').forEach((g) => {
-          gsap.to(g, {
+        gsap.utils.toArray('.work__ghost').forEach((ghost) => {
+          gsap.to(ghost, {
             yPercent: -30,
             ease: 'none',
-            scrollTrigger: { trigger: g.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
+            scrollTrigger: { trigger: ghost.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
           });
         });
       },
       root
     );
-    return () => mm.revert();
+    return () => mediaContext.revert();
   }, []);
 
   return (
     <section id="work" className="section work-section" ref={root}>
       <div className="wrap">
         <div className="head">
-          <p className="eyebrow">{t.work.eyebrow}</p>
-          <h2>{t.work.title}</h2>
-          <p className="sub">{t.work.sub}</p>
+          <p className="eyebrow">{translations.work.eyebrow}</p>
+          <h2>{translations.work.title}</h2>
+          <p className="sub">{translations.work.sub}</p>
         </div>
         {visibleProjects.length > 0 ? (
           <div className="grid work-grid">
-            {visibleProjects.map((p, i) => (
-              <ProjectCard key={p.slug} p={p} wide={i === 0 || i === 3} />
+            {visibleProjects.map((project, index) => (
+              <ProjectCard key={project.slug} project={project} wide={index === 0 || index === 3} />
             ))}
           </div>
         ) : (
-          <p className="card work__empty">{t.work.empty}</p>
+          <p className="card work__empty">{translations.work.empty}</p>
         )}
         {projects.length > 0 && (
           <div className="work__more">
             <a className="btn btn--ghost" href={worksPath(lang)}>
-              {t.work.viewAll}
+              {translations.work.viewAll}
             </a>
           </div>
         )}

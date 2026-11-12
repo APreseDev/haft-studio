@@ -6,30 +6,30 @@ import { serviceIcons } from '../data.js';
 import { useLang } from '../i18n/context.js';
 import { useTilt } from '../hooks.js';
 
-function Card({ s, i }) {
+function Card({ service, index }) {
   const { num } = useLang();
   const tilt = useTilt(8);
   return (
     <article ref={tilt} className="card card--glow service">
       <div className="service__top">
         <span className="service__icon">
-          <Icon name={serviceIcons[i]} />
+          <Icon name={serviceIcons[index]} />
         </span>
-        <span className="service__n">{num(String(i + 1).padStart(2, '0'))}</span>
+        <span className="service__n">{num(String(index + 1).padStart(2, '0'))}</span>
       </div>
-      <h3>{s.title}</h3>
-      <p>{s.text}</p>
+      <h3>{service.title}</h3>
+      <p>{service.text}</p>
     </article>
   );
 }
 
 export default function Services() {
-  const { t } = useLang();
+  const { translations } = useLang();
   const root = useRef(null);
 
   useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add(
+    const mediaContext = gsap.matchMedia();
+    mediaContext.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
         // عنوان از سمت شروع خواندن، کارت‌ها یکی در میان از دو طرف
@@ -38,19 +38,19 @@ export default function Services() {
       },
       root
     );
-    return () => mm.revert();
+    return () => mediaContext.revert();
   }, []);
 
   return (
     <section id="services" className="section services" ref={root}>
       <div className="wrap">
         <div className="head">
-          <p className="eyebrow">{t.services.eyebrow}</p>
-          <h2>{t.services.title}</h2>
+          <p className="eyebrow">{translations.services.eyebrow}</p>
+          <h2>{translations.services.title}</h2>
         </div>
         <div className="grid grid--4">
-          {t.services.items.map((s, i) => (
-            <Card key={s.title} s={s} i={i} />
+          {translations.services.items.map((service, index) => (
+            <Card key={service.title} service={service} index={index} />
           ))}
         </div>
       </div>

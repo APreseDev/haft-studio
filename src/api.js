@@ -11,10 +11,10 @@ const ENDPOINT = 'https://api.web3forms.com/submit';
  *   { ok: false, reason: 'rejected' | 'rate_limited' | 'network' | 'timeout', status?, detail? }
  */
 export async function sendContact({ name, phone, service, message }, { timeoutMs = 15000 } = {}) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  const abortController = new AbortController();
+  const timer = setTimeout(() => abortController.abort(), timeoutMs);
   try {
-    const res = await fetch(ENDPOINT, {
+    const response = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
@@ -26,18 +26,18 @@ export async function sendContact({ name, phone, service, message }, { timeoutMs
         service,
         message,
       }),
-      signal: ctrl.signal,
+      signal: abortController.signal,
     });
     let data = null;
     try {
-      data = await res.json();
+      data = await response.json();
     } catch {
       /* پاسخ JSON نبود */
     }
-    if (res.ok && data && data.success) return { ok: true };
-    return { ok: false, reason: res.status === 429 ? 'rate_limited' : 'rejected', status: res.status, detail: data && data.message };
-  } catch (err) {
-    return { ok: false, reason: err && err.name === 'AbortError' ? 'timeout' : 'network' };
+    if (response.ok && data && data.success) return { ok: true };
+    return { ok: false, reason: response.status === 429 ? 'rate_limited' : 'rejected', status: response.status, detail: data && data.message };
+  } catch (error) {
+    return { ok: false, reason: error && error.name === 'AbortError' ? 'timeout' : 'network' };
   } finally {
     clearTimeout(timer);
   }

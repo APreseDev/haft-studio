@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { LOGO_PIECES, LOGO_H } from './logoShapes.js';
 
-const rand = (a, b) => a + Math.random() * (b - a);
+const rand = (min, max) => min + Math.random() * (max - min);
 
 /**
  * صحنه‌ی سه‌بعدی پس‌زمینه: لوگوی فلزی سه‌بعدی (به‌جای ۷)، حلقه‌ها، شکل‌های شناور و ذرات.
@@ -10,7 +10,7 @@ const rand = (a, b) => a + Math.random() * (b - a);
  */
 // تنظیمات ظاهر. اگر عدد ۷ هنوز زیادی روشن (سفید) یا زیادی تیره بود، فقط این عددها را عوض کنید.
 const LOOK = {
-  sevenColor: '#3B82D6', // کرمی/شامپاینی تیره‌تر، تا زیر نور به سفید نرسد
+  sevenColor: '#E9B02A', // کرمی/شامپاینی تیره‌تر، تا زیر نور به سفید نرسد
   exposure: 0.95, // روشنایی کلی صحنه
   envIntensity: 0.35, // شدت بازتاب محیط روی فلز
   keyLight: 0.8, // نور اصلی
@@ -25,10 +25,11 @@ const LOOK = {
   // --- تنظیمات سرعت ---
   maxPixelRatio: 1, // سقف وضوح رندر؛ ۱ یعنی بدون وضوح اضافه روی نمایشگرهای رتینا (حدود ۳۶٪ پیکسل کمتر از ۱٫۲۵)
   bloom: false, // درخشش (چند پاس تمام‌صفحه). ظاهر را خیلی کم عوض می‌کند ولی سنگین‌ترین بخش بود؛ برای روشن‌کردن true بگذارید
-  floaters: 10, // تعداد شکل‌های شناور (نسخه‌ی سبک ۶)
-  particles: 800, // تعداد ذرات (نسخه‌ی سبک ۴۰۰)
+  floaters: 6, // تعداد شکل‌های شناور (نسخه‌ی سبک ۴)
+  particles: 400, // تعداد ذرات (نسخه‌ی سبک ۲۰۰)
+  shell: false, // قاب سیمی دور لوگو؛ تعداد رسم‌ها را دو برابر می‌کند، پس پیش‌فرض خاموش است
   fps: 60, // سقف فریم در ثانیه وقتی عدد ۷ دیده می‌شود
-  idleFps: 30, // سقف فریم بعد از هیرو، وقتی عدد ۷ کاملاً محو شده و فقط ذرات و شکل‌های کند حرکت می‌کنند
+  idleFps: 20, // سقف فریم بعد از هیرو، وقتی عدد ۷ کاملاً محو شده و فقط ذرات و شکل‌های کند حرکت می‌کنند
 };
 
 /**
@@ -37,7 +38,7 @@ const LOOK = {
  */
 export function createScene(
   canvas,
-  { accent = '#1A8CFF', accentOnLight = '#0A5FD1', lite = false, reduced = false, theme: initialTheme = 'dark' } = {}
+  { accent = '#FFC93C', accentOnLight = '#C98F00', lite = false, reduced = false, theme: initialTheme = 'dark' } = {}
 ) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -47,12 +48,12 @@ export function createScene(
     powerPreference: lite ? 'default' : 'high-performance', // پس‌زمینه‌ی تزئینی روی گوشی/دستگاه ضعیف باتری را فشار ندهد
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, LOOK.maxPixelRatio)); // سقف کمتر = رندر خیلی سبک‌تر
-  renderer.setClearColor(0x04070d, 1);
+  renderer.setClearColor(0x2b2d31, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = LOOK.exposure;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x04070d, 0.03);
+  scene.fog = new THREE.FogExp2(0x2b2d31, 0.03);
 
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 120);
   camera.position.set(0, 0, 14);
@@ -70,14 +71,14 @@ export function createScene(
   const accentColor = new THREE.Color(accent);
 
   // نورها
-  const key = new THREE.DirectionalLight(0xd6e8ff, LOOK.keyLight);
-  key.position.set(5, 6, 8);
-  scene.add(key);
+  const keyLight = new THREE.DirectionalLight(0xfff4d6, LOOK.keyLight);
+  keyLight.position.set(5, 6, 8);
+  scene.add(keyLight);
   const accentLight = new THREE.PointLight(accentColor, LOOK.accentLight, 40, 2);
   accentLight.position.set(-6, 2, 5);
   scene.add(accentLight);
   // نور کناری کهربایی (به‌جای نور فیروزه‌ای قبلی) تا همه‌چیز در تن کرمی بماند
-  const coolLight = new THREE.PointLight(0x2f7fff, LOOK.warmLight, 40, 2);
+  const coolLight = new THREE.PointLight(0xffb300, LOOK.warmLight, 40, 2);
   coolLight.position.set(7, -3, 4);
   scene.add(coolLight);
 
@@ -87,42 +88,40 @@ export function createScene(
   // لوگوی سه‌بعدی هفت استودیو (جایگزین عدد ۷ قبلی)
   // هر تکه‌ی لوگو جدا اکسترود می‌شود تا فاصله‌ی باریک بین تکه‌ها بماند؛ عمق تکه‌ها کمی فرق دارد تا حس لایه‌لایه بدهد.
   const LOGO_SCALE = 5.2 / LOGO_H; // ارتفاع لوگو در صحنه ≈ ۵٫۲ واحد (هم‌اندازه‌ی ۷ قبلی)
-  const sevenMat = new THREE.MeshPhysicalMaterial({
+  const sevenMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color(LOOK.sevenColor),
     metalness: 0.7,
     roughness: 0.32,
-    clearcoat: 0.25,
-    clearcoatRoughness: 0.3,
     transparent: true, // از ابتدا شفاف‌پذیر است تا هنگام اولین محوشدن، شیدر دوباره کامپایل نشود و نپرد
   });
   const shellMat = new THREE.MeshBasicMaterial({ color: accentColor, wireframe: true, transparent: true, opacity: 0.1 });
   const seven = new THREE.Group(); // نام قدیمی حفظ شده؛ حالا گروه تکه‌های لوگوست
   const shell = new THREE.Group();
   shell.scale.setScalar(1.05);
-  LOGO_PIECES.forEach((pts, i) => {
-    const shape = new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2(x * LOGO_SCALE, y * LOGO_SCALE)));
-    const depth = 0.9 + (i % 3) * 0.28;
-    const geo = new THREE.ExtrudeGeometry(shape, {
+  LOGO_PIECES.forEach((points, pieceIndex) => {
+    const shape = new THREE.Shape(points.map(([pointX, pointY]) => new THREE.Vector2(pointX * LOGO_SCALE, pointY * LOGO_SCALE)));
+    const depth = 0.9 + (pieceIndex % 3) * 0.28;
+    const geometry = new THREE.ExtrudeGeometry(shape, {
       depth,
       bevelEnabled: true,
       bevelThickness: 0.06,
       bevelSize: 0.025,
       bevelOffset: -0.025,
-      bevelSegments: lite ? 1 : 3,
+      bevelSegments: lite ? 1 : 2,
     });
-    geo.translate(0, 0, -depth / 2);
-    seven.add(new THREE.Mesh(geo, sevenMat));
-    shell.add(new THREE.Mesh(geo, shellMat));
+    geometry.translate(0, 0, -depth / 2);
+    seven.add(new THREE.Mesh(geometry, sevenMat));
+    if (LOOK.shell) shell.add(new THREE.Mesh(geometry, shellMat));
   });
   const hero = new THREE.Group();
   hero.add(seven, shell);
 
   // حلقه‌های مداری
   const ringMat = new THREE.MeshBasicMaterial({ color: accentColor, transparent: true, opacity: 0.4 });
-  const ring1 = new THREE.Mesh(new THREE.TorusGeometry(5.4, 0.018, 8, lite ? 80 : 180), ringMat);
+  const ring1 = new THREE.Mesh(new THREE.TorusGeometry(5.4, 0.018, 8, lite ? 64 : 96), ringMat);
   ring1.rotation.x = Math.PI / 2.6;
   const ring2 = new THREE.Mesh(
-    new THREE.TorusGeometry(6.4, 0.012, 8, lite ? 80 : 180),
+    new THREE.TorusGeometry(6.4, 0.012, 8, lite ? 64 : 96),
     new THREE.MeshBasicMaterial({ color: accentColor, transparent: true, opacity: 0.28 })
   );
   ring2.rotation.set(Math.PI / 3, 0.6, 0);
@@ -132,38 +131,38 @@ export function createScene(
   // شکل‌های شناور
   const floaters = new THREE.Group();
   scene.add(floaters);
-  const geos = [
+  const floaterGeometries = [
     new THREE.IcosahedronGeometry(0.42, 0),
     new THREE.OctahedronGeometry(0.5),
     new THREE.TorusGeometry(0.34, 0.12, 12, 28),
     new THREE.BoxGeometry(0.6, 0.6, 0.6),
   ];
-  const solid = new THREE.MeshStandardMaterial({ color: 0x161b24, metalness: 0.9, roughness: 0.28 });
+  const solid = new THREE.MeshStandardMaterial({ color: 0x1b1c1f, metalness: 0.9, roughness: 0.28 });
   const wire = new THREE.MeshBasicMaterial({ color: accentColor, wireframe: true, transparent: true, opacity: 0.45 });
   const floaterData = [];
-  const count = lite ? 6 : LOOK.floaters;
-  for (let i = 0; i < count; i++) {
-    const m = new THREE.Mesh(geos[i % geos.length], i % 3 === 0 ? wire : solid);
-    const ang = rand(0, Math.PI * 2);
-    const rad = rand(6, 17);
-    m.position.set(Math.cos(ang) * rad, rand(-9, 9), rand(-12, 3));
-    m.scale.setScalar(rand(0.7, 1.9));
-    floaters.add(m);
-    floaterData.push({ m, sx: rand(-0.4, 0.4), sy: rand(-0.4, 0.4), ph: rand(0, 6.28), y0: m.position.y });
+  const count = lite ? 4 : LOOK.floaters;
+  for (let floaterIndex = 0; floaterIndex < count; floaterIndex++) {
+    const mesh = new THREE.Mesh(floaterGeometries[floaterIndex % floaterGeometries.length], floaterIndex % 3 === 0 ? wire : solid);
+    const angle = rand(0, Math.PI * 2);
+    const radius = rand(6, 17);
+    mesh.position.set(Math.cos(angle) * radius, rand(-9, 9), rand(-12, 3));
+    mesh.scale.setScalar(rand(0.7, 1.9));
+    floaters.add(mesh);
+    floaterData.push({ mesh, spinX: rand(-0.4, 0.4), spinY: rand(-0.4, 0.4), phase: rand(0, 6.28), startY: mesh.position.y });
   }
 
   // ذرات
-  const pCount = lite ? 400 : LOOK.particles;
-  const pos = new Float32Array(pCount * 3);
-  for (let i = 0; i < pCount; i++) {
-    pos[i * 3] = rand(-26, 26);
-    pos[i * 3 + 1] = rand(-20, 20);
-    pos[i * 3 + 2] = rand(-26, 8);
+  const particleCount = lite ? 200 : LOOK.particles;
+  const particlePositions = new Float32Array(particleCount * 3);
+  for (let particleIndex = 0; particleIndex < particleCount; particleIndex++) {
+    particlePositions[particleIndex * 3] = rand(-26, 26);
+    particlePositions[particleIndex * 3 + 1] = rand(-20, 20);
+    particlePositions[particleIndex * 3 + 2] = rand(-26, 8);
   }
-  const pGeo = new THREE.BufferGeometry();
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const particleGeometry = new THREE.BufferGeometry();
+  particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
   const particles = new THREE.Points(
-    pGeo,
+    particleGeometry,
     new THREE.PointsMaterial({
       color: accentColor,
       size: 0.06,
@@ -190,31 +189,33 @@ export function createScene(
       import('three/examples/jsm/postprocessing/UnrealBloomPass.js'),
       import('three/examples/jsm/postprocessing/OutputPass.js'),
     ])
-      .then(([ec, rp, ub, op]) => {
+      .then(([effectComposerModule, renderPassModule, unrealBloomPassModule, outputPassModule]) => {
         if (disposed || bloomOff) return;
-        const c = new ec.EffectComposer(renderer);
-        c.addPass(new rp.RenderPass(scene, camera));
-        c.addPass(new ub.UnrealBloomPass(new THREE.Vector2(1, 1), LOOK.bloomStrength, 0.6, LOOK.bloomThreshold));
-        c.addPass(new op.OutputPass());
-        if (lastW && lastH) c.setSize(lastW, lastH);
-        composer = c;
+        const effectComposer = new effectComposerModule.EffectComposer(renderer);
+        effectComposer.addPass(new renderPassModule.RenderPass(scene, camera));
+        effectComposer.addPass(new unrealBloomPassModule.UnrealBloomPass(new THREE.Vector2(1, 1), LOOK.bloomStrength, 0.6, LOOK.bloomThreshold));
+        effectComposer.addPass(new outputPassModule.OutputPass());
+        if (lastWidth && lastHeight) effectComposer.setSize(lastWidth, lastHeight);
+        composer = effectComposer;
         if (reduced) frame();
       })
-      .catch((err) => console.warn('Bloom unavailable', err));
+      .catch(() => {
+        // بسته‌ی درخشش دانلود نشد؛ صحنه بدون درخشش ادامه می‌دهد
+      });
   }
 
   // حالت تیره/روشن: رنگ زمینه و مه، رنگ خط‌ها و ذرات، و ترکیب ذرات (روی زمینه‌ی روشن، additive دیده نمی‌شود)
   const PALETTE = {
-    dark: { bg: 0x04070d, accent, blending: THREE.AdditiveBlending, particleOpacity: LOOK.particleOpacity },
-    light: { bg: 0xf3f6fb, accent: accentOnLight, blending: THREE.NormalBlending, particleOpacity: 0.55 },
+    dark: { bg: 0x2b2d31, accent, blending: THREE.AdditiveBlending, particleOpacity: LOOK.particleOpacity },
+    light: { bg: 0xd9dadc, accent: accentOnLight, blending: THREE.NormalBlending, particleOpacity: 0.55 },
   };
   function applyTheme(name) {
-    const p = PALETTE[name] || PALETTE.dark;
-    renderer.setClearColor(p.bg, 1);
-    scene.fog.color.set(p.bg);
-    [shellMat, ringMat, ring2.material, wire, particles.material].forEach((m) => m.color.set(p.accent));
-    particles.material.blending = p.blending;
-    particles.material.opacity = p.particleOpacity;
+    const colors = PALETTE[name] || PALETTE.dark;
+    renderer.setClearColor(colors.bg, 1);
+    scene.fog.color.set(colors.bg);
+    [shellMat, ringMat, ring2.material, wire, particles.material].forEach((material) => material.color.set(colors.accent));
+    particles.material.blending = colors.blending;
+    particles.material.opacity = colors.particleOpacity;
     particles.material.needsUpdate = true;
     if (name === 'light') {
       // درخشش (bloom) روی زمینه‌ی روشن کل صفحه را می‌درخشاند؛ در حالت روشن خاموش است (و بعد از آن دوباره ساخته نمی‌شود)
@@ -234,17 +235,17 @@ export function createScene(
   let baseZ = 14;
   // اندازه از خود بوم گرفته می‌شود (ارتفاعش با CSS ثابت است). با بالا و پایین رفتن نوار آدرس موبایل
   // اندازه عوض نمی‌شود، پس صحنه دوباره ساخته نمی‌شود و نمی‌پرد.
-  let lastW = 0;
-  let lastH = 0;
+  let lastWidth = 0;
+  let lastHeight = 0;
   function resize() {
-    const w = canvas.clientWidth || window.innerWidth;
-    const h = canvas.clientHeight || window.innerHeight;
-    if (w === lastW && h === lastH) return;
-    lastW = w;
-    lastH = h;
-    renderer.setSize(w, h, false);
-    if (composer) composer.setSize(w, h);
-    camera.aspect = w / h;
+    const width = canvas.clientWidth || window.innerWidth;
+    const height = canvas.clientHeight || window.innerHeight;
+    if (width === lastWidth && height === lastHeight) return;
+    lastWidth = width;
+    lastHeight = height;
+    renderer.setSize(width, height, false);
+    if (composer) composer.setSize(width, height);
+    camera.aspect = width / height;
     const wide = camera.aspect > 1.1;
     // فارسی (راست‌به‌چپ): متن سمت راست است و ۷ سمت چپ. انگلیسی (چپ‌به‌راست): متن سمت چپ است و ۷ باید سمت راست باشد.
     const side = document.documentElement.getAttribute('dir') === 'ltr' ? 1 : -1;
@@ -273,60 +274,60 @@ export function createScene(
   let shellOff = false; // وقتی کنترل‌کننده‌ی کیفیت قاب سیمی را خاموش کرد، دوباره روشن نشود
   let lastFade = -1;
   const sevenShellOpacity = shellMat.opacity; // ۰٫۱ ؛ شفافیت پایه‌ی قاب سیمی
-  function applyFade(y) {
-    const k = Math.min(1, Math.max(0, (y - fadeFrom) / (fadeTo - fadeFrom)));
-    const vis = 1 - k * k * (3 - 2 * k); // smoothstep
-    if (vis === lastFade) return; // بدون تغییر: کاری نکن
-    lastFade = vis;
-    sevenMat.opacity = vis;
-    shellMat.opacity = sevenShellOpacity * vis;
-    seven.visible = vis > 0.002; // وقتی کاملاً محو است اصلاً رسم نشود
-    shell.visible = !shellOff && vis > 0.002;
+  function applyFade(scrollPosition) {
+    const fadeProgress = Math.min(1, Math.max(0, (scrollPosition - fadeFrom) / (fadeTo - fadeFrom)));
+    const visibility = 1 - fadeProgress * fadeProgress * (3 - 2 * fadeProgress); // smoothstep
+    if (visibility === lastFade) return; // بدون تغییر: کاری نکن
+    lastFade = visibility;
+    sevenMat.opacity = visibility;
+    shellMat.opacity = sevenShellOpacity * visibility;
+    seven.visible = visibility > 0.002; // وقتی کاملاً محو است اصلاً رسم نشود
+    shell.visible = !shellOff && visibility > 0.002;
   }
 
   const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
-  const onMove = (e) => {
-    mouse.tx = (e.clientX / window.innerWidth) * 2 - 1;
-    mouse.ty = (e.clientY / window.innerHeight) * 2 - 1;
+  const onMove = (event) => {
+    mouse.tx = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.ty = (event.clientY / window.innerHeight) * 2 - 1;
   };
 
   const clock = new THREE.Clock();
-  let cur = 0;
+  let smoothedScroll = 0;
   function frame() {
-    const t = clock.getElapsedTime();
-    const max = maxScroll;
-    const target = Math.min(1, Math.max(0, window.scrollY / max));
-    cur += (target - cur) * (reduced ? 1 : 0.06);
+    const elapsed = clock.getElapsedTime();
+    const scrollRange = maxScroll;
+    const target = Math.min(1, Math.max(0, window.scrollY / scrollRange));
+    smoothedScroll += (target - smoothedScroll) * (reduced ? 1 : 0.06);
     mouse.x += (mouse.tx - mouse.x) * 0.05;
     mouse.y += (mouse.ty - mouse.y) * 0.05;
-    const p = cur;
-    const m = reduced ? 0 : 1;
+    const scrollProgress = smoothedScroll;
+    const motionScale = reduced ? 0 : 1;
     applyFade(window.scrollY);
 
-    hero.rotation.y = m * (p * Math.PI * 5 + t * 0.25 + mouse.x * 0.5);
-    hero.rotation.x = 0.08 + m * (Math.sin(p * Math.PI * 3) * 0.4 + mouse.y * 0.3);
-    hero.position.x = baseX * Math.cos(p * Math.PI * 2.5);
-    hero.position.y = baseY + m * (Math.sin(t * 0.8) * 0.25 + Math.sin(p * Math.PI * 4) * 0.6);
-    hero.position.z = -p * 6;
-    hero.scale.setScalar(baseScale * (1 - 0.3 * Math.min(1, p * 1.5)));
-    ring1.rotation.z = m * t * 0.35;
-    ring2.rotation.z = m * -t * 0.22;
+    hero.rotation.y = motionScale * (scrollProgress * Math.PI * 5 + elapsed * 0.25 + mouse.x * 0.5);
+    hero.rotation.x = 0.08 + motionScale * (Math.sin(scrollProgress * Math.PI * 3) * 0.4 + mouse.y * 0.3);
+    hero.position.x = baseX * Math.cos(scrollProgress * Math.PI * 2.5);
+    hero.position.y = baseY + motionScale * (Math.sin(elapsed * 0.8) * 0.25 + Math.sin(scrollProgress * Math.PI * 4) * 0.6);
+    hero.position.z = -scrollProgress * 6;
+    hero.scale.setScalar(baseScale * (1 - 0.3 * Math.min(1, scrollProgress * 1.5)));
+    ring1.rotation.z = motionScale * elapsed * 0.35;
+    ring2.rotation.z = motionScale * -elapsed * 0.22;
 
     camera.position.x = mouse.x * 0.8;
     camera.position.y = -mouse.y * 0.5;
-    camera.position.z = baseZ - Math.sin(p * Math.PI) * 2;
+    camera.position.z = baseZ - Math.sin(scrollProgress * Math.PI) * 2;
     camera.lookAt(0, 0, 0);
 
-    accentLight.position.x = Math.sin(t * 0.6) * 7;
-    coolLight.position.y = Math.cos(t * 0.5) * 5;
+    accentLight.position.x = Math.sin(elapsed * 0.6) * 7;
+    coolLight.position.y = Math.cos(elapsed * 0.5) * 5;
 
-    particles.rotation.y = m * (t * 0.02 + p * 0.8);
-    particles.position.y = p * 3;
+    particles.rotation.y = motionScale * (elapsed * 0.02 + scrollProgress * 0.8);
+    particles.position.y = scrollProgress * 3;
 
-    for (const f of floaterData) {
-      f.m.rotation.x += f.sx * 0.01 * m;
-      f.m.rotation.y += f.sy * 0.01 * m;
-      f.m.position.y = f.y0 + m * Math.sin(t * 0.5 + f.ph) * 0.6 + p * 2;
+    for (const floater of floaterData) {
+      floater.mesh.rotation.x += floater.spinX * 0.01 * motionScale;
+      floater.mesh.rotation.y += floater.spinY * 0.01 * motionScale;
+      floater.mesh.position.y = floater.startY + motionScale * Math.sin(elapsed * 0.5 + floater.phase) * 0.6 + scrollProgress * 2;
     }
 
     if (composer) composer.render();
@@ -349,7 +350,7 @@ export function createScene(
   window.addEventListener('resize', resize);
   // با عوض شدن زبان (و جهت صفحه)، جای عدد ۷ هم عوض شود
   const dirObserver = new MutationObserver(() => {
-    lastW = 0;
+    lastWidth = 0;
     resize();
   });
   dirObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['dir'] });
@@ -360,11 +361,11 @@ export function createScene(
     // کنترل‌کننده‌ی کیفیت: اگر دستگاه در چند ثانیه‌ی اول فریم کافی ندهد، صحنه خودکار سبک‌تر می‌شود
     // (مرحله ۱: بدون درخشش، رزولوشن ۱، شکل‌های کمتر) و اگر باز هم کند بود، ثابت می‌ماند
     // و آخرین فریم به‌عنوان پس‌زمینه می‌ماند تا اسکرول صفحه روان شود.
-    let last = 0;
+    let lastFrameTime = 0;
     let tier = 0;
     let frames = 0;
-    let acc = 0;
-    let good = 0;
+    let frameTimeSum = 0;
+    let goodWindows = 0;
     let monitoring = true;
     const WARMUP = 90; // فریم‌های اول (کامپایل شیدر و ...) حساب نمی‌شوند
     const WINDOW = 120;
@@ -377,12 +378,12 @@ export function createScene(
           composer = null;
         }
         renderer.setPixelRatio(1);
-        lastW = 0;
+        lastWidth = 0;
         resize();
         shellOff = true;
         shell.visible = false;
-        floaterData.forEach((f, i) => {
-          if (i % 2) f.m.visible = false;
+        floaterData.forEach((floater, index) => {
+          if (index % 2) floater.mesh.visible = false;
         });
       } else {
         renderer.setAnimationLoop(null);
@@ -391,26 +392,26 @@ export function createScene(
     };
     // وقتی عدد ۷ کاملاً محو است (بعد از هیرو)، صحنه با نیمی از فریم‌ریت رسم می‌شود. این بخش از صفحه فقط ذرات
     // و شکل‌های کند دارد و تفاوتش دیده نمی‌شود، ولی کار پردازنده‌ی گرافیکی نصف می‌شود.
-    const MIN_DT = 1000 / LOOK.fps - 2;
+    const MIN_DT = 1000 / (lite ? 30 : LOOK.fps) - 2; // روی دستگاه ضعیف/موبایل نصف فریم (حدود ۳۰ فریم در ثانیه)
     const MIN_DT_IDLE = 1000 / LOOK.idleFps - 3;
-    renderer.setAnimationLoop((now) => {
-      const dt = now - last;
+    renderer.setAnimationLoop((timestamp) => {
+      const deltaMs = timestamp - lastFrameTime;
       const idle = lastFade === 0;
-      if (dt < (idle ? MIN_DT_IDLE : MIN_DT)) return;
-      last = now;
+      if (deltaMs < (idle ? MIN_DT_IDLE : MIN_DT)) return;
+      lastFrameTime = timestamp;
       frame();
       // فریم‌های کم‌فریم‌ریتِ عمدی در حالت idle نباید به‌عنوان «دستگاه کند» حساب شوند
-      if (monitoring && !idle && dt < 250) {
+      if (monitoring && !idle && deltaMs < 250) {
         // وقفه‌های بزرگ (مثلاً عوض‌کردن تب) حساب نمی‌شوند
         frames += 1;
         if (frames > WARMUP) {
-          acc += dt;
+          frameTimeSum += deltaMs;
           if (frames === WARMUP + WINDOW) {
-            const avg = acc / WINDOW;
+            const averageFrameMs = frameTimeSum / WINDOW;
             frames = 0;
-            acc = 0;
-            if (avg > (tier === 0 ? 28 : 40)) degrade();
-            else if (++good >= 2) monitoring = false;
+            frameTimeSum = 0;
+            if (averageFrameMs > (tier === 0 ? 24 : 36)) degrade();
+            else if (++goodWindows >= 2) monitoring = false;
           }
         }
       }
@@ -430,10 +431,10 @@ export function createScene(
     window.removeEventListener('resize', resize);
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('scroll', frame);
-    scene.traverse((o) => {
-      if (o.geometry) o.geometry.dispose();
-      if (o.material) {
-        (Array.isArray(o.material) ? o.material : [o.material]).forEach((mt) => mt.dispose());
+    scene.traverse((object) => {
+      if (object.geometry) object.geometry.dispose();
+      if (object.material) {
+        (Array.isArray(object.material) ? object.material : [object.material]).forEach((material) => material.dispose());
       }
     });
     envTex.dispose();

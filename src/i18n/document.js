@@ -2,8 +2,8 @@ import { DEFAULT_LANG, isLang, locales } from './locales.js';
 import { pathWithLang } from '../routes.js';
 
 const setMeta = (selector, value) => {
-  const el = document.head.querySelector(selector);
-  if (el) el.setAttribute('content', value);
+  const element = document.head.querySelector(selector);
+  if (element) element.setAttribute('content', value);
 };
 
 /** lang و dir صفحه، عنوان و متادیتای اشتراک‌گذاری را با زبان داده‌شده هماهنگ می‌کند. چندبار صدا زدنش مشکلی ندارد. */

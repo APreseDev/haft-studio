@@ -4,6 +4,6 @@ import { getProjects } from './projects.js';
 
 /** نمونه‌کارهای زبان فعلی (موردهای placeholder فقط در npm run dev). */
 export function useProjects() {
-  const { t } = useLang();
-  return useMemo(() => getProjects(t, { includePlaceholders: import.meta.env.DEV }), [t]);
+  const { translations } = useLang();
+  return useMemo(() => getProjects(translations, { includePlaceholders: import.meta.env.DEV }), [translations]);
 }

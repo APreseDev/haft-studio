@@ -5,12 +5,12 @@ import { parseAccentWords } from '../i18n/format.js';
 
 /** شعار تیم. با اسکرول، کلمه‌ها یکی‌یکی روشن می‌شوند. کلمه‌های بین دو ستاره با رنگ تأکید نشان داده می‌شوند. */
 export default function Manifesto() {
-  const { t } = useLang();
+  const { translations } = useLang();
   const root = useRef(null);
 
   useLayoutEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add(
+    const mediaContext = gsap.matchMedia();
+    mediaContext.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
         gsap.fromTo(
@@ -26,19 +26,19 @@ export default function Manifesto() {
       },
       root
     );
-    return () => mm.revert();
+    return () => mediaContext.revert();
   }, []);
 
-  const words = parseAccentWords(t.manifesto);
+  const words = parseAccentWords(translations.manifesto);
 
   return (
     <section className="manifesto" ref={root}>
       <div className="wrap">
         <p className="manifesto__text">
-          {words.map((w, i) => (
-            <span key={i}>
+          {words.map((word, index) => (
+            <span key={index}>
               <span className="w">
-                <span className={`wi ${w.accent ? 'accent' : ''}`}>{w.text}</span>
+                <span className={`wi ${word.accent ? 'accent' : ''}`}>{word.text}</span>
               </span>{' '}
             </span>
           ))}

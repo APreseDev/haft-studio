@@ -1,23 +1,23 @@
 // توابع کمکی فرم تماس (بدون وابستگی به React تا راحت تست شوند)
 
-const FA = '۰۱۲۳۴۵۶۷۸۹';
-const AR = '٠١٢٣٤٥٦٧٨٩';
+const PERSIAN_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+const ARABIC_DIGITS = '٠١٢٣٤٥٦٧٨٩';
 
 /** ارقام فارسی و عربی را به لاتین تبدیل می‌کند. */
-export const toLatinDigits = (s) =>
-  String(s)
-    .replace(/[۰-۹]/g, (d) => FA.indexOf(d))
-    .replace(/[٠-٩]/g, (d) => AR.indexOf(d));
+export const toLatinDigits = (text) =>
+  String(text)
+    .replace(/[۰-۹]/g, (digit) => PERSIAN_DIGITS.indexOf(digit))
+    .replace(/[٠-٩]/g, (digit) => ARABIC_DIGITS.indexOf(digit));
 
 /** فاصله، خط تیره، نقطه و پرانتز را برمی‌دارد و ارقام را لاتین می‌کند. */
-export const cleanPhone = (s) => toLatinDigits(s).replace(/[\s\-().]/g, '');
+export const cleanPhone = (phone) => toLatinDigits(phone).replace(/[\s\-().]/g, '');
 
 /** فقط رقم (با + اختیاری اول)، بین ۱۰ تا ۱۵ رقم. شماره‌ی موبایل و ثابت ایران و شماره‌های بین‌المللی را می‌پذیرد. */
-export const isValidPhone = (s) => /^\+?\d{10,15}$/.test(s);
+export const isValidPhone = (phone) => /^\+?\d{10,15}$/.test(phone);
 
 /** شماره را برای tel: و داده‌ی ساخت‌یافته به فرمت بین‌المللی می‌برد (۰۹۱... → +۹۸۹۱...). */
-export const toInternationalPhone = (s) => {
-  const d = cleanPhone(s).replace(/\D/g, '');
-  if (d.startsWith('0')) return '+98' + d.slice(1);
-  return d ? '+' + d : '';
+export const toInternationalPhone = (phone) => {
+  const digits = cleanPhone(phone).replace(/\D/g, '');
+  if (digits.startsWith('0')) return '+98' + digits.slice(1);
+  return digits ? '+' + digits : '';
 };

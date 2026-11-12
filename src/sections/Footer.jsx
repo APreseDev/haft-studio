@@ -11,15 +11,15 @@ function currentYear(locale, fallback) {
 }
 
 export default function Footer() {
-  const { t } = useLang();
-  const year = currentYear(t.intl, t.footer.fallbackYear);
+  const { translations } = useLang();
+  const year = currentYear(translations.intl, translations.footer.fallbackYear);
   return (
     <footer className="footer">
       <div className="wrap footer__inner">
-        <span className="logo" role="img" aria-label={t.brand}>
+        <span className="logo" role="img" aria-label={translations.brand}>
           <Logo variant="full" />
         </span>
-        <span>{t.footer.rights.replace('{year}', year)}</span>
+        <span>{translations.footer.rights.replace('{year}', year)}</span>
       </div>
     </footer>
   );

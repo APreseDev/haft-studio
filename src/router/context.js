@@ -7,7 +7,7 @@ export const RouterContext = createContext(null);
  * navigate(to, { replace?, scroll? }) برای رفتن به یک صفحه‌ی سایت بدون بارگذاری دوباره‌ی کامل.
  */
 export function useRouter() {
-  const ctx = useContext(RouterContext);
-  if (!ctx) throw new Error('useRouter باید داخل <RouterProvider> استفاده شود.');
-  return ctx;
+  const context = useContext(RouterContext);
+  if (!context) throw new Error('useRouter باید داخل <RouterProvider> استفاده شود.');
+  return context;
 }

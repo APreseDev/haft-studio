@@ -1,27 +1,30 @@
 /* هفت استودیو — استایل کل سایت. رنگ‌ها و اندازه‌های اصلی در :root هستند. */
 :root {
-  --bg: #04070d;
-  --surface: rgba(8, 14, 26, 0.72);
-  --surface-2: #0b1424;
-  --line: rgba(200, 220, 255, 0.14);
-  --line-strong: rgba(200, 220, 255, 0.32);
-  --fg: #f2f6fc; /* متن اصلی: سفید مایل به آبی */
-  --muted: #98a3b5; /* متن کم‌رنگ‌تر: خاکستریِ خنک */
-  --accent: #1a8cff; /* باید با ACCENT در data.js یکی باشد */
-  --on-accent: #ffffff;
-  /* همین رنگ‌ها به‌صورت «r, g, b» هم هستند تا بشود شفافیت‌های مختلف از آن‌ها ساخت (rgba(var(--bg-rgb), 0.5)) */
-  --bg-rgb: 4, 7, 13;
-  --card-rgb: 8, 14, 26;
-  --accent-rgb: 26, 140, 255;
-  --accent-hover: #4aa3ff;
-  --cream: #6db3ff; /* کرمی ثابت (برای نوار سرمه‌ای که در هر دو حالت یکی است) */
-  --work-from: rgba(14, 24, 44, 0.8);
-  --work-to: rgba(5, 9, 18, 0.8);
+  /* پالت: خاکستری #2B2D31 · نقره‌ای #D9DADC · زرد #FFC93C */
+  --bg: #2b2d31;
+  --surface: rgba(43, 45, 49, 0.72);
+  --surface-2: #383b40;
+  --line: rgba(217, 218, 220, 0.12);
+  --line-strong: rgba(217, 218, 220, 0.28);
+  --fg: #f1f1f2; /* متن اصلی: نقره‌ای روشن */
+  --muted: #a7aaaf; /* متن کم‌رنگ‌تر */
+  --accent: #ffc93c; /* باید با ACCENT در data.js یکی باشد */
+  --accent-ink: #ffc93c; /* رنگ متن‌های تأکیدی (در حالت روشن تیره‌تر می‌شود تا خوانا بماند) */
+  --on-accent: #2b2d31;
+  --bg-rgb: 43, 45, 49;
+  --card-rgb: 52, 55, 60;
+  --accent-rgb: 255, 201, 60;
+  --accent-hover: #ffd966;
+  --accent-grad: linear-gradient(135deg, #ffe08a 0%, #ffc93c 55%, #f0a500 100%);
+  --cream: #ffd966;
+  --work-from: rgba(62, 65, 71, 0.85);
+  --work-to: rgba(36, 38, 42, 0.85);
+  --shadow-card: 0 10px 22px -16px rgba(0, 0, 0, 0.6);
   --error-border: #e8a598;
   --error-text: #f0b3a6;
   /* وابسته به جهت صفحه (فارسی: راست‌به‌چپ، انگلیسی: چپ‌به‌راست) */
   --start-origin: 100%; /* سمت شروع خواندن؛ نوار پیشرفت و خط قدم‌ها از این سمت پر می‌شوند */
-  --marquee-shift: 50%; /* جهت حرکت نوار کرمی */
+  --marquee-shift: 50%; /* جهت حرکت نوار زرد */
   --font: "Vazirmatn", Tahoma, system-ui, sans-serif;
   --gutter: clamp(16px, 4vw, 40px);
   --maxw: 1240px;
@@ -30,21 +33,23 @@
 
 /* حالت روشن. حالت تیره (ظاهر فعلی سایت) همان مقدارهای بالای :root است و پیش‌فرض می‌ماند. */
 :root[data-theme="light"] {
-  --bg: #f3f6fb;
-  --surface: rgba(255, 255, 255, 0.72);
-  --surface-2: #e3eaf5;
-  --line: rgba(10, 25, 50, 0.14);
-  --line-strong: rgba(10, 25, 50, 0.34);
-  --fg: #0a1220;
-  --muted: #4a5568;
-  --accent: #0a5fd1; /* باید با ACCENT_LIGHT در data.js یکی باشد */
-  --on-accent: #ffffff;
-  --bg-rgb: 243, 246, 251;
-  --card-rgb: 255, 255, 255;
-  --accent-rgb: 10, 95, 209;
-  --accent-hover: #084aa6;
-  --work-from: rgba(255, 255, 255, 0.9);
-  --work-to: rgba(222, 231, 245, 0.9);
+  --bg: #d9dadc;
+  --surface: rgba(255, 255, 255, 0.6);
+  --surface-2: #e9eaec;
+  --line: rgba(43, 45, 49, 0.13);
+  --line-strong: rgba(43, 45, 49, 0.32);
+  --fg: #2b2d31;
+  --muted: #55585e;
+  --accent: #f5b700; /* پرکننده‌ی دکمه‌ها و نشانه‌ها */
+  --accent-ink: #8f6200; /* متن تأکیدی روی نقره‌ای (کنتراست کافی) */
+  --on-accent: #2b2d31;
+  --bg-rgb: 217, 218, 220;
+  --card-rgb: 247, 247, 248;
+  --accent-rgb: 245, 183, 0;
+  --accent-hover: #ffc93c;
+  --work-from: rgba(250, 250, 251, 0.95);
+  --work-to: rgba(226, 227, 229, 0.95);
+  --shadow-card: 0 10px 22px -16px rgba(43, 45, 49, 0.4);
   --error-border: #b3402c;
   --error-text: #9a2f1d;
 }
@@ -271,7 +276,7 @@ main,
 }
 .btn--solid {
   background: var(--accent);
-  border-color: var(--accent);
+  border-color: var(--accent-ink);
   color: var(--on-accent);
   font-weight: 700;
 }
@@ -280,8 +285,8 @@ main,
   border-color: var(--accent-hover);
 }
 .btn--ghost:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
 }
 .nav .btn {
   min-height: 44px;
@@ -301,7 +306,7 @@ main,
   display: inline-block;
 }
 .accent {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 /* هیرو */
@@ -387,12 +392,13 @@ html[lang="en"] .hero__title {
 /* نوار متحرک */
 .marquee {
   --marquee-duration: 120s; /* مدت یک دور کامل ردیف؛ با REPEAT در Marquee.jsx هماهنگ است */
-  background: var(--accent);
+  background: var(--accent-grad, linear-gradient(90deg, #ffe08a, #ffc93c 55%, #f0a500));
   color: var(--on-accent);
   overflow: hidden;
-  border-block: 1px solid var(--line);
+  border-block: 1px solid rgba(43, 45, 49, 0.12);
 }
 .marquee__track {
+  will-change: transform;
   display: flex;
   width: max-content;
   /* سرعت قبلی (۳۰ ثانیه برای یک ردیف چهارتایی) حفظ شده: ردیف حالا ۴ تکرار دارد، پس مدت چهار برابر است */
@@ -433,7 +439,7 @@ html[lang="en"] .hero__title {
   margin-bottom: 52px;
 }
 .eyebrow {
-  color: var(--accent);
+  color: var(--accent-ink);
   font-weight: 700;
   font-size: 15px;
   margin-bottom: 14px;
@@ -479,11 +485,6 @@ h2,
   transition: border-color 0.25s;
 }
 /* حالت سه‌بعدی کارت فقط برای ماوس لازم است */
-@media (hover: hover) and (pointer: fine) {
-  .card {
-    transform-style: preserve-3d;
-  }
-}
 .card:hover {
   border-color: var(--line-strong);
 }
@@ -521,7 +522,7 @@ h2,
   height: 56px;
   border-radius: 16px;
   background: var(--surface-2);
-  color: var(--accent);
+  color: var(--accent-ink);
   display: grid;
   place-items: center;
 }
@@ -628,7 +629,7 @@ h2,
   font-weight: 900;
   line-height: 1;
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--accent);
+  -webkit-text-stroke: 1.5px var(--accent-ink);
 }
 .step__body {
   display: flex;
@@ -663,16 +664,13 @@ h2,
 
 /* شعار */
 .manifesto {
-  /* نوار سرمه‌ای: هم‌خانواده‌ی نوار کرمی بالاتر، ولی خنک. به‌جای گرادیان طلایی قبلی */
-  --navy-lift: #1a3160;
-  --navy: #0f1f44;
-  --navy-deep: #0a1330;
-  --on-navy: #cfd8ee; /* متن اصلی: آبیِ کم‌رنگ و خنک */
+  /* نوار شعار: زغالیِ تیره با درخششِ زرد، در هر دو حالت یکسان */
+  --on-navy: #d9dadc;
   position: relative;
   padding-block: clamp(96px, 18vh, 176px);
   background:
-    radial-gradient(60% 90% at 85% 15%, rgba(86, 128, 220, 0.26), transparent 70%),
-    linear-gradient(160deg, var(--navy-lift) 0%, var(--navy) 48%, var(--navy-deep) 100%);
+    radial-gradient(60% 90% at 85% 10%, rgba(255, 201, 60, 0.22), transparent 70%),
+    linear-gradient(160deg, #3a3d42 0%, #2b2d31 48%, #1d1f22 100%);
   border-block: 1px solid var(--line);
 }
 .manifesto__text {
@@ -712,7 +710,7 @@ h2,
   margin-top: 0;
 }
 .member p {
-  color: var(--accent);
+  color: var(--accent-ink);
   font-size: 15px;
 }
 
@@ -745,7 +743,7 @@ h2,
   min-height: 46px;
 }
 .contact__list svg {
-  color: var(--accent);
+  color: var(--accent-ink);
   flex: none;
 }
 form {
@@ -794,7 +792,7 @@ textarea {
 }
 .status {
   min-height: 26px;
-  color: var(--accent);
+  color: var(--accent-ink);
   font-size: 14px;
 }
 
@@ -816,11 +814,8 @@ textarea {
 
 /* متن‌ها روی صحنه‌ی سه‌بعدی بمانند و خوانا باشند */
 /* عنوان هیرو و شعار حذف شدند، چون کلمه‌هایشان برای انیمیشن بریده می‌شود و سایه مستطیلی می‌شد */
-.hero__text,
-.eyebrow,
-h2,
-.sub {
-  text-shadow: 0 0 28px rgba(var(--bg-rgb), 0.85);
+.hero__text {
+  text-shadow: 0 0 14px rgba(var(--bg-rgb), 0.8);
 }
 
 /* منوی موبایل */
@@ -895,7 +890,7 @@ h2,
 }
 .tool-btn:hover {
   background: rgba(var(--accent-rgb), 0.12);
-  border-color: var(--accent);
+  border-color: var(--accent-ink);
 }
 /* فلش دکمه‌ها به سمت «جلو» اشاره کند: در فارسی به چپ، در انگلیسی به راست */
 html[dir="ltr"] .btn svg {
@@ -984,7 +979,7 @@ html[dir="ltr"] .btn svg {
   }
   .nav__only-menu {
     display: inline-flex !important;
-    color: var(--accent);
+    color: var(--accent-ink);
   }
   .logo__img--mark {
     height: 36px;
@@ -1096,7 +1091,7 @@ main:focus {
 
 /* فرم: ستاره‌ی الزامی، خطا و پرکردن خودکار مرورگر */
 .req {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 input[aria-invalid="true"] {
   border-color: var(--error-border);
@@ -1117,7 +1112,7 @@ select:-webkit-autofill {
   transition: color 0.2s;
 }
 .contact__list a:hover {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 /* نمونه‌کار با عکس، و حالت خالی بخش نمونه‌کارها */
@@ -1191,12 +1186,12 @@ select:-webkit-autofill {
   transition: border-color 0.2s, color 0.2s, background-color 0.2s;
 }
 .filter:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
 }
 .filter[aria-pressed="true"] {
   background: var(--accent);
-  border-color: var(--accent);
+  border-color: var(--accent-ink);
   color: var(--on-accent);
   font-weight: 700;
 }
@@ -1209,7 +1204,7 @@ select:-webkit-autofill {
   transition: color 0.2s;
 }
 .back-link:hover {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 [dir="rtl"] .arrow {
   display: inline-block;
@@ -1360,5 +1355,281 @@ select:-webkit-autofill {
   }
   .project-cta {
     padding: 32px 24px;
+  }
+}
+
+/* =====================================================================
+   لایه‌ی طراحی مدرن (خاکستری · نقره‌ای · زرد)
+   فقط ظاهر را تازه می‌کند؛ ساختار و انیمیشن‌های قبلی همان‌اند.
+   ===================================================================== */
+
+/* منو: خط باریکِ درخشان زیر منو و دکمه‌ی زرد با درخشش */
+.nav--solid {
+  background: rgba(var(--bg-rgb), 0.9);
+  box-shadow: 0 10px 30px -24px rgba(0, 0, 0, 0.7);
+}
+.nav--solid::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), 0.55), transparent);
+  pointer-events: none;
+}
+.nav__links a {
+  position: relative;
+}
+.nav__links a::after {
+  content: "";
+  position: absolute;
+  inset: auto 4px 8px 4px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+.nav__links a:hover::after {
+  transform: scaleX(1);
+}
+
+/* دکمه‌ها
+   مهم: transform دکمه‌ها را GSAP کنترل می‌کند (کشیده‌شدن به سمت ماوس و انیمیشن ورود)،
+   پس این‌جا هیچ transition یا hover برای transform نگذاشته‌ایم تا با انیمیشن‌ها تداخل نکند. */
+.btn {
+  font-weight: 500;
+  transition:
+    box-shadow 0.25s ease,
+    background 0.25s,
+    background-position 0.5s ease,
+    color 0.25s,
+    border-color 0.25s;
+}
+.btn--solid {
+  background: var(--accent-grad);
+  background-size: 200% 100%;
+  border-color: transparent;
+  box-shadow:
+    0 10px 28px -10px rgba(var(--accent-rgb), 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+.btn--solid:hover {
+  background: var(--accent-grad);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  border-color: transparent;
+  box-shadow:
+    0 16px 34px -10px rgba(var(--accent-rgb), 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.btn--ghost {
+  background: rgba(var(--bg-rgb), 0.35);
+}
+.btn--ghost:hover {
+  background: rgba(var(--accent-rgb), 0.1);
+}
+
+/* نشانک بالای هیرو: نقطه‌ی زنده */
+.pill {
+  background: rgba(var(--accent-rgb), 0.08);
+  border-color: rgba(var(--accent-rgb), 0.35);
+}
+.dot {
+  position: relative;
+}
+.dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: ping 2.2s ease-out infinite;
+}
+@keyframes ping {
+  to {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* عنوان هیرو: کلمه‌های زرد با گرادیان */
+.hero__title .accent {
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+:root[data-theme="light"] .hero__title .accent,
+:root[data-theme="light"] .manifesto__text .accent {
+  background-image: linear-gradient(135deg, #c98f00, #8f6200);
+}
+.manifesto__text .accent {
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+:root[data-theme="light"] .manifesto__text .accent {
+  background-image: var(--accent-grad); /* نوار شعار در هر دو حالت تیره است */
+}
+
+/* تیتر هر بخش: خط کوچک زرد کنار برچسب */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: 0.02em;
+}
+.eyebrow::after {
+  content: "";
+  width: 36px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+html[dir="rtl"] .eyebrow::after {
+  background: linear-gradient(270deg, var(--accent), transparent);
+}
+h2,
+.page-title {
+  letter-spacing: -0.01em;
+}
+
+/* کارت‌ها: لبه‌ی روشن بالا، سایه‌ی نرم و بالا آمدن با هاور */
+.card {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.06), transparent 45%),
+    rgba(var(--card-rgb), 0.9);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  /* transform عمداً در transition نیست: ورود کارت‌ها و کج‌شدن سه‌بعدی را GSAP انجام می‌دهد */
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+:root[data-theme="light"] .card {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.35) 60%, rgba(var(--accent-rgb), 0.1)),
+    rgba(var(--card-rgb), 0.9);
+  box-shadow: var(--shadow-card), inset 0 1px 0 #fff;
+}
+.card:hover {
+  border-color: rgba(var(--accent-rgb), 0.55);
+  box-shadow: var(--shadow-card), 0 0 0 1px rgba(var(--accent-rgb), 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+.card--glow::after {
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(var(--accent-rgb), 0.16), transparent 60%);
+}
+.card.work,
+:root[data-theme="light"] .card.work {
+  background: linear-gradient(150deg, var(--work-from), var(--work-to));
+}
+
+/* خدمات: آیکون زرد پرشده */
+.service__icon {
+  background: var(--accent-grad);
+  color: var(--on-accent);
+  box-shadow: 0 10px 22px -10px rgba(var(--accent-rgb), 0.8);
+  transition: transform 0.3s ease;
+}
+.service:hover .service__icon {
+  transform: rotate(-6deg) scale(1.06);
+}
+.service__n {
+  font-feature-settings: "tnum";
+  opacity: 0.7;
+}
+
+/* نمونه‌کار */
+.chip {
+  background: rgba(var(--accent-rgb), 0.14);
+  border-color: rgba(var(--accent-rgb), 0.45);
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+.work__ghost {
+  -webkit-text-stroke: 1.5px rgba(var(--accent-rgb), 0.3);
+}
+
+/* روش کار */
+.step__line {
+  background: linear-gradient(90deg, var(--accent), rgba(var(--accent-rgb), 0));
+}
+html[dir="rtl"] .step__line {
+  background: linear-gradient(270deg, var(--accent), rgba(var(--accent-rgb), 0));
+}
+
+/* تیم */
+.avatar {
+  border: 2px solid rgba(var(--accent-rgb), 0.6);
+  box-shadow: 0 0 0 5px rgba(var(--accent-rgb), 0.1);
+}
+
+/* فرم تماس */
+.contact__box {
+  background:
+    radial-gradient(70% 90% at 100% 0%, rgba(var(--accent-rgb), 0.12), transparent 60%),
+    rgba(var(--card-rgb), 0.92);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+input,
+select,
+textarea {
+  background: rgba(var(--bg-rgb), 0.55);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
+}
+:root[data-theme="light"] input,
+:root[data-theme="light"] select,
+:root[data-theme="light"] textarea {
+  background: rgba(255, 255, 255, 0.7);
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.22);
+}
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  box-shadow: 0 0 0 1000px var(--surface-2) inset;
+}
+
+/* دکمه‌های ابزار منو */
+.tool-btn {
+  background: rgba(var(--bg-rgb), 0.4);
+  border-radius: 999px;
+}
+.nav .btn,
+.tool-btn--lang {
+  border-radius: 999px;
+}
+
+/* نوار پیشرفت و انتخاب متن */
+.progress {
+  background: var(--accent-grad);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.7);
+}
+
+/* فوتر */
+.footer {
+  border-top-color: rgba(var(--accent-rgb), 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot::after {
+    animation: none;
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .nav__links a::after {
+    display: none;
   }
 }

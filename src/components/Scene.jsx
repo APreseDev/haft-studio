@@ -6,22 +6,23 @@ import { useTheme } from '../theme/context.js';
 
 /** بوم سه‌بعدی ثابت پشت کل صفحه. اگر WebGL نبود، فقط یک پس‌زمینه‌ی ساده دیده می‌شود. */
 export default function Scene() {
-  const ref = useRef(null);
+  const canvasRef = useRef(null);
   const sceneRef = useRef(null);
   const { theme } = useTheme();
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    const canvas = ref.current;
+    const canvas = canvasRef.current;
     if (!canvas) return;
     // برای عیب‌یابی کندی: آدرس را با ?noscene (بدون صحنه‌ی سه‌بعدی) یا ?lite (نسخه‌ی سبک) باز کنید
-    const q = new URLSearchParams(window.location.search);
-    if (q.has('noscene')) {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has('noscene')) {
       setFailed(true);
       return;
     }
     const lite =
-      q.has('lite') || window.matchMedia('(max-width: 768px)').matches || (navigator.hardwareConcurrency || 8) <= 4;
+      searchParams.has('lite') || window.matchMedia('(max-width: 768px)').matches || (navigator.hardwareConcurrency || 8) <= 6 ||
+      (navigator.deviceMemory || 8) <= 4;
     let handle;
     try {
       // حالت اولیه را از صفحه می‌خوانیم (ThemeProvider و اسکریپت index.html آن را قبل از ساخت صحنه گذاشته‌اند)
@@ -34,8 +35,7 @@ export default function Scene() {
         theme: initial,
       });
       sceneRef.current = handle;
-    } catch (err) {
-      console.warn('WebGL scene failed', err);
+    } catch {
       setFailed(true);
     }
     return () => {
@@ -50,5 +50,5 @@ export default function Scene() {
   }, [theme]);
 
   if (failed) return <div className="scene scene--fallback" aria-hidden="true" />;
-  return <canvas ref={ref} className="scene" aria-hidden="true" />;
+  return <canvas ref={canvasRef} className="scene" aria-hidden="true" />;
 }

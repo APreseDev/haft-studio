@@ -27,7 +27,7 @@ export default function LangProvider({ children }) {
 
   const value = useMemo(() => {
     const { dir, dict } = locales[lang];
-    return { lang, dir, t: dict, setLang, num: (n) => localizeDigits(n, dict.numerals) };
+    return { lang, dir, translations: dict, setLang, num: (number) => localizeDigits(number, dict.numerals) };
   }, [lang, setLang]);
 
   return <LangContext.Provider value={value}>{children}</LangContext.Provider>;

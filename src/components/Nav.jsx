@@ -10,27 +10,27 @@ import { useMagnetic } from '../hooks.js';
 import Logo from './Logo.jsx';
 
 export default function Nav() {
-  const { lang, setLang, t } = useLang();
+  const { lang, setLang, translations } = useLang();
   const { route, pathname } = useRouter();
   // در صفحه‌ی اصلی لینک‌ها فقط #بخش‌اند؛ در صفحه‌های دیگر به بخش همان صفحه‌ی اصلی می‌روند
   const home = route.page === 'home' ? '' : homePath(lang);
   const { theme, toggleTheme } = useTheme();
-  const otherLang = Object.keys(locales).find((k) => k !== lang);
+  const otherLang = Object.keys(locales).find((langCode) => langCode !== lang);
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
-  const cta = useMagnetic(0.3);
+  const ctaButtonRef = useMagnetic(0.3);
 
   useEffect(() => {
-    const on = () => setSolid(window.scrollY > 40);
-    on();
-    window.addEventListener('scroll', on, { passive: true });
-    return () => window.removeEventListener('scroll', on);
+    const updateSolid = () => setSolid(window.scrollY > 40);
+    updateSolid();
+    window.addEventListener('scroll', updateSolid, { passive: true });
+    return () => window.removeEventListener('scroll', updateSolid);
   }, []);
 
   // منوی موبایل با Escape بسته شود
   useEffect(() => {
     if (!open) return;
-    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    const onKey = (event) => event.key === 'Escape' && setOpen(false);
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
@@ -40,21 +40,21 @@ export default function Nav() {
   return (
     <header className={`nav ${solid || open ? 'nav--solid' : ''}`}>
       <div className="nav__inner">
-        <a href={`${home}#top`} className="logo" aria-label={t.brand} onClick={close}>
+        <a href={`${home}#top`} className="logo" aria-label={translations.brand} onClick={close}>
           <Logo />
         </a>
-        <nav id="main-nav" className={`nav__links ${open ? 'is-open' : ''}`} aria-label={t.nav.label}>
-          {navHrefs.map((href, i) => (
+        <nav id="main-nav" className={`nav__links ${open ? 'is-open' : ''}`} aria-label={translations.nav.label}>
+          {navHrefs.map((href, index) => (
             <a key={href} href={`${home}${href}`} onClick={close}>
-              {t.nav.links[i]}
+              {translations.nav.links[index]}
             </a>
           ))}
           <a href={`${home}#contact`} className="nav__only-menu" onClick={close}>
-            {t.nav.cta}
+            {translations.nav.cta}
           </a>
         </nav>
-        <a ref={cta} href={`${home}#contact`} className="btn btn--ghost nav__cta">
-          {t.nav.cta}
+        <a ref={ctaButtonRef} href={`${home}#contact`} className="btn btn--ghost nav__cta">
+          {translations.nav.cta}
         </a>
         <div className="nav__tools">
           {/* لینک واقعی به نسخه‌ی زبان دیگر: روی دکمه نام زبانی نوشته می‌شود که با کلیک به آن می‌رویم */}
@@ -62,10 +62,10 @@ export default function Nav() {
             className="tool-btn tool-btn--lang"
             href={pathWithLang(pathname, otherLang)}
             hrefLang={otherLang}
-            aria-label={t.ui.switchLang}
-            onClick={(e) => {
-              if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-              e.preventDefault();
+            aria-label={translations.ui.switchLang}
+            onClick={(event) => {
+              if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault();
               setLang(otherLang);
             }}
           >
@@ -79,7 +79,7 @@ export default function Nav() {
           <button
             type="button"
             className="tool-btn"
-            aria-label={theme === 'dark' ? t.ui.themeToLight : t.ui.themeToDark}
+            aria-label={theme === 'dark' ? translations.ui.themeToLight : translations.ui.themeToDark}
             onClick={toggleTheme}
           >
             <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={20} />
@@ -90,8 +90,8 @@ export default function Nav() {
           className="nav__toggle"
           aria-expanded={open}
           aria-controls="main-nav"
-          aria-label={open ? t.nav.close : t.nav.open}
-          onClick={() => setOpen((o) => !o)}
+          aria-label={open ? translations.nav.close : translations.nav.open}
+          onClick={() => setOpen((isOpen) => !isOpen)}
         >
           <span />
           <span />

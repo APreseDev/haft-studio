@@ -6,26 +6,26 @@ import { useProjects } from '../useProjects.js';
 import { usePageMeta } from '../usePageMeta.js';
 import { homePath, projectPath, worksPath } from '../routes.js';
 
-const imgSrc = (src) => (/^(https?:)?\/\//.test(src) ? src : `${import.meta.env.BASE_URL}${src}`);
+const imgSrc = (imagePath) => (/^(https?:)?\/\//.test(imagePath) ? imagePath : `${import.meta.env.BASE_URL}${imagePath}`);
 
 /** صفحه‌ی جزئیات یک نمونه‌کار. فیلدهای اختیاری (کارفرما، سال، خدمات، توضیح، نتیجه‌ها، لینک، گالری) اگر نباشند نشان داده نمی‌شوند. */
 export default function ProjectPage({ slug }) {
-  const { lang, t, num } = useLang();
+  const { lang, translations, num } = useLang();
   const projects = useProjects();
-  const index = projects.findIndex((p) => p.slug === slug);
-  const p = projects[index];
+  const index = projects.findIndex((project) => project.slug === slug);
+  const project = projects[index];
   const root = useRef(null);
-  const tp = t.projectPage;
+  const projectPageText = translations.projectPage;
 
   usePageMeta(
-    p ? `${p.title} | ${t.brand}` : `${tp.notFoundTitle} | ${t.brand}`,
-    p ? p.summary || p.hint || t.meta.description : t.meta.description
+    project ? `${project.title} | ${translations.brand}` : `${projectPageText.notFoundTitle} | ${translations.brand}`,
+    project ? project.summary || project.hint || translations.meta.description : translations.meta.description
   );
 
   useLayoutEffect(() => {
-    if (!p) return;
-    const mm = gsap.matchMedia();
-    mm.add(
+    if (!project) return;
+    const mediaContext = gsap.matchMedia();
+    mediaContext.add(
       '(prefers-reduced-motion: no-preference)',
       () => {
         fromBottom('.project__head > *', '.project__head', { stagger: 0.1 });
@@ -39,19 +39,19 @@ export default function ProjectPage({ slug }) {
       },
       root
     );
-    return () => mm.revert();
-  }, [p]);
+    return () => mediaContext.revert();
+  }, [project]);
 
-  if (!p) {
+  if (!project) {
     return (
       <section className="section page project-page" ref={root}>
         <div className="wrap">
           <div className="head">
-            <h1 className="page-title">{tp.notFoundTitle}</h1>
-            <p className="sub">{tp.notFoundText}</p>
+            <h1 className="page-title">{projectPageText.notFoundTitle}</h1>
+            <p className="sub">{projectPageText.notFoundText}</p>
           </div>
           <a className="btn btn--solid" href={worksPath(lang)}>
-            {tp.back}
+            {projectPageText.back}
           </a>
         </div>
       </section>
@@ -60,7 +60,7 @@ export default function ProjectPage({ slug }) {
 
   const prev = projects[index - 1];
   const next = projects[index + 1];
-  const hasMeta = p.client || p.year || (p.services && p.services.length > 0);
+  const hasMeta = project.client || project.year || (project.services && project.services.length > 0);
 
   return (
     <section className="section page project-page" ref={root}>
@@ -69,45 +69,45 @@ export default function ProjectPage({ slug }) {
           <span className="arrow" aria-hidden="true">
             ←
           </span>
-          {tp.back}
+          {projectPageText.back}
         </a>
 
         <header className="project__head">
-          <span className="chip">{p.tag}</span>
-          <h1 className="page-title">{p.title}</h1>
-          {(p.summary || p.hint) && <p className="sub">{p.summary || p.hint}</p>}
+          <span className="chip">{project.tag}</span>
+          <h1 className="page-title">{project.title}</h1>
+          {(project.summary || project.hint) && <p className="sub">{project.summary || project.hint}</p>}
         </header>
 
         {hasMeta && (
           <dl className="project__meta">
-            {p.client && (
+            {project.client && (
               <div>
-                <dt>{tp.client}</dt>
-                <dd>{p.client}</dd>
+                <dt>{projectPageText.client}</dt>
+                <dd>{project.client}</dd>
               </div>
             )}
-            {p.year && (
+            {project.year && (
               <div>
-                <dt>{tp.year}</dt>
-                <dd>{num(p.year)}</dd>
+                <dt>{projectPageText.year}</dt>
+                <dd>{num(project.year)}</dd>
               </div>
             )}
-            {p.services && p.services.length > 0 && (
+            {project.services && project.services.length > 0 && (
               <div>
-                <dt>{tp.services}</dt>
-                <dd>{p.services.join(t.listSeparator)}</dd>
+                <dt>{projectPageText.services}</dt>
+                <dd>{project.services.join(translations.listSeparator)}</dd>
               </div>
             )}
           </dl>
         )}
 
-        {p.image ? (
+        {project.image ? (
           <img
             className="project__cover"
-            src={imgSrc(p.image)}
-            alt={p.alt || ''}
-            width={p.width || 1600}
-            height={p.height || 900}
+            src={imgSrc(project.image)}
+            alt={project.alt || ''}
+            width={project.width || 1600}
+            height={project.height || 900}
             decoding="async"
           />
         ) : (
@@ -117,35 +117,35 @@ export default function ProjectPage({ slug }) {
         )}
 
         <div className="project__body">
-          {(p.description || []).map((para, i) => (
-            <p key={i}>{para}</p>
+          {(project.description || []).map((para, paragraphIndex) => (
+            <p key={paragraphIndex}>{para}</p>
           ))}
-          {p.results && p.results.length > 0 && (
+          {project.results && project.results.length > 0 && (
             <>
-              <h2 className="project__h">{tp.results}</h2>
+              <h2 className="project__h">{projectPageText.results}</h2>
               <ul className="project__results">
-                {p.results.map((r) => (
-                  <li key={r}>{r}</li>
+                {project.results.map((result) => (
+                  <li key={result}>{result}</li>
                 ))}
               </ul>
             </>
           )}
-          {p.link && (
-            <a className="btn btn--solid" href={p.link} target="_blank" rel="noopener noreferrer">
-              {tp.visit}
+          {project.link && (
+            <a className="btn btn--solid" href={project.link} target="_blank" rel="noopener noreferrer">
+              {projectPageText.visit}
             </a>
           )}
         </div>
 
-        {p.gallery && p.gallery.length > 0 && (
-          <div className="project__gallery" aria-label={tp.gallery}>
-            {p.gallery.map((g) => (
-              <figure key={g.src}>
+        {project.gallery && project.gallery.length > 0 && (
+          <div className="project__gallery" aria-label={projectPageText.gallery}>
+            {project.gallery.map((galleryImage) => (
+              <figure key={galleryImage.src}>
                 <img
-                  src={imgSrc(g.src)}
-                  alt={g.alt || ''}
-                  width={g.width || 1200}
-                  height={g.height || 800}
+                  src={imgSrc(galleryImage.src)}
+                  alt={galleryImage.alt || ''}
+                  width={galleryImage.width || 1200}
+                  height={galleryImage.height || 800}
                   loading="lazy"
                   decoding="async"
                 />
@@ -155,10 +155,10 @@ export default function ProjectPage({ slug }) {
         )}
 
         {(prev || next) && (
-          <nav className="project-nav" aria-label={tp.more}>
+          <nav className="project-nav" aria-label={projectPageText.more}>
             {prev ? (
               <a className="card project-nav__item" href={projectPath(lang, prev.slug)} data-hover>
-                <span>{tp.prev}</span>
+                <span>{projectPageText.prev}</span>
                 <b>{prev.title}</b>
               </a>
             ) : (
@@ -166,7 +166,7 @@ export default function ProjectPage({ slug }) {
             )}
             {next ? (
               <a className="card project-nav__item project-nav__item--next" href={projectPath(lang, next.slug)} data-hover>
-                <span>{tp.next}</span>
+                <span>{projectPageText.next}</span>
                 <b>{next.title}</b>
               </a>
             ) : (
@@ -176,10 +176,10 @@ export default function ProjectPage({ slug }) {
         )}
 
         <div className="project-cta card">
-          <h2>{tp.cta}</h2>
-          <p>{tp.ctaText}</p>
+          <h2>{projectPageText.cta}</h2>
+          <p>{projectPageText.ctaText}</p>
           <a className="btn btn--solid" href={`${homePath(lang)}#contact`}>
-            {t.nav.cta}
+            {translations.nav.cta}
           </a>
         </div>
       </div>
