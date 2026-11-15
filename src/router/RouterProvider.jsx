@@ -5,7 +5,7 @@ import { getLenis } from '../lenis.js';
 import { isAppPath, parsePath } from '../routes.js';
 
 function scrollToHash(hash) {
-  let element = null;
+  let element;
   try {
     element = hash ? document.querySelector(decodeURIComponent(hash)) : null;
   } catch {

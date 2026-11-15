@@ -80,66 +80,66 @@ export const projects = [
       ],
     },
   },
-  {
-    slug: "project-1",
-    tag: { fa: "طراحی سایت", en: "Web design" },
-    title: { fa: "[نام پروژه اول]", en: "[Project one name]" },
-    hint: {
-      fa: "جای تصویر یا ویدیوی نمونه‌کار",
-      en: "Space for a sample image or video",
-    },
-    summary: {
-      fa: "[یک جمله درباره‌ی پروژه]",
-      en: "[One sentence about the project]",
-    },
-    client: { fa: "[نام کارفرما]", en: "[Client name]" },
-    year: { fa: 1405, en: 2026 },
-    services: {
-      fa: ["طراحی سایت", "طراحی رابط کاربری"],
-      en: ["Web design", "UI design"],
-    },
-    description: {
-      fa: [
-        "[پاراگراف اول: هدف پروژه و چالش کارفرما]",
-        "[پاراگراف دوم: کاری که انجام دادیم و نتیجه]",
-      ],
-      en: [
-        "[Paragraph one: the goal and the client’s challenge]",
-        "[Paragraph two: what we did and the result]",
-      ],
-    },
-    results: {
-      fa: ["[نتیجه‌ی اول]", "[نتیجه‌ی دوم]"],
-      en: ["[First result]", "[Second result]"],
-    },
-  },
-  {
-    slug: "project-2",
-    tag: { fa: "ریلز اینستاگرام", en: "Instagram reels" },
-    title: { fa: "[نام پروژه دوم]", en: "[Project two name]" },
-    hint: { fa: "جای نمونه‌کار", en: "Space for a sample" },
-    summary: {
-      fa: "[یک جمله درباره‌ی پروژه]",
-      en: "[One sentence about the project]",
-    },
-    services: { fa: ["ساخت ریلز"], en: ["Reels production"] },
-    description: { fa: ["[توضیح پروژه]"], en: ["[Project description]"] },
-  },
-  {
-    slug: "project-3",
-    tag: { fa: "کمپین تبلیغاتی", en: "Ad campaign" },
-    title: { fa: "[نام پروژه سوم]", en: "[Project three name]" },
-    hint: { fa: "جای نمونه‌کار", en: "Space for a sample" },
-  },
-  {
-    slug: "project-4",
-    tag: { fa: "مدیریت پیج", en: "Page management" },
-    title: { fa: "[نام پروژه چهارم]", en: "[Project four name]" },
-    hint: {
-      fa: "جای تصویر یا ویدیوی نمونه‌کار",
-      en: "Space for a sample image or video",
-    },
-  },
+  // {
+  //   slug: "project-1",
+  //   tag: { fa: "طراحی سایت", en: "Web design" },
+  //   title: { fa: "[نام پروژه اول]", en: "[Project one name]" },
+  //   hint: {
+  //     fa: "جای تصویر یا ویدیوی نمونه‌کار",
+  //     en: "Space for a sample image or video",
+  //   },
+  //   summary: {
+  //     fa: "[یک جمله درباره‌ی پروژه]",
+  //     en: "[One sentence about the project]",
+  //   },
+  //   client: { fa: "[نام کارفرما]", en: "[Client name]" },
+  //   year: { fa: 1405, en: 2026 },
+  //   services: {
+  //     fa: ["طراحی سایت", "طراحی رابط کاربری"],
+  //     en: ["Web design", "UI design"],
+  //   },
+  //   description: {
+  //     fa: [
+  //       "[پاراگراف اول: هدف پروژه و چالش کارفرما]",
+  //       "[پاراگراف دوم: کاری که انجام دادیم و نتیجه]",
+  //     ],
+  //     en: [
+  //       "[Paragraph one: the goal and the client’s challenge]",
+  //       "[Paragraph two: what we did and the result]",
+  //     ],
+  //   },
+  //   results: {
+  //     fa: ["[نتیجه‌ی اول]", "[نتیجه‌ی دوم]"],
+  //     en: ["[First result]", "[Second result]"],
+  //   },
+  // },
+  // {
+  //   slug: "project-2",
+  //   tag: { fa: "ریلز اینستاگرام", en: "Instagram reels" },
+  //   title: { fa: "[نام پروژه دوم]", en: "[Project two name]" },
+  //   hint: { fa: "جای نمونه‌کار", en: "Space for a sample" },
+  //   summary: {
+  //     fa: "[یک جمله درباره‌ی پروژه]",
+  //     en: "[One sentence about the project]",
+  //   },
+  //   services: { fa: ["ساخت ریلز"], en: ["Reels production"] },
+  //   description: { fa: ["[توضیح پروژه]"], en: ["[Project description]"] },
+  // },
+  // {
+  //   slug: "project-3",
+  //   tag: { fa: "کمپین تبلیغاتی", en: "Ad campaign" },
+  //   title: { fa: "[نام پروژه سوم]", en: "[Project three name]" },
+  //   hint: { fa: "جای نمونه‌کار", en: "Space for a sample" },
+  // },
+  // {
+  //   slug: "project-4",
+  //   tag: { fa: "مدیریت پیج", en: "Page management" },
+  //   title: { fa: "[نام پروژه چهارم]", en: "[Project four name]" },
+  //   hint: {
+  //     fa: "جای تصویر یا ویدیوی نمونه‌کار",
+  //     en: "Space for a sample image or video",
+  //   },
+  // },
 ];
 
 // ------------------------------------------------------------------------------------------
@@ -174,6 +174,7 @@ export const team = [
   {
     name: { fa: "سانیار کامه", en: "Saniar Kame" },
     role: { fa: "فیلم‌بردار و گرافیست", en: "Videographer & Graphic Designer" },
+    photo: "team/sanyar.webp",
   },
 ];
 
