@@ -1,6 +1,6 @@
 // آدرس‌های سایت. زبان پیش‌فرض (انگلیسی) روی خود آدرس پایه است و بقیه با پیشوند کد زبان:
-//   «/»  «/works/»  «/works/<slug>/»        انگلیسی
-//   «/fa/»  «/fa/works/»  «/fa/works/<slug>/»   فارسی
+//   «/»  «/works/»  «/works/<slug>/»  «/privacy/»        انگلیسی
+//   «/fa/»  «/fa/works/»  «/fa/works/<slug>/»  «/fa/privacy/»   فارسی
 import { DEFAULT_LANG, isLang } from './i18n/locales.js';
 
 // آدرس پایه‌ی سایت (در Vite از VITE_BASE می‌آید؛ پیش‌فرض "/")
@@ -19,11 +19,12 @@ const segmentsOf = (pathname) => {
   return rest.split('/').filter((segment) => segment && segment !== 'index.html');
 };
 
-/** آدرس را به { lang, page: 'home' | 'works' | 'project', slug } تبدیل می‌کند. آدرس ناشناخته به صفحه‌ی اصلی می‌رود. */
+/** آدرس را به { lang, page: 'home' | 'works' | 'project' | 'privacy', slug } تبدیل می‌کند. آدرس ناشناخته به صفحه‌ی اصلی می‌رود. */
 export function parsePath(pathname) {
   const segs = segmentsOf(pathname);
   let lang = DEFAULT_LANG;
   if (segs.length && isLang(segs[0]) && segs[0] !== DEFAULT_LANG) lang = segs.shift();
+  if (segs[0] === 'privacy') return { lang, page: 'privacy', slug: '' };
   if (segs[0] === 'works') {
     return segs[1] ? { lang, page: 'project', slug: safeDecode(segs[1]) } : { lang, page: 'works', slug: '' };
   }
@@ -33,6 +34,7 @@ export function parsePath(pathname) {
 const prefix = (lang) => (lang === DEFAULT_LANG ? '' : `${lang}/`);
 export const homePath = (lang) => `${BASE}${prefix(lang)}`;
 export const worksPath = (lang) => `${homePath(lang)}works/`;
+export const privacyPath = (lang) => `${homePath(lang)}privacy/`;
 export const projectPath = (lang, slug) => `${worksPath(lang)}${encodeURIComponent(slug)}/`;
 
 /** همین صفحه، ولی به زبان دیگر (برای دکمه‌ی تغییر زبان). */
@@ -40,6 +42,7 @@ export function pathWithLang(pathname, lang) {
   const { page, slug } = parsePath(pathname);
   if (page === 'project') return projectPath(lang, slug);
   if (page === 'works') return worksPath(lang);
+  if (page === 'privacy') return privacyPath(lang);
   return homePath(lang);
 }
 

@@ -55,7 +55,7 @@ const ogImage = String(data.ogImage || '').trim().replace(/^\/+/, '');
 const DEFAULT_LANG = 'en'; // باید با DEFAULT_LANG در src/i18n/locales.js یکی باشد
 const prefix = (lang) => (lang === DEFAULT_LANG ? '' : `${lang}/`);
 const pagePath = (lang, kind, slug) =>
-  `/${prefix(lang)}${kind === 'home' ? '' : kind === 'works' ? 'works/' : `works/${encodeURIComponent(slug)}/`}`;
+  `/${prefix(lang)}${kind === 'home' ? '' : kind === 'works' ? 'works/' : kind === 'privacy' ? 'privacy/' : `works/${encodeURIComponent(slug)}/`}`;
 
 const pages = [];
 for (const lang of LANGS) {
@@ -68,6 +68,15 @@ for (const lang of LANGS) {
     title: `${dict.worksPage.title} | ${dict.brand}`,
     description: dict.worksPage.sub,
     extra: '',
+  });
+  pages.push({
+    lang,
+    kind: 'privacy',
+    slug: '',
+    title: `${dict.privacy.title} | ${dict.brand}`,
+    description: dict.privacy.sub,
+    extra: dict.privacy.sections.map((section) => `<h2>${escapeHtml(section.title)}</h2>${section.text.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}`).join(''),
+    h1: dict.privacy.title,
   });
   for (const project of getProjects(dict)) {
     const description = project.summary || project.hint || dict.meta.description;

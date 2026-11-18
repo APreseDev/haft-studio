@@ -46,18 +46,18 @@ export const projects = [
       en: "Tasisat Dayan online store",
     },
     hint: {
-      fa: "فروشگاه لوازم تاسیساتی مثل کولر گازی و ...",
-      en: "An online store for HVAC equipment such as gas air conditioners and more",
+      fa: "فروشگاه اینترنتی کولر گازی و لوازم تاسیساتی",
+      en: "An online store for gas air conditioners and HVAC equipment",
     },
     summary: {
-      fa: "طراحی سایت فروشگاهی، رابط گرافیکی و انیمیشن‌های شخصی‌سازی‌شده برای تاسیسات دایان.",
-      en: "Online store design, graphic interface and custom animations for Tasisat Dayan.",
+      fa: "طراحی سایت فروشگاهی، رابط کاربری و انیمیشن اختصاصی برای تاسیسات دایان.",
+      en: "Online store design, UI and custom animation for Tasisat Dayan.",
     },
     client: { fa: "تاسیسات دایان", en: "Tasisat Dayan" },
     year: { fa: 1405, en: 2026 },
     services: {
-      fa: ["طراحی سایت", "طراحی رابط گرافیکی", "انیمیشن شخصی‌سازی‌شده"],
-      en: ["Web design", "Graphic interface design", "Custom animation"],
+      fa: ["طراحی سایت", "طراحی رابط کاربری", "انیمیشن اختصاصی"],
+      en: ["Web design", "UI design", "Custom animation"],
     },
     image: "products/dayan-web/dayan.webp",
     alt: {
@@ -155,11 +155,11 @@ export const projects = [
 export const team = [
   {
     name: { fa: "امیرمحسن دهقان", en: "Amirmohsen Dehghan" },
-    role: { fa: "مدیر و طراح سایت", en: "Executive & Web Developer" },
+    role: { fa: "طراح و مدیر سایت", en: "Website Designer & Manager" },
     photo: "team/mohsen.webp",
   },
   {
-    name: { fa: "متین دهقان", en: "Matin dehghan" },
+    name: { fa: "متین دهقان", en: "Matin Dehghan" },
     role: { fa: "مدیر اجرایی و تدوین‌گر", en: "Executive & Editor" },
     photo: "team/matin.webp",
   },
@@ -172,7 +172,7 @@ export const team = [
     photo: "team/dashti.webp",
   },
   {
-    name: { fa: "سانیار کامه", en: "Saniar Kame" },
+    name: { fa: "سانیار کامه", en: "Saniyar Kameh" },
     role: { fa: "فیلم‌بردار و گرافیست", en: "Videographer & Graphic Designer" },
     photo: "team/sanyar.webp",
   },
@@ -201,8 +201,8 @@ export const services = [
     icon: "video",
     title: { fa: "ویدیو و ریلز اینستاگرام", en: "Instagram video & reels" },
     text: {
-      fa: "ایده، فیلم‌برداری، تدوین و موشن‌گرافیک؛ ویدیوهایی که تا ثانیه آخر دیده می‌شوند.",
-      en: "Idea, filming, editing and motion graphics: videos that get watched to the very last second.",
+      fa: "از ایده و فیلم‌برداری تا تدوین و موشن‌گرافیک؛ ویدیوی کوتاهی که مخاطب را نگه می‌دارد.",
+      en: "From idea and filming to editing and motion graphics: short videos built to hold attention.",
     },
   },
   {
@@ -250,8 +250,8 @@ export const processSteps = [
   {
     title: { fa: "طراحی و تولید", en: "Design & production" },
     text: {
-      fa: "سایت، ویدیو و محتوا ساخته می‌شود و در هر مرحله نظر شما را می‌گیریم.",
-      en: "The website, video and content are made, and we ask for your feedback at every stage.",
+      fa: "سایت و ویدیو را می‌سازیم و در طول کار پیش‌نمایش می‌فرستیم تا قبل از نسخه‌ی نهایی نظرتان را بدانیم.",
+      en: "We build the site and videos, sending previews along the way so you can weigh in before anything is final.",
     },
   },
   {

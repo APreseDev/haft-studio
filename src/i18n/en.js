@@ -34,8 +34,8 @@ export default {
   },
   hero: {
     pill: "Advertising & content studio · Newly founded",
-    title: "Advertising that *gets* *seen,* not just made.",
-    text: "Haft Studio is a young advertising team. We design websites for companies, produce Instagram videos, and make their brands stand out on social media.",
+    title: "We make your brand *worth* *watching.*",
+    text: "Haft Studio is a young advertising team. We design websites, shoot Instagram videos and run social media pages for companies.",
     cta1: "Tell us about your project",
     cta2: "View services",
     scroll: "Scroll",
@@ -43,12 +43,12 @@ export default {
   marquee: localize(marquee, "en"), // src/database.js (جدول marquee)
   services: {
     eyebrow: "01 — Services",
-    title: "Everything you need to be seen, in one place.",
+    title: "Website, video, social media and campaigns, all with one team.",
     items: localize(services, "en"), // src/database.js (جدول services)
   },
   work: {
     eyebrow: "02 — Work",
-    title: "Work that speaks for itself.",
+    title: "What we’ve built so far.",
     sub: "The first Haft Studio projects will be published here.",
     empty: "Our portfolio will be added here soon.",
     viewAll: "View all projects",
@@ -82,11 +82,11 @@ export default {
   },
   process: {
     eyebrow: "03 — Process",
-    title: "From the first conversation to launch, in four steps.",
+    title: "How a project works with us.",
     steps: localize(processSteps, "en"), // src/database.js (جدول processSteps)
   },
   manifesto:
-    "We have only just begun; for us, every project is the *most* *important* *project* *of* *the* *year.*",
+    "We’re just getting started, so we treat every project like our *very* *first.*",
   team: {
     eyebrow: "04 — Team",
     title: "The people behind Haft Studio.",
@@ -109,7 +109,7 @@ export default {
       "Content & page management",
       "Campaigns & advertising",
       "Several services together",
-      "more...",
+      "Other services",
     ],
     errors: {
       nameRequired: "Please enter your name and company name.",
@@ -124,7 +124,54 @@ export default {
     },
     sent: "Your message has been sent. We will get in touch with you soon.",
   },
+  privacy: {
+    eyebrow: "Privacy",
+    title: "What we do with your information.",
+    sub: "A short, plain explanation of what we collect, why we collect it, and who sees it.",
+    updated: "Last updated: November 2026",
+    sections: [
+      {
+        title: "What we collect",
+        text: [
+          "Only what you type into the contact form: your name and company, phone number, the service you’re interested in, and a few lines about your project. We don’t ask for accounts, passwords or payment details.",
+        ],
+      },
+      {
+        title: "How we use it",
+        text: [
+          "Only to get back to you and talk about your project. We don’t sell your number, and we don’t use it for marketing.",
+        ],
+      },
+      {
+        title: "Where your message goes",
+        text: [
+          "The contact form runs on a service called Web3Forms, which delivers your message to our team’s email. That means the service handles your message on its way to us. Beyond that, we don’t share your information with anyone, unless the law requires us to.",
+        ],
+      },
+      {
+        title: "Cookies and tracking",
+        text: [
+          "Our site doesn’t set cookies and has no analytics or advertising tools. The only thing saved in your browser is your light or dark mode choice, so the site looks the way you left it. Fonts load from our own site, not from outside services.",
+          "Like any website, our hosting server may keep ordinary technical records, such as your IP address and the time of your visit, for security and troubleshooting.",
+        ],
+      },
+      {
+        title: "How long we keep it",
+        text: [
+          "For as long as we need it to reply to you and work on your project. You can ask us at any time to send you what we have, correct it, or delete it.",
+        ],
+      },
+      {
+        title: "Questions?",
+        text: [
+          "Ask us anything about your information. If this page changes, it will be updated here.",
+        ],
+      },
+    ],
+    contactCta: "Email us",
+  },
   footer: {
+    privacy: "Privacy",
     rights: "© {year} · All rights reserved.",
     fallbackYear: "2026",
   },

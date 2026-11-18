@@ -18,6 +18,7 @@ import Footer from "./sections/Footer.jsx";
 import StructuredData from "./components/StructuredData.jsx";
 import WorksPage from "./pages/WorksPage.jsx";
 import ProjectPage from "./pages/ProjectPage.jsx";
+import PrivacyPage from "./pages/PrivacyPage.jsx";
 
 // کتابخانه‌ی Three.js حجیم‌ترین بخش سایت است. جدا و دیرتر بارگذاری می‌شود تا متن‌ها و منو فوراً دیده شوند.
 const Scene = lazy(() => import("./components/Scene.jsx"));
@@ -160,6 +161,7 @@ export default function App() {
       <main id="main" tabIndex={-1} key={pageKey}>
         {route.page === "works" && <WorksPage />}
         {route.page === "project" && <ProjectPage slug={route.slug} />}
+        {route.page === "privacy" && <PrivacyPage />}
         {route.page === "home" && (
           <>
             <Hero />
